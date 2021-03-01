@@ -1,0 +1,26 @@
+{
+    "name": "bagisto/laravel-import",
+    "description": "Wholesale import module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arpad Koszegi",
+            "email": "arpad.koszegi@icbtech.rs"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Shipping\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Icbtech\\Import\\Providers\\ImportServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "minimum-stability": "dev"
+}
