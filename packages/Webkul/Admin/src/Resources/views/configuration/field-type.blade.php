@@ -35,13 +35,13 @@
     }
 ?>
 
-    @if ($field['type'] == 'depands')
+    @if ($field['type'] == 'depends')
 
         <?php
 
-            $depands = explode(":", $field['depand']);
-            $depandField = current($depands);
-            $depandValue = end($depands);
+            $depends = explode(":", $field['depend']);
+            $dependField = current($depends);
+            $dependValue = end($depends);
 
             if (count($channel_locale)) {
                 $channel_locale = implode(' - ', $channel_locale);
@@ -61,22 +61,22 @@
             }
 
             if (! isset($field['options'])) {
-                $field['options'] = [['title' => 'No', 'value' => 0],['title' => 'Yes', 'value' => 1]];
+                $field['options'] = '';
             }
 
             $selectedOption = core()->getConfigData($name) ?? '';
         ?>
 
-        <depands
+        <depends
             :options = '@json($field['options'])'
             :name = "'{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]'"
             :validations = "'{{ $validations }}'"
-            :depand = "'{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $depandField }}]'"
-            :value = "'{{ $depandValue }}'"
-            :field_name = "'{{ $field['title'] }}'"
-            :channel_loacle = "'{{ $channel_locale }}'"
+            :depend = "'{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $dependField }}]'"
+            :value = "'{{ $dependValue }}'"
+            :field_name = "'{{ trans($field['title']) }}'"
+            :channel_locale = "'{{ $channel_locale }}'"
             :result = "'{{ $selectedOption }}'"
-        ></depands>
+        ></depends>
 
     @else
 
@@ -94,19 +94,24 @@
 
             @if ($field['type'] == 'text')
 
-                <input type="text" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ $field['name'] }}&quot;">
+                <input type="text" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: (core()->getConfigData($name) ? core()->getConfigData($name) : (isset($field['default_value']) ? $field['default_value'] : '')) }}" data-vv-as="&quot;{{ trans($field['title']) }}&quot;">
 
             @elseif ($field['type'] == 'password')
 
-                <input type="password" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ $field['name'] }}&quot;">
+                <input type="password" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ trans($field['title']) }}&quot;">
+
+            @elseif ($field['type'] == 'color')
+
+                <input type="color" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ trans($field['title']) }}&quot;">
+
 
             @elseif ($field['type'] == 'textarea')
 
-                <textarea v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" data-vv-as="&quot;{{ $field['name'] }}&quot;">{{ old($name) ?: core()->getConfigData($name) }}</textarea>
+                <textarea v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" data-vv-as="&quot;{{ trans($field['title']) }}&quot;">{{ old($name) ?: core()->getConfigData($name) }}</textarea>
 
             @elseif ($field['type'] == 'select')
 
-                <select v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" data-vv-as="&quot;{{ $field['name'] }}&quot;" >
+                <select v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" data-vv-as="&quot;{{ trans($field['title']) }}&quot;" >
 
                     <?php
                         $selectedOption = core()->getConfigData($name) ?? '';
@@ -123,10 +128,14 @@
                     @else
                         @foreach ($field['options'] as $option)
                             <?php
-                                if ($option['value'] == false) {
-                                    $value = 0;
+                                if (! isset($option['value'])) {
+                                    $value = null;
                                 } else {
                                     $value = $option['value'];
+
+                                    if (! $value) {
+                                        $value = 0;
+                                    }
                                 }
                             ?>
 
@@ -140,7 +149,7 @@
 
             @elseif ($field['type'] == 'multiselect')
 
-                <select v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}][]" data-vv-as="&quot;{{ $field['name'] }}&quot;"  multiple>
+                <select v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}][]" data-vv-as="&quot;{{ trans($field['title']) }}&quot;"  multiple>
 
                     <?php
                         $selectedOption = core()->getConfigData($name) ?? '';
@@ -157,15 +166,19 @@
                     @else
                         @foreach ($field['options'] as $option)
                             <?php
-                                if ($option['value'] == false) {
-                                    $value = 0;
+                                if (! isset($option['value'])) {
+                                    $value = null;
                                 } else {
                                     $value = $option['value'];
+
+                                    if (! $value) {
+                                        $value = 0;
+                                    }
                                 }
                             ?>
 
                             <option value="{{ $value }}" {{ in_array($option['value'], explode(',', $selectedOption)) ? 'selected' : ''}}>
-                                {{ $option['title'] }}
+                                {{ trans($option['title']) }}
                             </option>
                         @endforeach
                     @endif
@@ -198,21 +211,13 @@
 
             @elseif ($field['type'] == 'boolean')
 
-                <select v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" data-vv-as="&quot;{{ $field['name'] }}&quot;">
+                <?php $selectedOption = core()->getConfigData($name) ?? ''; ?>
 
-                    <?php
-                        $selectedOption = core()->getConfigData($name) ?? '';
-                    ?>
-
-                    <option value="0" {{ $selectedOption ? '' : 'selected'}}>
-                        {{ __('admin::app.configuration.no') }}
-                    </option>
-
-                    <option value="1" {{ $selectedOption ? 'selected' : ''}}>
-                        {{ __('admin::app.configuration.yes') }}
-                    </option>
-
-                </select>
+                <label class="switch">
+                    <input type="hidden" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="0" />
+                    <input type="checkbox" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="1" {{ $selectedOption ? 'checked' : '' }}>
+                    <span class="slider round"></span>
+                </label>
 
             @elseif ($field['type'] == 'image')
 
@@ -227,7 +232,7 @@
                     </a>
                 @endif
 
-                <input type="file" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ $field['name'] }}&quot;" style="padding-top: 5px;">
+                <input type="file" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ trans($field['title']) }}&quot;" style="padding-top: 5px;">
 
                 @if ($result)
                     <div class="control-group" style="margin-top: 5px;">
@@ -254,7 +259,7 @@
                     </a>
                 @endif
 
-                <input type="file" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ $field['name'] }}&quot;" style="padding-top: 5px;">
+                <input type="file" v-validate="'{{ $validations }}'" class="control" id="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" name="{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]" value="{{ old($name) ?: core()->getConfigData($name) }}" data-vv-as="&quot;{{ trans($field['title']) }}&quot;" style="padding-top: 5px;">
 
                 @if ($result)
                     <div class="control-group" style="margin-top: 5px;">
@@ -270,7 +275,7 @@
             @endif
 
             @if (isset($field['info']))
-                <span class="control-info">{{ trans($field['info']) }}</span>
+                <span class="control-info mt-10">{{ trans($field['info']) }}</span>
             @endif
 
             <span class="control-error" @if ($field['type'] == 'multiselect')  v-if="errors.has('{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}][]')" @else  v-if="errors.has('{{ $firstField }}[{{ $secondField }}][{{ $thirdField }}][{{ $field['name'] }}]')" @endif
@@ -287,6 +292,8 @@
     @endif
 
 @push('scripts')
+
+<?php if ($field['type'] == 'country'): ?>
 
 <script type="text/x-template" id="country-template">
 
@@ -391,18 +398,23 @@
     });
 </script>
 
-<script type="text/x-template" id="depands-template">
+<?php endif; ?>
+
+<script type="text/x-template" id="depends-template">
 
     <div class="control-group"  :class="[errors.has(name) ? 'has-error' : '']" v-if="this.isVisible">
         <label :for="name" :class="[ isRequire ? 'required' : '']">
             @{{ field_name }}
-            <span class="locale"> [@{{ channel_loacle }}] </span>
+            <span class="locale"> [@{{ channel_locale }}] </span>
         </label>
 
-        <select v-validate= "validations" class="control" :id = "name" :name = "name" v-model="this.result"
+        <select v-if="this.options.length" v-validate= "validations" class="control" :id = "name" :name = "name" v-model="savedValue"
         :data-vv-as="field_name">
             <option v-for='(option, index) in this.options' :value="option.value"> @{{ option.title }} </option>
         </select>
+
+        <input v-else type="text"  class="control" v-validate= "validations" :id = "name" :name = "name" v-model="savedValue"
+        :data-vv-as="field_name">
 
         <span class="control-error" v-if="errors.has(name)">
             @{{ errors.first(name) }}
@@ -412,50 +424,65 @@
 </script>
 
 <script>
-    Vue.component('depands', {
+    Vue.component('depends', {
 
-        template: '#depands-template',
+        template: '#depends-template',
 
         inject: ['$validator'],
 
-        props: ['options', 'name', 'validations', 'depand', 'value', 'field_name', 'channel_loacle', 'repository', 'result'],
+        props: ['options', 'name', 'validations', 'depend', 'value', 'field_name', 'channel_locale', 'repository', 'result'],
 
         data: function() {
             return {
-                isVisible: false,
                 isRequire: false,
+                isVisible: false,
+                savedValue: "",
             }
         },
 
         mounted: function () {
             var this_this = this;
 
+            this_this.savedValue = this_this.result;
+
             if (this_this.validations || (this_this.validations.indexOf("required") != -1)) {
                 this_this.isRequire = true;
             }
 
-            var dependentElement = document.getElementById(this_this.depand);
-            var depandValue = this_this.value;
+            $(document).ready(function(){
+                var dependentElement = document.getElementById(this_this.depend);
+                var dependValue = this_this.value;
 
-            if (depandValue == 'true') {
-                depandValue = 1;
-            } else if (depandValue == 'false') {
-                depandValue = 0;
-            }
+                if (dependValue == 'true') {
+                    dependValue = 1;
+                } else if (dependValue == 'false') {
+                    dependValue = 0;
+                }
 
-            $("select.control").change(function() {
-                if (dependentElement.value == depandValue) {
+                $(document).on("change", "select.control", function() {
+                    if (this_this.depend == this.name) {
+                        if (this_this.value == this.value) {
+                            this_this.isVisible = true;
+                        } else {
+                            this_this.isVisible = false;
+                        }
+                    }
+                })
+
+                if (dependentElement && dependentElement.value == dependValue) {
                     this_this.isVisible = true;
                 } else {
                     this_this.isVisible = false;
                 }
-            });
 
-            if (dependentElement.value == depandValue) {
-                this_this.isVisible = true;
-            } else {
-                this_this.isVisible = false;
-            }
+                if (this_this.result) {
+                    if (dependentElement.value == this_this.value) {
+                        this_this.isVisible = true;
+                    } else {
+                        this_this.isVisible = false;
+                    }
+                }
+            });
         }
     });
 </script>

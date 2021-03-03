@@ -11,7 +11,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.customers.reviews.edit-title') }}
                     </h1>
@@ -36,7 +36,7 @@
 
                             <div class="control-group">
                                 <label for="name" > {{ __('admin::app.customers.reviews.title') }}</label>
-                                <input type="text"  class="control" id="name" name="name" value="{{$review->title}}" disabled/>
+                                <input type="text"  class="control" id="name" name="name" value="{{old('name') ?: $review->title}}" disabled/>
                             </div>
 
                             <div class="control-group">

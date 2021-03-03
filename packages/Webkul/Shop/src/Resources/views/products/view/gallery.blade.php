@@ -1,4 +1,6 @@
 @inject ('productImageHelper', 'Webkul\Product\Helpers\ProductImage')
+@inject ('wishListHelper', 'Webkul\Customer\Helpers\Wishlist')
+
 <?php $images = $productImageHelper->getGalleryImages($product); ?>
 
 {!! view_render_event('bagisto.shop.products.view.gallery.before', ['product' => $product]) !!}
@@ -41,7 +43,7 @@
                 <img :src="currentLargeImageUrl" id="pro-img" :data-image="currentOriginalImageUrl"/>
 
                 @auth('customer')
-                    <a class="add-to-wishlist" href="{{ route('customer.wishlist.add', $product->product_id) }}">
+                    <a @if ($wishListHelper->getWishlistProduct($product)) class="add-to-wishlist already" @else class="add-to-wishlist" @endif href="{{ route('customer.wishlist.add', $product->product_id) }}">
                     </a>
                 @endauth
             </div>
@@ -108,7 +110,9 @@
 
                     this.currentOriginalImageUrl = image.original_image_url;
 
-                    $('img#pro-img').data('zoom-image', image.original_image_url).ezPlus();
+                    if ($(window).width() > 580) {
+                        $('img#pro-img').data('zoom-image', image.original_image_url).ezPlus();
+                    }
                 },
 
                 moveThumbs: function(direction) {
@@ -152,10 +156,14 @@
 
     <script>
         $(document).ready(function() {
-            $('img#pro-img').data('zoom-image', $('img#pro-img').data('image')).ezPlus();
+            if ($(window).width() > 580) {
+                $('img#pro-img').data('zoom-image', $('img#pro-img').data('image')).ezPlus();
+            }
+
+            var wishlist = " <?php echo $wishListHelper->getWishlistProduct($product);  ?> ";
 
             $(document).mousemove(function(event) {
-                if ($('.add-to-wishlist').length) {
+                if ($('.add-to-wishlist').length && wishlist != 1) {
                     if (event.pageX > $('.add-to-wishlist').offset().left && event.pageX < $('.add-to-wishlist').offset().left+32 && event.pageY > $('.add-to-wishlist').offset().top && event.pageY < $('.add-to-wishlist').offset().top+32) {
 
                         $(".zoomContainer").addClass("show-wishlist");

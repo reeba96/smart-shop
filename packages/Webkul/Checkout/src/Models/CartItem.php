@@ -16,7 +16,11 @@ class CartItem extends Model implements CartItemContract
         'additional' => 'array',
     ];
 
-    protected $guarded = ['id', 'created_at', 'updated_at'];
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
 
     public function product()
     {
@@ -53,6 +57,22 @@ class CartItem extends Model implements CartItemContract
      */
     public function child()
     {
-        return $this->belongsTo(self::class, 'id', 'parent_id');
+        return $this->belongsTo(static::class, 'id', 'parent_id');
+    }
+
+    /**
+     * Get the parent item record associated with the cart item.
+     */
+    public function parent()
+    {
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    /**
+     * Get the children items.
+     */
+    public function children()
+    {
+        return $this->hasMany(self::class, 'parent_id');
     }
 }

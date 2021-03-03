@@ -2,12 +2,13 @@
 
 namespace Webkul\Category\Database\Seeders;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
-use DB;
 
 class ProductTableSeeder extends Seeder
 {
     public function run()
     {
+        dd('running');
     }
 }

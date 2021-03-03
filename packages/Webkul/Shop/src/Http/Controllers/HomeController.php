@@ -4,42 +4,82 @@ namespace Webkul\Shop\Http\Controllers;
 
 use Webkul\Shop\Http\Controllers\Controller;
 use Webkul\Core\Repositories\SliderRepository;
+use Webkul\Product\Repositories\SearchRepository;
 
-/**
- * Home page controller
- *
- * @author    Prashant Singh <prashant.singh852@webkul.com> @prashant-webkul
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
- class HomeController extends Controller
+class HomeController extends Controller
 {
-    protected $_config;
+    /**
+     * SliderRepository object
+     *
+     * @var \Webkul\Core\Repositories\SliderRepository
+    */
     protected $sliderRepository;
-    protected $current_channel;
 
-    public function __construct(SliderRepository $sliderRepository)
+    /**
+     * SearchRepository object
+     *
+     * @var \Webkul\Core\Repositories\SearchRepository
+    */
+    protected $searchRepository;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @param  \Webkul\Core\Repositories\SliderRepository  $sliderRepository
+     * @param  \Webkul\Product\Repositories\SearchRepository  $searchRepository
+     * @return void
+    */
+    public function __construct(
+        SliderRepository $sliderRepository,
+        SearchRepository $searchRepository
+    )
     {
-        $this->_config = request('_config');
-
         $this->sliderRepository = $sliderRepository;
+
+        $this->searchRepository = $searchRepository;
+
+        parent::__construct();
     }
 
     /**
      * loads the home page for the storefront
+     * 
+     * @return \Illuminate\View\View 
      */
     public function index()
     {
         $currentChannel = core()->getCurrentChannel();
-        $sliderData = $this->sliderRepository->findByField('channel_id', $currentChannel->id)->toArray();
+
+        $currentLocale = core()->getCurrentLocale();
+
+        $sliderData = $this->sliderRepository
+            ->where('channel_id', $currentChannel->id)
+            ->where('locale', $currentLocale->code)
+            ->get()
+            ->toArray();
 
         return view($this->_config['view'], compact('sliderData'));
     }
 
     /**
      * loads the home page for the storefront
+     * 
+     * @return \Exception
      */
     public function notFound()
     {
         abort(404);
+    }
+
+    /**
+     * Upload image for product search with machine learning
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function upload()
+    {
+        $url = $this->searchRepository->uploadSearchImage(request()->all());
+
+        return $url; 
     }
 }

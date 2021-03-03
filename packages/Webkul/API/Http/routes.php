@@ -1,14 +1,14 @@
 <?php
 
 Route::group(['prefix' => 'api'], function ($router) {
-    
+
     Route::group(['namespace' => 'Webkul\API\Http\Controllers\Shop', 'middleware' => ['locale', 'theme', 'currency']], function ($router) {
         //Currency and Locale switcher
         Route::get('switch-currency', 'CoreController@switchCurrency');
 
         Route::get('switch-locale', 'CoreController@switchLocale');
-        
-        
+
+
         //Category routes
         Route::get('categories', 'ResourceController@index')->defaults('_config', [
             'repository' => 'Webkul\Category\Repositories\CategoryRepository',
@@ -69,6 +69,12 @@ Route::group(['prefix' => 'api'], function ($router) {
         ]);
 
         Route::post('reviews/{id}/create', 'ReviewController@store');
+
+        Route::delete('reviews/{id}', 'ResourceController@destroy')->defaults('_config', [
+            'repository' => 'Webkul\Product\Repositories\ProductReviewRepository',
+            'resource' => 'Webkul\API\Http\Resources\Catalog\ProductReview',
+            'authorization_required' => true
+        ]);
 
 
         //Channel routes
@@ -148,7 +154,7 @@ Route::group(['prefix' => 'api'], function ($router) {
 
         Route::post('customer/register', 'CustomerController@create');
 
-        Route::get('customers/{id}', 'ResourceController@get')->defaults('_config', [
+        Route::get('customers/{id}', 'CustomerController@get')->defaults('_config', [
             'repository' => 'Webkul\Customer\Repositories\CustomerRepository',
             'resource' => 'Webkul\API\Http\Resources\Customer\Customer',
             'authorization_required' => true
@@ -156,9 +162,7 @@ Route::group(['prefix' => 'api'], function ($router) {
 
 
         //Customer Address routes
-        Route::get('addresses', 'ResourceController@index')->defaults('_config', [
-            'repository' => 'Webkul\Customer\Repositories\CustomerAddressRepository',
-            'resource' => 'Webkul\API\Http\Resources\Customer\CustomerAddress',
+        Route::get('addresses', 'AddressController@get')->defaults('_config', [
             'authorization_required' => true
         ]);
 
@@ -242,7 +246,6 @@ Route::group(['prefix' => 'api'], function ($router) {
 
         Route::get('wishlist/add/{id}', 'WishlistController@create');
 
-
         //Checkout routes
         Route::group(['prefix' => 'checkout'], function ($router) {
             Route::post('cart/add/{id}', 'CartController@store');
@@ -254,6 +257,10 @@ Route::group(['prefix' => 'api'], function ($router) {
             Route::put('cart/update', 'CartController@update');
 
             Route::get('cart/remove-item/{id}', 'CartController@destroyItem');
+
+            Route::post('cart/coupon', 'CartController@applyCoupon');
+
+            Route::delete('cart/coupon', 'CartController@removeCoupon');
 
             Route::get('cart/move-to-wishlist/{id}', 'CartController@moveToWishlist');
 

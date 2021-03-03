@@ -11,7 +11,7 @@
         <div class="page-header">
             <div class="page-title">
                 <h1>
-                    <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                    <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                     {{ __('admin::app.sales.shipments.view-title', ['shipment_id' => $shipment->id]) }}
                 </h1>
@@ -34,21 +34,21 @@
 
                             <div class="section-content">
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.shipments.order-id') }}
                                     </span>
 
                                     <span class="value">
-                                        <a href="{{ route('admin.sales.orders.view', $order->id) }}">#{{ $order->id }}</a>
+                                        <a href="{{ route('admin.sales.orders.view', $order->id) }}">#{{ $order->increment_id }}</a>
                                     </span>
                                 </div>
 
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.order-date') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ $order->created_at }}
                                     </span>
                                 </div>
@@ -57,7 +57,7 @@
                                     <span class="title">
                                         {{ __('admin::app.sales.orders.order-status') }}
                                     </span>
-                                    
+
                                     <span class="value">
                                         {{ $order->status_label }}
                                     </span>
@@ -67,7 +67,7 @@
                                     <span class="title">
                                         {{ __('admin::app.sales.orders.channel') }}
                                     </span>
-                                        
+
                                     <span class="value">
                                         {{ $order->channel_name }}
                                     </span>
@@ -82,22 +82,22 @@
 
                             <div class="section-content">
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.customer-name') }}
                                     </span>
 
-                                    <span class="value"> 
-                                        {{ $shipment->address->name }}
+                                    <span class="value">
+                                        {{ $shipment->order->customer_full_name }}
                                     </span>
                                 </div>
 
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.email') }}
                                     </span>
 
-                                    <span class="value"> 
-                                        {{ $shipment->address->email }}
+                                    <span class="value">
+                                        {{ $shipment->order->customer_email }}
                                     </span>
                                 </div>
                             </div>
@@ -106,37 +106,41 @@
                     </div>
                 </accordian>
 
-                <accordian :title="'{{ __('admin::app.sales.orders.address') }}'" :active="true">
-                    <div slot="body">
+                @if ($order->billing_address || $order->shipping_address)
+                    <accordian :title="'{{ __('admin::app.sales.orders.address') }}'" :active="true">
+                        <div slot="body">
 
-                        <div class="sale-section">
-                            <div class="secton-title">
-                                <span>{{ __('admin::app.sales.orders.billing-address') }}</span>
-                            </div>
+                            @if ($order->billing_address)
+                                <div class="sale-section">
+                                    <div class="secton-title">
+                                        <span>{{ __('admin::app.sales.orders.billing-address') }}</span>
+                                    </div>
 
-                            <div class="section-content">
+                                    <div class="section-content">
 
-                                @include ('admin::sales.address', ['address' => $order->billing_address])
-                                
-                            </div>
+                                        @include ('admin::sales.address', ['address' => $order->billing_address])
+
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($order->shipping_address)
+                                <div class="sale-section">
+                                    <div class="secton-title">
+                                        <span>{{ __('admin::app.sales.orders.shipping-address') }}</span>
+                                    </div>
+
+                                    <div class="section-content">
+
+                                        @include ('admin::sales.address', ['address' => $order->shipping_address])
+
+                                    </div>
+                                </div>
+                            @endif
+
                         </div>
-
-                        @if ($order->shipping_address)
-                            <div class="sale-section">
-                                <div class="secton-title">
-                                    <span>{{ __('admin::app.sales.orders.shipping-address') }}</span>
-                                </div>
-
-                                <div class="section-content">
-                                
-                                    @include ('admin::sales.address', ['address' => $order->shipping_address])
-
-                                </div>
-                            </div>
-                        @endif
-                    
-                    </div>
-                </accordian>
+                    </accordian>
+                @endif
 
                 <accordian :title="'{{ __('admin::app.sales.orders.payment-and-shipping') }}'" :active="true">
                     <div slot="body">
@@ -148,21 +152,21 @@
 
                             <div class="section-content">
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.payment-method') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ core()->getConfigData('sales.paymentmethods.' . $order->payment->method . '.title') }}
                                     </span>
                                 </div>
 
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.currency') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ $order->order_currency_code }}
                                     </span>
                                 </div>
@@ -176,53 +180,53 @@
 
                             <div class="section-content">
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.shipping-method') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ $order->shipping_title }}
                                     </span>
                                 </div>
 
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.orders.shipping-price') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ core()->formatBasePrice($order->base_shipping_amount) }}
                                     </span>
                                 </div>
 
-                                @if ($shipment->inventory_source)
+                                @if ($shipment->inventory_source || $shipment->inventory_source_name)
                                     <div class="row">
-                                        <span class="title"> 
+                                        <span class="title">
                                             {{ __('admin::app.sales.shipments.inventory-source') }}
                                         </span>
 
-                                        <span class="value"> 
-                                            {{ $shipment->inventory_source->name }}
+                                        <span class="value">
+                                            {{ $shipment->inventory_source ? $shipment->inventory_source->name : $shipment->inventory_source_name }}
                                         </span>
                                     </div>
                                 @endif
 
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.shipments.carrier-title') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ $shipment->carrier_title }}
                                     </span>
                                 </div>
 
                                 <div class="row">
-                                    <span class="title"> 
+                                    <span class="title">
                                         {{ __('admin::app.sales.shipments.tracking-number') }}
                                     </span>
 
-                                    <span class="value"> 
+                                    <span class="value">
                                         {{ $shipment->track_number }}
                                     </span>
                                 </div>
@@ -252,8 +256,14 @@
                                             <td>
                                                 {{ $item->name }}
 
-                                                @if ($html = $item->getOptionDetailHtml())
-                                                    <p>{{ $html }}</p>
+                                                @if (isset($item->additional['attributes']))
+                                                    <div class="item-options">
+
+                                                        @foreach ($item->additional['attributes'] as $attribute)
+                                                            <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}</br>
+                                                        @endforeach
+
+                                                    </div>
                                                 @endif
                                             </td>
                                             <td>{{ $item->qty }}</td>

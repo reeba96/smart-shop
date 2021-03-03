@@ -821,7 +821,7 @@
     "RSD": {
         "symbol": "din.",
         "name": "Serbian Dinar",
-        "symbol_native": "дин.",
+        "symbol_native": "RSD",
         "decimal_digits": 0,
         "rounding": 0,
         "code": "RSD",

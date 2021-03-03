@@ -2,27 +2,32 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Exports\DataGridExport;
 use Excel;
 
-/**
- * Export controlller
- *
- * @author    Rahul Shukla <rahulshukla.symfony517@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class ExportController extends Controller
 {
     protected $exportableGrids = [
-        'OrderDataGrid', 'OrderInvoicesDataGrid', 'OrderShipmentsDataGrid', 'CustomerDataGrid', 'TaxRateDataGrid', 'ProductDataGrid'
+        'OrderDataGrid',
+        'OrderInvoicesDataGrid',
+        'OrderShipmentsDataGrid',
+        'OrderRefundDataGrid',
+        'CustomerDataGrid',
+        'TaxRateDataGrid',
+        'ProductDataGrid',
+        'CMSPageDataGrid',
+        'StatusDataGrid',
+        'PriorityDataGrid',
+        'CategoryDataGrid',
+        'ConfigurationDataGrid',
+        'CompleteTicketDataGrid',
+        'ActiveTicketDataGrid'
     ];
 
     /**
      * Create a new controller instance.
      *
+     * @return void
      */
     public function __construct()
     {
@@ -37,12 +42,16 @@ class ExportController extends Controller
     public function export()
     {
         $criteria = request()->all();
+
         $format = $criteria['format'];
 
         $gridName = explode('\\', $criteria['gridName']);
+
         $path = '\Webkul\Admin\DataGrids'.'\\'.last($gridName);
 
         $proceed = false;
+
+        if(!file_exists($path)){ $path = '\ICBTECH\Helpdesk\DataGrids'.'\\'.last($gridName); }
 
         foreach ($this->exportableGrids as $exportableGrid) {
             if (last($gridName) == $exportableGrid) {
@@ -53,11 +62,12 @@ class ExportController extends Controller
         if (! $proceed) {
             return redirect()->back();
         }
-
+        
         $gridInstance = new $path;
+        
         $records = $gridInstance->export();
 
-        if (count($records) == 0) {
+        if (! count($records)) {
             session()->flash('warning', trans('admin::app.export.no-records'));
 
             return redirect()->back();

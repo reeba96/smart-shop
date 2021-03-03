@@ -2,44 +2,35 @@
 
 @inject ('productFlatRepository', 'Webkul\Product\Repositories\ProductFlatRepository')
 
-@inject ('productAttributeValueRepository', 'Webkul\Product\Repositories\ProductAttributeValueRepository')
+@inject ('productRepository', 'Webkul\Product\Repositories\ProductRepository')
 
 <?php
-    $filterAttributes = [];
+    $filterAttributes = $attributes = [];
+    $maxPrice = 0;
 
     if (isset($category)) {
-        $categoryProduct = $productFlatRepository->getCategoryProduct($category->id);
+        $products = $productRepository->getAll($category->id);
 
-        foreach ($categoryProduct as $product) {
-            $attributes = $productAttributeValueRepository->findByField('product_id', $product->product_id);
+        $filterAttributes = $productFlatRepository->getFilterableAttributes($category, $products);
 
-            if ($product->product->type == 'configurable') {
-                foreach ($product->product->super_attributes as $super_attribute) {
-                    $productAttribute[] =  $super_attribute->id;
-                }
-            }
+        $maxPrice = core()->convertPrice($productFlatRepository->getCategoryProductMaximumPrice($category));
+    }
 
-            foreach ($attributes as $attribute) {
-                if ($attribute) {
-                    $productAttribute[] =  $attribute->attribute_id;
-                }
-            }
-        }
-
-        if (isset($productAttribute)) {
-            foreach ($attributeRepository->getFilterAttributes() as $filterAttribute) {
-                if (in_array($filterAttribute->id, array_unique($productAttribute))) {
-                    $filterAttributes[] = $filterAttribute;
-                } else  if ($filterAttribute ['code'] == 'price') {
-                    $filterAttributes[] = $filterAttribute;
-                }
-            }
-        }
-
-        $filterAttributes = collect($filterAttributes);
-    } else {
+    if (! count($filterAttributes) > 0) {
         $filterAttributes = $attributeRepository->getFilterAttributes();
     }
+
+    foreach ($filterAttributes as $attribute) {
+        if ($attribute->code <> 'price') {
+            if (! $attribute->options->isEmpty()) {
+                $attributes[] = $attribute;
+            }
+        } else {
+            $attributes[] = $attribute;
+        }
+    }
+
+    $filterAttributes = collect($attributes);
 ?>
 
 <div class="layered-filter-wrapper">
@@ -109,7 +100,7 @@
                         :tooltip-style="sliderConfig.tooltipStyle"
                         :max="sliderConfig.max"
                         :lazy="true"
-                        @callback="priceRangeUpdated($event)"
+                        @change="priceRangeUpdated($event)"
                     ></vue-slider>
                 </div>
 
@@ -126,18 +117,13 @@
             data: function() {
                 return {
                     attributes: @json($filterAttributes),
+
                     appliedFilters: {}
                 }
             },
 
             created: function () {
                 var urlParams = new URLSearchParams(window.location.search);
-
-                //var entries = urlParams.entries();
-
-                //for (let pair of entries) {
-                    //this.appliedFilters[pair[0]] = pair[1].split(',');
-                //}
 
                 var this_this = this;
 
@@ -161,7 +147,9 @@
                     var params = [];
 
                     for(key in this.appliedFilters) {
-                        params.push(key + '=' + this.appliedFilters[key].join(','))
+                        if (key != 'page') {
+                            params.push(key + '=' + this.appliedFilters[key].join(','))
+                        }
                     }
 
                     window.location.href = "?" + params.join('&');
@@ -176,6 +164,10 @@
             props: ['index', 'attribute', 'appliedFilterValues'],
 
             data: function() {
+                let maxPrice  = @json($maxPrice);
+
+                maxPrice = maxPrice ? ((parseInt(maxPrice) !== 0 || maxPrice) ? parseInt(maxPrice) : 500) : 500;
+
                 return {
                     appliedFilters: [],
 
@@ -186,7 +178,7 @@
                             0,
                             0
                         ],
-                        max: {{ isset($category) ? core()->convertPrice($productFlatRepository->getCategoryProductMaximumPrice($category->id)) : core()->convertPrice($productFlatRepository->getProductMaximumPrice()) }},
+                        max: maxPrice,
                         processStyle: {
                             "backgroundColor": "#FF6472"
                         },

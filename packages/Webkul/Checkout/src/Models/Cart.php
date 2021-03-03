@@ -10,11 +10,16 @@ class Cart extends Model implements CartContract
 {
     protected $table = 'cart';
 
-    protected $guarded = ['id', 'created_at', 'updated_at'];
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
 
-    protected $hidden = ['coupon_code'];
-
-    protected $with = ['items', 'items.child'];
+    protected $with = [
+        'items',
+        'items.children',
+    ];
 
     /**
      * To get relevant associated items with the cart instance
@@ -43,7 +48,7 @@ class Cart extends Model implements CartContract
      */
     public function billing_address()
     {
-        return $this->addresses()->where('address_type', 'billing');
+        return $this->addresses()->where('address_type', CartAddress::ADDRESS_TYPE_BILLING);
     }
 
     /**
@@ -59,7 +64,7 @@ class Cart extends Model implements CartContract
      */
     public function shipping_address()
     {
-        return $this->addresses()->where('address_type', 'shipping');
+        return $this->addresses()->where('address_type', CartAddress::ADDRESS_TYPE_SHIPPING);
     }
 
     /**
@@ -100,5 +105,68 @@ class Cart extends Model implements CartContract
     public function payment()
     {
         return $this->hasOne(CartPaymentProxy::modelClass());
+    }
+
+    /**
+     * Checks if cart have stockable items
+     *
+     * @return boolean
+     */
+    public function haveStockableItems()
+    {
+        foreach ($this->items as $item) {
+            if ($item->product->isStockable()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if cart has downloadable items
+     *
+     * @return boolean
+     */
+    public function hasDownloadableItems()
+    {
+        foreach ($this->items as $item) {
+            if (stristr($item->type,'downloadable') !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns true if cart contains one or many products with quantity box.
+     * (for example: simple, configurable, virtual)
+     * @return bool
+     */
+    public function hasProductsWithQuantityBox(): bool
+    {
+        foreach ($this->items as $item) {
+            if ($item->product->getTypeInstance()->showQuantityBox() === true) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if cart has items that allow guest checkout
+     *
+     * @return boolean
+     */
+    public function hasGuestCheckoutItems()
+    {
+        foreach ($this->items as $item) {
+            if ($item->product->getAttribute('guest_checkout') === 0) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

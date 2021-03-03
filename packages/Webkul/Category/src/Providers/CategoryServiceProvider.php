@@ -2,9 +2,10 @@
 
 namespace Webkul\Category\Providers;
 
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\AliasLoader;
-use Illuminate\Routing\Router;
+use Webkul\Category\Models\CategoryProxy;
+use Webkul\Category\Observers\CategoryObserver;
 
 class CategoryServiceProvider extends ServiceProvider
 {
@@ -13,18 +14,23 @@ class CategoryServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(Router $router)
+    public function boot()
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
+        CategoryProxy::observe(CategoryObserver::class);
+
+        $this->registerEloquentFactoriesFrom(__DIR__ . '/../Database/Factories');
     }
 
     /**
-     * Register services.
+     * Register factories.
      *
+     * @param  string  $path
      * @return void
      */
-    public function register()
+    protected function registerEloquentFactoriesFrom($path): void
     {
-
+        $this->app->make(EloquentFactory::class)->load($path);
     }
 }

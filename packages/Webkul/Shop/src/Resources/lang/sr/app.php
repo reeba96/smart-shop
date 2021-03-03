@@ -1,349 +1,419 @@
 <?php
 
 return [
+    'invalid_vat_format' => 'PDV id je u pogrešnom formatu.',
+    'security-warning' => 'Pronađene su sumnjive aktivnosti!',
+    'nothing-to-delete' => 'Nema ništa za brisanje.',
+
     'layouts' => [
         'my-account' => 'Moj nalog',
         'profile' => 'Profil',
-        'address' => 'Adresa',
+        'address' => 'Adrese',
         'reviews' => 'Recenzije',
         'wishlist' => 'Lista želja',
-        'orders' => 'Narudžbe',
+        'orders' => 'Porudžbine',
+        'downloadable-products' => 'Proizvodi za preuzimanje'
     ],
 
     'common' => [
-        'error' => 'Greška, molimo Vas pokušajte kasnije.'
+        'error' => 'Nešto nije u redu, molimo pokušajte ponovo.',
+        'no-result-found' => 'Nije moguće pronaći ni jedan zapis.'
     ],
 
     'home' => [
-        'page-title' => 'Quick Shop',
-        'featured-products' => 'Istaknuti Proizvodi',
-        'new-products' => 'Novi Proizvodi',
-        'verify-email' => 'Verifikuj email adresu',
-        'resend-verify-email' => 'Pošalji ponovo verifikacioni kod'
+        'page-title' => config('app.name') . ' - Početna',
+        'featured-products' => 'Preporučujemo za Vas',
+        'new-products' => 'Novi proizvodi',
+        'verify-email' => 'Potvrdite Vašu email adresu.',
+        'resend-verify-email' => 'Ponovo pošaljite email za potvrdu.'
     ],
 
     'header' => [
-        'title' => 'Moj nalog',
-        'dropdown-text' => 'Korpa, narudžbe, lista želja',
+        'title' => 'Nalog',
+        'dropdown-text' => 'Upravljaj korpom, porudžbinama i listom želja',
         'sign-in' => 'Prijavi se',
         'sign-up' => 'Registruj se',
         'account' => 'Nalog',
         'cart' => 'Korpa',
-        'profile' => 'Profil',
+        'profile' => 'Nalog',
         'wishlist' => 'Lista želja',
-        'logout' => 'Odjava',
-        'search-text' => 'Potraži proizvode'
+        'cart' => 'Korpa',
+        'logout' => 'Odjavi se',
+        'search-text' => 'Pretražite proizvode..'
     ],
 
     'minicart' => [
-        'view-cart' => 'Moja korpa',
-        'checkout' => 'Naruči',
+        'view-cart' => 'Pregled korpe',
+        'checkout' => 'Nastavi dalje',
         'cart' => 'Korpa',
         'zero' => '0'
     ],
 
     'footer' => [
-        'subscribe-newsletter' => 'Subscribe Newsletter',
-        'subscribe' => 'Pretplati se',
-        'locale' => 'Locale',
-        'currency' => 'Valuta',
+        'subscribe-newsletter' => 'Pretplata na Newsletter',
+        'subscribe' => 'Pretplata',
+        'locale' => 'Lokalno',
+        'currency' => 'Kanalno',
     ],
 
     'subscription' => [
-        'unsubscribe' => 'Unsubcribe', 
+        'unsubscribe' => 'Otkaži pretplatu',
         'subscribe' => 'Pretplati se',
-        'subscribed' => 'Uspešno si se prijavio kao pretplatnik ', 
-        'not-subscribed' => ' Ne možete se prijaviti kao pretplatnik, molimo Vas pokušajte kasnije.',
-        'already' => 'Već ste prijavljeni kao pretplatnik', 
-        'unsubscribed' => 'Odjavili ste se sa email pretplate na Bagisto', 
-        'already-unsub' => 'Već ste otkazali pretplatu', 
-        'not-subscribed' => 'Greška! E-mail se trenutno ne može poslati, molimo Vas pokušajte kasnije' 
+        'subscribed' => 'Pretplaćeni ste na email pretplatu.',
+        'not-subscribed' => 'Ne možete se pretplatiti na email pretplatu, molimo pokušajte ponovo',
+        'already' => 'Već ste pretplaćeni na našu listu pretplanika.',
+        'unsubscribed' => 'Otkazali ste pretplatu.',
+        'already-unsub' => 'Već ste otkazali pretplatu.',
+        'not-subscribed' => 'Greška! Trenutno nije moguće poslati email, molimo pokušajte ponovo.'
     ],
 
     'search' => [
-        'no-results' => 'Nema rezultata', 
-        'page-title' => 'Bagisto - pretraga', 
-        'found-results' => 'Pronađeni su rezultati pretrage',
-        'found-result' => 'Pronađen je rezultat pretrage'
+        'no-results' => 'Nema pronađenih rezultata.',
+        'page-title' => config('app.name') . ' - Pretraga',
+        'found-results' => 'Pronađeni rezultati pretrage',
+        'found-result' => 'Pronađen rezultat pretrage'
     ],
 
-    'reviews' => [  
+    'reviews' => [
         'title' => 'Naslov',
         'add-review-page-title' => 'Dodaj recenziju',
-        'write-review' => 'Napiši recenziju',
-        'review-title' => 'Dodaj naslov  recenziji', 
-        'product-review-page-title' => 'Recenzija proizvoda',
-        'rating-reviews' => 'Ocene i recenzije',
-        'submit' => 'Potvrdi',
-        'delete-all' => 'Sve recenzije su obrisane uspešno',
-        'ratingreviews' => ':rating Ocene & :reviews Recenzije',
-        'star' => 'Star',
-        'percentage' => ':percent %',
-        'id-star' => 'star',
-        'name' => 'Name'
+        'write-review' => 'Napiši recenziju ',
+        'review-title' => 'Dodaj naslov',
+        'product-review-page-title' => 'Recenzije proizvoda',
+        'rating-reviews' => 'Ocena i recenzije',
+        'submit' => 'POŠALJI',
+        'delete-all' => 'Sve recenzije su uspešno obrisane',
+        'ratingreviews' => ':rating Ocene & :review Recenzije',
+        'star' => 'Zvezdica',
+        'percentage' => ':percentage %',
+        'id-star' => 'Zvezdica',
+        'name' => 'Ime',
     ],
 
     'customer' => [
         'signup-text' => [
-            'account_exists' => 'Već imate nalog',
+            'account_exists' => 'Nalog već postoji',
             'title' => 'Prijavi se'
         ],
 
         'signup-form' => [
-            'page-title' => 'Korisnik - Obrazac za registraciju forma',
-            'title' => 'Registracija',
+            'page-title' => 'Napravi novi nalog',
+            'title' => 'Registruj se',
             'firstname' => 'Ime',
             'lastname' => 'Prezime',
             'email' => 'Email',
-            'password' => 'Šifra',
-            'confirm_pass' => 'Potvrdi šifru',
+            'password' => 'Lozinka',
+            'confirm_pass' => 'Potvrdi lozinku',
             'button_title' => 'Registruj se',
-            'agree' => 'Prihvatam',
-            'terms' => 'Uslovi',
+            'agree' => 'Pristajem',
+            'terms' => 'Termini',
             'conditions' => 'Uslovi',
-            'using' => 'koristeći ovaj veb sajt',
+            'using' => 'Koristeći ovaj sajt',
             'agreement' => 'Dogovor',
-            'success' => 'Nalog je uspešno kreiran , poslat Vam je e-mail radi verifikacije naloga',
-            'success-verify-email-not-sent' => 'Nalog je uspešno kreiran, ali verifikacioni email nije poslat',
-            'failed' => 'Greška! Nalog se ne može kreirati, molimo Vas pokušajte kasnije', 
-            'already-verified' => 'Vaš nalog je aktiviran ili pokušajte sa slanjem novog verifikacionog email-a ponovo', 
-            'verification-not-sent' => 'Greška! Problem u slanju verifikacionog email-a, molimo Vas pokušajte kasnije.', 
-            'verification-sent' => 'Verifikacion email je poslat.', 
-            'verified' => 'Vaš nalog je aktiviran, pokušajte da se prijavite', 
-            'verify-failed' => 'Ne možemo da Vam verifikujemo email nalog', 
-            'dont-have-account' => 'Nemate nalog kod nas', 
+            'success' => 'Uspešno ste kreirali nalog',
+            'success-verify' => 'Uspešno ste kreirali nalog, email za potvrdu je poslat.',
+            'success-verify-email-unsent' => 'Uspešno ste kreirali nalog, email za potvrdu nije poslat.',
+            'failed' => 'Greška! Nemoguće je kreirati Vaš nalog, molimo pokušajte ponovo.',
+            'already-verified' => 'Nalog sa ovom email adresom već postoji, pokušajte da pošaljete novi email za potvrdu!',
+            'verification-not-sent' => 'Greška! Problem pri slanju email-a za potvrdu, molimo pokušajte ponovo.',
+            'verification-sent' => 'Email za potvrdu je poslat.',
+            'verified' => 'Vaš nalog je potvrđen, pokušajte se prijaviti.',
+            'verify-failed' => 'Nemoguće je potvrditi Vaš email.',
+            'dont-have-account' => 'Nemate kreiran nalog.',
+            'customer-registration' => 'Uspešna registracija korisnika!'
         ],
 
         'login-text' => [
-            'no_account' => 'Nemate nalog',
+            'no_account' => 'Nemate postojeći nalog',
             'title' => 'Prijavi se',
         ],
 
         'login-form' => [
-            'page-title' => 'Korisnik - prijava',
+            'page-title' => 'Prijava kupca',
             'title' => 'Prijavi se',
             'email' => 'Email',
-            'password' => 'Šifra',
-            'forgot_pass' => 'Zaboravili ste šifru?',
+            'password' => 'Lozinka',
+            'forgot_pass' => 'Zaboravili ste lozinku ?',
             'button_title' => 'Prijavi se',
             'remember' => 'Zapamti me',
-            'footer' => '© Autorsko pravo :year ICBtech , Sva prava zadržana',
-            'invalid-creds' => 'Molimo vas proverite vaše podatke i pokušajte ponovo', 
-            'verify-first' => 'Prvo verifikujte svoj nalog',
-            'resend-verification' => 'Ponovo pošalji verifikacioni email'
+            'footer' => '© Copyright :year Webkul Software, All rights reserved',
+            'invalid-creds' => 'Proverite svoje podatke i molimo pokušajte ponovo',
+            'verify-first' => 'Prvo potvrdite Vaš email. ',
+            'not-activated' => 'Vaša aktivacija traži odobrenje administratora',
+            'resend-verification' => 'Ponovo pošaljite email za potvrdu'
         ],
 
         'forgot-password' => [
-            'title' => 'Oporavi šifru',
+            'title' => 'Resetovanje lozinke',
             'email' => 'Email',
-            'submit' => 'Potvrdi',
-            'page_title' => 'Korisnik - Obrazac za zaboravljenu šifru'
+            'submit' => 'Pošaljite email za resetovanje lozinke',
+            'page_title' => 'Zaboravili ste lozinku ?'
         ],
 
         'reset-password' => [
-            'title' => 'Resetuj šifru',
-            'email' => 'Registruj email',
-            'password' => 'Šifra',
-            'confirm-password' => 'Potvrdi šifru',
-            'back-link-title' => 'Nazad na prijavu',
-            'submit-btn-title' => 'Resetuj šifru'
+            'title' => 'Resetovanje lozinke',
+            'email' => 'Email adresa',
+            'password' => 'Lozinka',
+            'confirm-password' => 'Potvrdite lozinku',
+            'back-link-title' => 'Nazad na Prijavi se',
+            'submit-btn-title' => 'Resetuj lozinku'
         ],
 
         'account' => [
-            'dashboard' => 'Korisnik - Izmeni nalog',
-            'menu' => 'Menu',
+            'dashboard' => 'Uredi nalog',
+            'menu' => 'Meni',
 
             'profile' => [
-                'index' => [  
-                    'page-title' => 'Korisnik - Nalog',
+                'index' => [
+                    'page-title' => 'Nalog',
                     'title' => 'Nalog',
-                    'edit' => 'Izmeni', 
+                    'edit' => 'Uredi',
                 ],
 
-                'edit-success' => 'Nalog je uspešno izmenjen',
-                'edit-fail' => 'Greška! Nalog se ne može izmeniti, molimo Vas pokušajte kasnije',
-                'unmatch' => 'Stara lozinka se ne podudara',
+                'edit-success' => 'Uspešno ste ažurirali nalog.',
+                'edit-fail' => 'Greška! Profil se ne može ažurirati, molimo pokušajte ponovo.',
+                'unmatch' => 'Stara lozinka se ne podudara.',
 
                 'fname' => 'Ime',
                 'lname' => 'Prezime',
                 'gender' => 'Pol',
+                'other' => 'Drugo',
+                'male' => 'Muški',
+                'female' => 'Ženski',
                 'dob' => 'Datum rođenja',
                 'phone' => 'Telefon',
                 'email' => 'Email',
-                'opassword' => 'Stara  šifra',
-                'password' => 'Šifra',
-                'cpassword' => 'Potvrdi šifru',
-                'submit' => 'Izmeni nalog',
+                'opassword' => 'Stara lozinka',
+                'password' => 'Lozinka',
+                'cpassword' => 'Potvrdi lozinku',
+                'submit' => 'Ažuriraj nalog',
 
                 'edit-profile' => [
-                    'title' => 'Izmeni nalog',
-                    'page-title' => 'Korisnik - Obrazac za izmenu naloga'
+                    'title' => 'Uredi nalog',
+                    'page-title' => 'Uredi formu naloga'
                 ]
             ],
 
             'address' => [
-                'index' => [  
-                    'page-title' => 'Korisnik - Adresa',
+                'index' => [
+                    'page-title' => 'Adresa',
                     'title' => 'Adresa',
                     'add' => 'Dodaj adresu',
-                    'edit' => 'Izmeni',
-                    'empty' => 'Ovde nemate nijednu sačuvanu adresu, pokušajte da je kreirate klikom na link ispod',  
+                    'edit' => 'Uredi',
+                    'empty' => 'Nemate nijednu sačuvanu adresu, otvorite link iznad i pokušajte ponovo.',
                     'create' => 'Kreiraj adresu',
                     'delete' => 'Obriši',
-                    'make-default' => ' Napravi podrazumevanu',
-                    'default' => 'Podrazumevana',
-                    'contact' => 'Kontakt',
-                    'confirm-delete' =>  'Da li zaista želite da izbrišete ovu adresu?',
-                    'default-delete' => 'Podrazumevana adresa se ne može promeniti'
+                    'make-default' => 'Postavi podrazumevano',
+                    'default' => 'Podrazumevano',
+                    'contact' => 'Kontakti',
+                    'confirm-delete' =>  'Da li ste sigurni da želite obrisati ovu adresu?',
+                    'default-delete' => 'Podrazumevana adresa ne može da se promeni.',
+                    'enter-password' => 'Unesite Vašu lozinku.',
                 ],
 
-                'create' => [ 
-                    'page-title' => 'Korisnik - Dodaj obrazac za adresu',
+                'create' => [
+                    'page-title' => 'Dodaj formu za adresu',
+                    'company_name' => 'Naziv kompanije',
+                    'first_name' => 'Ime',
+                    'last_name' => 'Prezime',
+                    'vat_id' => 'Vat id',
+                    'vat_help_note' => '[Note: Use Country Code with VAT Id. Eg. INV01234567891]',
                     'title' => 'Dodaj adresu',
-                    'street-address' => 'Ulica',
+                    'street-address' => 'Ulica i broj',
                     'country' => 'Država',
-                    'state' => 'Država',
-                    'select-state' => ' Izaberite region, državu ili pokrajinu.', 
+                    'state' => 'Zemlja',
+                    'select-state' => 'Izaberite mesto, region i državu',
                     'city' => 'Grad',
                     'postcode' => 'Poštanski broj',
                     'phone' => 'Telefon',
                     'submit' => 'Sačuvaj adresu',
-                    'success' => 'Adresa je uspešno dodata',
-                    'error' => 'Adresa se ne može dodati.'
+                    'success' => 'Adresa je uspešno dodata.',
+                    'error' => 'Adresa ne može biti dodata.'
                 ],
 
                 'edit' => [
-                    'page-title' => 'Korisnik - izmeni adresu',
-                    'title' => 'Izmeni adresu',
-                    'submit' => 'Sačcuvaj adresu',
-                    'success' => 'Adresa je uspešno ažurirana.'
+                    'page-title' => 'Izmeni adresu',
+                    'company_name' => 'Naziv kompanije',
+                    'first_name' => 'Ime',
+                    'last_name' => 'Prezime',
+                    'vat_id' => 'Vat id',
+                    'title' => 'Uredi adresu',
+                    'street-address' => 'Ulica i broj',
+                    'submit' => 'Sačuvaj adresu',
+                    'success' => 'Adresa je uspešno ažurirana.',
                 ],
                 'delete' => [
-                    'success' => 'Adresa je uspešno izbrisana',
-                    'failure' => 'Adresa se ne može obrisati'
+                    'success' => 'Adresa je uspešno obrisana',
+                    'failure' => 'Adresa se ne može obrisati',
+                    'wrong-password' => 'Pogrešna lozinka!'
                 ]
             ],
 
             'order' => [
                 'index' => [
-                    'page-title' => 'Korisnik - Narudžbe',
-                    'title' => 'Narudžbe',
-                    'order_id' => 'ID Narudžbe',
+                    'page-title' => 'Porudžbine',
+                    'title' => 'Porudžbine',
+                    'order_id' => 'ID porudžbine',
                     'date' => 'Datum',
                     'status' => 'Status',
-                    'total' => 'Ukupno'
+                    'total' => 'Ukupno',
+                    'order_number' => 'Broj porudžbine',
+                    'processing' => 'Obrada',
+                    'completed' => 'Završeno',
+                    'canceled' => 'Otkazano',
+                    'closed' => 'Zatvoreno',
+                    'pending' => 'Nedovršeno',
+                    'pending-payment' => 'Plaćanje u toku',
+                    'fraud' => 'Prevara'
                 ],
 
-                'view' => [ 
-                    'page-tile' => 'Narudžba #:order_id',
-                    'info' => 'Informacije',
-                    'placed-on' => 'Postavljen na',
-                    'products-ordered' => 'Naručeni proizvodi',
+                'view' => [
+                    'page-tile' => 'Porudžbina #:order_id',
+                    'info' => 'Informacija',
+                    'placed-on' => 'Postavljeno',
+                    'products-ordered' => 'Poručeni proizvodi',
                     'invoices' => 'Fakture',
                     'shipments' => 'Pošiljke',
                     'SKU' => 'SKU',
                     'product-name' => 'Ime',
-                    'qty' => 'Kol.',
-                    'item-status' => 'Status artikla',
-                    'item-ordered' => 'Naručeno (:qty_ordered)',
+                    'qty' => 'Količina',
+                    'item-status' => 'Status predmeta',
+                    'item-ordered' => 'Poručeno (:qty_ordered)',
                     'item-invoice' => 'Fakturisano (:qty_invoiced)',
-                    'item-shipped' => 'poslato (:qty_shipped)',
+                    'item-shipped' => 'Poslato (:qty_shipped)',
                     'item-canceled' => 'Otkazano (:qty_canceled)',
+                    'item-refunded' => 'Vraćeno (:qty_refunded)',
                     'price' => 'Cena',
                     'total' => 'Ukupno',
-                    'subtotal' => 'Suma stavke',
-                    'shipping-handling' => 'Pošiljka & Rukovanje', 
+                    'subtotal' => 'Međuzbir',
+                    'shipping-handling' => 'Isporuka i rukovođenje',
                     'tax' => 'Porez',
-                    'tax-percent' => 'Procenat poreza',
+                    'discount' => 'Popust',
+                    'tax-percent' => 'Procenat popusta',
                     'tax-amount' => 'Iznos poreza',
                     'discount-amount' => 'Iznos popusta',
-                    'grand-total' => 'Ukupno', 
+                    'grand-total' => 'Ukupan iznos',
                     'total-paid' => 'Ukupno plaćeno',
-                    'total-refunded' => 'Ukupno vrećeno',
-                    'total-due' => 'Ukupno zaduženo',
-                    'shipping-address' => 'Adresa dostave',
-                    'billing-address' => 'Adresa za naplatu',
-                    'shipping-method' => 'Način pošiljke', 
+                    'total-refunded' => 'Ukupno vraćeno',
+                    'total-due' => 'Ukupan iznos',
+                    'shipping-address' => 'Adresa isporuke',
+                    'billing-address' => 'Adresa fakturisanja',
+                    'shipping-method' => 'Način isporuke',
                     'payment-method' => 'Način plaćanja',
                     'individual-invoice' => 'Faktura #:invoice_id',
                     'individual-shipment' => 'Pošiljka #:shipment_id',
                     'print' => 'Štampaj',
-                    'invoice-id' => 'Id fakture',
-                    'order-id' => 'Id narudžbe',
-                    'order-date' => 'Datum narudžbe',
+                    'invoice-id' => 'ID fakture',
+                    'order-id' => 'ID porudžbine',
+                    'order-date' => 'Datum porudžbine',
                     'bill-to' => 'Račun za',
-                    'ship-to' => 'Isporučiti',
-                    'contact' => 'Kontakt'
+                    'ship-to' => 'Isporuka za',
+                    'contact' => 'Kontakt',
+                    'refunds' => 'Povrat',
+                    'individual-refund' => 'Povrat #:refund_id',
+                    'adjustment-refund' => 'Regulisanje povrata',
+                    'adjustment-fee' => 'Regulisanje iznosa',
+                    'cancel-btn-title' => 'Otkaži',
                 ]
+            ],
+
+            'wishlist' => [
+                'page-title' => 'Lista želja',
+                'title' => 'Lista želja',
+                'deleteall' => 'Obriši sve',
+                'moveall' => 'Premesti sve proizvode u korpu',
+                'move-to-cart' => 'Premesti u korpu',
+                'error' => 'Proizvod je nemoguće dodati na listu želja, molimo pokušajte ponovo.',
+                'add' => 'Stavka je dodata na listu želju',
+                'remove' => 'Stavka je uklonjena sa liste želja',
+                'moved' => 'Stavka je premeštena u korpu',
+                'option-missing' => 'Nemoguće je premestiti stavku na listu želja, nedostaju opcije.',
+                'move-error' => 'Nemoguće je prebaciti stavku na listu želja, molimo pokušajte ponovo',
+                'success' => 'Uspešno dodata stavka na listu želja',
+                'failure' => 'Nemoguće je dodati stavku na listu želja, molimo pokušajte ponovo',
+                'already' => 'Stavka je već dodata na listu želja',
+                'removed' => 'Stavka je uspešno uklonjena sa liste želja',
+                'remove-fail' => 'Nemoguće je ukloniti stavku sa liste želja',
+                'empty' => 'Nemate nijednu stavku na listi želja',
+                'remove-all-success' => 'Sve stavke iz Vaše liste želja su uklonjene',
+            ],
+
+            'downloadable_products' => [
+                'title' => 'Proizvodi za preuzimanje',
+                'order-id' => 'ID porudžbine',
+                'date' => 'Datum',
+                'name' => 'Naslov',
+                'status' => 'Status',
+                'pending' => 'Nedovršen',
+                'available' => 'Dostupan',
+                'expired' => 'Istekao',
+                'remaining-downloads' => 'Preostala preuzimanja',
+                'unlimited' => 'Neograničen',
+                'download-error' => 'Link za preuzimanje je istekao.'
             ],
 
             'review' => [
                 'index' => [
                     'title' => 'Recenzije',
-                    'page-title' => 'Korisnik - Recenzije'
+                    'page-title' => 'Recenzije'
                 ],
 
                 'view' => [
-                    'page-tile' => 'Recenzije #:id',
+                    'page-tile' => 'Komentar #:id',
                 ]
             ]
         ]
     ],
 
-    'products' => [   
+    'products' => [
         'layered-nav-title' => 'Filtriranje',
         'price-label' => 'Nisko kao',
-        'remove-filter-link-title' => 'Briši sve',
+        'remove-filter-link-title' => 'Ukloni sve',
         'sort-by' => 'Sortiraj po',
         'from-a-z' => 'Od A-Z',
         'from-z-a' => 'Od Z-A',
-        'newest-first' => 'Najnoviji napred',
-        'oldest-first' => 'Najstariji napred',
-        'cheapest-first' => 'Najeftiniji napred',
-        'expensive-first' => 'Najskuplji napred',
-        'show' => 'Pokaži',
-        'pager-info' => 'Prikazano :showing od :total artikla',
+        'newest-first' => 'Najnovije prvo',
+        'oldest-first' => 'Najstarije prvo',
+        'cheapest-first' => 'Najjeftinije prvo',
+        'expensive-first' => 'Najskuplje prvo',
+        'show' => 'Prikaži',
+        'pager-info' => 'Prikaži :showing od :total stavki',
         'description' => 'Opis',
-        'specification' => 'Specifikacije',
-        'total-reviews' => ':total_reviews',
-        'total-rating' => ':total_rating Ocena i :total_reviews Recenzija',
+        'specification' => 'Specifikacija',
+        'total-reviews' => ':total Recenzije',
+        'total-rating' => ':total_rating Ocene & :total_reviews Recenzije',
         'by' => 'Po :name',
-        'up-sell-title' => 'We found other products you might like!',
+        'up-sell-title' => 'Pronašli smo još jedan proizvod koji će Vam se možda svideti !',
         'related-product-title' => 'Slični proizvodi',
         'cross-sell-title' => 'Više izbora',
-        'reviews-title' => 'Ocene & Recenzije',
+        'reviews-title' => 'Ocene i recenzije',
         'write-review-btn' => 'Napiši recenziju',
-        'choose-option' => 'Izaberi opciju',
-        'sale' => 'Akcija',
+        'choose-option' => 'Odaberi opciju',
+        'sale' => 'Rasprodaja',
         'new' => 'Novo',
-        'empty' => 'Nismo pronašli proizvode u ovoj kategoriji',
+        'empty' => 'Nema dostupnih proizvoda za odabranu kategoriju',
         'add-to-cart' => 'Dodaj u korpu',
-        'buy-now' => 'Kupi sad',
-        'whoops' => 'Uuups!',
+        'buy-now' => 'Kupi odmah',
+        'whoops' => 'Oops!',
         'quantity' => 'Količina',
-        'in-stock' => 'Na stanju',
-        'out-of-stock' => 'Trenutno nema',
+        'in-stock' => 'Na zalihama',
+        'out-of-stock' => 'Nema na zalihama',
         'view-all' => 'Pogledaj sve',
-        'select-above-options' => 'Prvo izaberite gore navedene opcije'
-    ],
-
-    'wishlist' => [
-        'title' => 'Lista želja',
-        'deleteall' => 'Obriši sve',
-        'moveall' => 'Premesti sve porizvode u korpu',
-        'move-to-cart' => 'Premesti u korpu',
-        'error' => 'Nije moguće dodati proizvod u korpu iz nepoznatih razloga, molimo Vas pokušajte kasnije', 
-        'add' => 'Proizvod je uspešno dodat u listu želja',
-        'remove' => 'Proizvod je uspešno izbrisan iz liste želja', 
-        'moved' => 'Proizvod je uspešno premešten u listu želja', 
-        'move-error' => 'Proizvod se ne može premestiti u listu želja, molimo Vas pokušajte kasnije', 
-        'success' => 'Proizvod je uspešno dodat u listu želja',
-        'failure' => 'Proizvod se ne može premestiti u listu želja, molimo Vas pokušajte kasnije',
-        'already' => 'Proizvod je već prisutan i listi želja', 
-        'removed' => 'Proizvod je uspešno izbrisan iz liste želja',
-        'remove-fail' => 'Proizvod se ne može izbrisati iz liste želja, molimo Vas pokušajte kasnije.',
-        'empty' => ' Nemate proizvode u vašoj listi želja',
-        'remove-all-success' => 'Svi proizvodi sa vaše liste želja su uklonjeni',  
+        'select-above-options' => 'Prvo odaberite gore navedene opcije.',
+        'less-quantity' => 'Količina ne može biti manja od jedan.',
+        'samples' => 'Primerci',
+        'links' => 'Linkovi',
+        'sample' => 'Primer',
+        'name' => 'Naziv',
+        'qty' => 'Količina',
+        'starting-at' => 'Cena od',
+        'customize-options' => 'Prilagodi podešavanja',
+        'choose-selection' => 'Izaberi selekciju',
+        'your-customization' => 'Vaša podešavanja',
+        'total-amount' => 'Ukupna količina',
+        'none' => 'Nema',
+        'available' => 'Dostupno',
+        'book-now' => 'Dodaj u korpu'
     ],
 
     // 'reviews' => [
@@ -351,157 +421,259 @@ return [
     // ]
 
     'buynow' => [
-        'no-options' => 'Molimo Vas izaberite opciju pre kupovine ovog proizvoda'
+        'no-options' => 'Molimo Vas izaberite opcije pre kupovine proizvoda.'
     ],
-
 
     'checkout' => [
         'cart' => [
-            'integrity' => [ 
-                'missing_fields' =>'Kršenje sistemskog integriteta korpe, nekoliko obaveznih polja nedostaje', 
-                'missing_options' =>'Kršenje sistemskog integriteta korpe,  opcije za proizvod koji se mogu konfigurisati nedostaju',
-               
+            'integrity' => [
+                'missing_fields' => 'Niste popunili obavezna polja.',
+                'missing_options' => 'Nedostaju opcije za ovaj proizvod.',
+                'missing_links' => 'Nedostaje link za preuzimanje ovog proizvoda.',
+                'qty_missing' => 'Najmanje jedan proizvod mora imati više od 1 količine.',
+                'qty_impossible' => 'Ne možete dodati više od jednog proizvoda u korpu.'
             ],
-            'create-error' => 'Došlo je do problema prilikom stavaranje instance korpe', 
-            'title' => 'Korpa',
-            'empty' => 'Vaša korpa je prazna',
-            'update-cart' => 'Ažuriraj korpu',
-            'continue-shopping' => 'Nastavi kupovinu',
-            'proceed-to-checkout' => 'Nastavi na kasu', 
-            'remove' => 'Ukloni',
-            'remove-link' => 'Ukloni',
-            'move-to-wishlist' => 'Premesti u listu želja',
-            'move-to-wishlist-success' => 'Proizvod je premešten u listu želja',
-            'move-to-wishlist-error' => 'Proizvod se ne može premestiti u listu želja, molimo Vas pokušajte kasnije',
-            'add-config-warning' => 'Molimo Vas izaberite opciju pre dodavanja u korpu',
+            'create-error' => 'Naišli smo na problem prilikom kreiranja korpe. ',
+            'title' => 'Potrošačka korpa',
+            'empty' => 'Potrošačka korpa je prazna.',
+            'update-cart' => 'Ažuriraj korpu.',
+            'continue-shopping' => 'Nastavite kupovinu',
+            'proceed-to-checkout' => 'Nastavite u korpu',
+            'remove' => 'Ukloniti',
+            'remove-link' => 'Ukloniti',
+            'move-to-wishlist' => 'Premestite u listu želja.',
+            'move-to-wishlist-success' => 'Stavka je premeštena u listu želja.',
+            'move-to-wishlist-error' => 'Nemoguće je premestiti staku u listu želja, molimo pokušajte ponovo.',
+            'add-config-warning' => 'Molimo izaberite opciju pre dodavanja u korpu.',
             'quantity' => [
                 'quantity' => 'Količina',
-                'success' => 'Korpa uspešno ažurirana',
-                'illegal' => 'Količina ne može biti manja od jedan', 
-                'inventory_warning' => 'Tražena količina nije dostupna, molimo Vas pokušajte ponovo',
-                'error' => 'Trenutno ne možete ažurirati korpu, molimo Vas pokušajte kasnije' 
+                'success' => 'Stavke u korpi su uspešno ažurirane. ',
+                'illegal' => 'Količina ne može biti manja od jedan.',
+                'inventory_warning' => 'Tražena količina nije dostupna, molimo pokušajte ponovo.',
+                'error' => 'Nemoguće je ažurirati stavku, molimo pokušajte ponovo.'
             ],
-            'item' => [
-                'error_remove' => 'Nema proizvoda za uklanjanje iz korpe', 
-                'success' => 'Proizvod je uspešno dodat u korpu',
-                'success-remove' => 'Proizvod je uspešno uklonjen iz korpe',
-                'error-add' => 'Proizvod se ne može dodati u korpu, molimo Vas pokušajte kasnije',  
-            ],
-            'quantity-error' => 'Trežena količina nije dostupna',
-            'cart-subtotal' => 'Suma stavke korpe',
-            'cart-remove-action' => 'Da li stvarno želite ovo da uradite ?'
-        ], 
 
-        'onepage' => [ 
-            'title' => 'Checkout',
-            'information' => 'Informacije',
-            'shipping' => 'Pošiljka',
+            'item' => [
+                'error_remove' => 'Nema stavki za ukloniti iz korpe.',
+                'success' => 'Stavka je uspešno dodata u korpu.',
+                'success-remove' => 'Stavka je uspešno uklonjena iz korpe. ',
+                'error-add' => 'Nemoguće je dodati stavku u korpu, molimo pokušajte ponovo.',
+            ],
+            'quantity-error' => 'Tražena količina nije dostupna.',
+            'cart-subtotal' => 'Međuzbir korpe',
+            'cart-remove-action' => 'Da li ste sigurni?',
+            'partial-cart-update' => 'Samo neke od stavki su ažurirane.',
+            'link-missing' => '',
+            'event' => [
+                'expired' => 'Događaj je istekao.'
+            ]
+        ],
+
+        'onepage' => [
+            'title' => 'Nastavi za kupovinu',
+            'information' => 'Informacija',
+            'shipping' => 'Isporuka',
             'payment' => 'Plaćanje',
-            'complete' => 'Završeno',
+            'complete' => 'Dovršeno',
             'billing-address' => 'Adresa za naplatu',
-            'sign-in' => 'Prijavi se',
+            'sign-in' => 'Prijavite se',
+            'company-name' => 'Naziv kompanije',
             'first-name' => 'Ime',
             'last-name' => 'Prezime',
             'email' => 'Email',
-            'address1' => 'Ulica',
+            'address1' => 'Ulica i broj',
             'city' => 'Grad',
             'state' => 'Država',
-            'select-state' => 'Izaberite region, državu ili pokrajinu.',
+            'select-state' => 'Izaberite mesto, državu ili region',
             'postcode' => 'Poštanski broj',
             'phone' => 'Telefon',
             'country' => 'Država',
-            'order-summary' => 'Sažetak narudžbe',
-            'shipping-address' => 'Adresa dostave',
-            'use_for_shipping' => 'Pošalji na ovu adresu',
+            'order-summary' => 'Pregled porudžbine',
+            'shipping-address' => 'Adresa isporuke',
+            'use_for_shipping' => 'Isporučiti na adresu',
             'continue' => 'Nastavi',
-            'shipping-method' => 'Izaberi način isporuke',
+            'shipping-method' => 'Izaberi način slanja',
             'payment-methods' => 'Izaberi način plaćanja',
             'payment-method' => 'Način plaćanja',
-            'summary' => 'Sažetak narudžbe',
+            'summary' => 'Pregled porudžbine',
             'price' => 'Cena',
             'quantity' => 'Količina',
             'billing-address' => 'Adresa za naplatu',
-            'shipping-address' => 'Adresa dostave',
-            'contact' => 'kontakt',
-            'place-order' => 'Naruči',
-            'new-address' => 'Dodaj novu adresu',
-            'save_as_address' => 'Sačuvaj kao adresu'
+            'shipping-address' => 'Adresa isporuke',
+            'contact' => 'Kontakt',
+            'place-order' => 'Poruči',
+            'new-address' => 'Dodajte novu adresu',
+            'save_as_address' => 'Sačuvajte adresu',
+            'apply-coupon' => 'Iskoristite kupon',
+            'amt-payable' => 'Naplativ iznos',
+            'got' => 'Uzmi',
+            'free' => 'Besplatno',
+            'coupon-used' => 'Kupon je iskorišćen',
+            'applied' => 'Primenje',
+            'back' => 'Nazad',
+            'cash-desc' => 'Po pouzeću',
+            'money-desc' => 'Transfer novca',
+            'paypal-desc' => 'Paypal standardi',
+            'free-desc' => 'Besplatna dostava',
+            'flat-desc' => 'Paušalno plaćanje',
+            'password' => 'Lozinka',
+            'login-exist-message' => 'Već imate nalog, prijavite se ili nastavite kao gost.',
+            'enter-coupon-code' => 'Unesite kod za kupon.'
         ],
 
         'total' => [
-            'order-summary' => 'Sažetak narudžbe',
-            'sub-total' => 'proizvod',
-            'grand-total' => 'Ukupno',
+            'order-summary' => 'Pregled porudžbine',
+            'sub-total' => 'Stavke',
+            'grand-total' => 'Ukupan iznos',
             'delivery-charges' => 'Troškovi dostave',
             'tax' => 'Porez',
-            'price' => 'cena',
-            'disc-amount' => 'Popust',
-            'new-grand-total' => 'Novi total',
+            'discount' => 'Popust',
+            'price' => 'Cena',
+            'disc-amount' => 'Iznos sniženja',
+            'new-grand-total' => 'Novi ukupan iznos',
             'coupon' => 'Kupon',
-            'coupon-applied' => 'Coupon Applied',
-            'remove-coupon' => 'Remove Coupon',
-            'cannot-apply-coupon' => 'Cannot Apply Coupon'
+            'coupon-applied' => 'Primenjen kupon',
+            'remove-coupon' => 'Uklonite kupon',
+            'cannot-apply-coupon' => 'Nemoguće je upotrebiti',
+            'invalid-coupon' => 'Kod za kupon je nevažeći.',
+            'success-coupon' => 'Kod za kupon je uspešno upotrebljen.',
+            'coupon-apply-issue' => 'Nemoguće je upotrebiti kod.'
         ],
 
         'success' => [
-            'title' => 'Narudžba je uspešno postavljena',
-            'thanks' => 'Hvala na Vašoj narudžbi',
-            'order-id-info' => 'Vaš id narudžbe #:order_id',
-            'info' => 'Poslaćemo Vam email za pojedinosti o narudžbi i podatke za praćenje' 
+            'title' => 'Uspešno ste izvršili porudžbinu.',
+            'thanks' => 'Hvala Vam na poručivanju!',
+            'order-id-info' => 'Vaša porudžbina je #:order_id',
+            'info' => 'Detalje o porudžbini i informacije o praćenju ćemo Vam proslediti na email adresu.'
         ]
     ],
 
     'mail' => [
         'order' => [
-            'subject' => 'Potvrda nove narudžbe',
-            'heading' => 'Potvrda narudžbe',
-            'dear' => 'Dragi :customer_name',
-            'greeting' => 'Hvala na narudžbi :order_id postavljen na :created_at',
-            'summary' => 'Sažetak narudžbe',
-            'shipping-address' => 'Adresa dostave',
-            'billing-address' => 'Adresa naplate',
+            'subject' => 'Potvrda nove porudžbine.',
+            'heading' => 'Potvrda porudžbine!',
+            'dear' => 'Dragi/a :customer_name',
+            'dear-admin' => 'Dragi/a :admin_name',
+            'greeting' => 'Hvala na porudžbini :order_id placed on :created_at',
+            'greeting-admin' => 'ID porudžbine :order_id placed on :created_at',
+            'summary' => 'Pregled porudžbine',
+            'shipping-address' => 'Adresa isporuke',
+            'billing-address' => 'Adresa za naplatu',
             'contact' => 'Kontakt',
-            'shipping' => 'Dostava',
-            'payment' => 'Plaćanje',
+            'shipping' => 'Način isporuke',
+            'payment' => 'Način plaćanja',
             'price' => 'Cena',
             'quantity' => 'Količina',
-            'subtotal' => 'Suma stavke',
-            'shipping-handling' => 'Pošiljka & Rukovanje',
+            'subtotal' => 'Međuzbir',
+            'shipping-handling' => 'Isporuka i rukovođenje',
             'tax' => 'Porez',
-            'grand-total' => 'Ukupno',
-            'final-summary' => 'Hvala što ste pokazali Vaš interes za našu prodavnicu, mi ćemo Vam poslati broj za praćenje nakon što se pošalje', 
-            'help' => 'Ako Vam je potrebno bilo kakva pomoć kontaktirajte nas na :support_email', 
-            'thanks' => 'Hvala!'
+            'discount' => 'Popust',
+            'grand-total' => 'Ukupan iznos',
+            'final-summary' => 'Hvala Vam na pokazanom interesovanju, nakon isporuke prosledićemo Vam broj za praćenje pošiljke.',
+            'help' => 'Ukoliko Vam je potrebna pomoć, kontaktirajte nas na :support_email',
+            'thanks' => 'Hvala!',
+            'cancel' => [
+                'subject' => 'Potvrda o otkazivanju porudžbine',
+                'heading' => 'Otkazivanje porudžbine',
+                'dear' => 'Dragi/a :customer_name',
+                'greeting' => 'Vaša porudžbina sa ID #:order_id poslata :created_at je otkazana',
+                'summary' => 'Pregled porudžbine',
+                'shipping-address' => 'Adresa isporuke',
+                'billing-address' => 'Adresa za naplatu',
+                'contact' => 'Kontakt',
+                'shipping' => 'Način isporuke',
+                'payment' => 'Način plaćanja',
+                'subtotal' => 'Međuzbir',
+                'shipping-handling' => 'Isporuka i rukovođenje',
+                'tax' => 'Porez',
+                'discount' => 'Popust',
+                'grand-total' => 'Ukupan iznos',
+                'final-summary' => 'Hvala Vam na ukazanom interesovanju.',
+                'help' => 'Ukoliko Vam je potrebna pomoć, kontaktirajte nas na at :support_email',
+                'thanks' => 'Hvala!',
+            ]
         ],
+
         'invoice' => [
-            'heading' => 'Vaša  faktura #:invoice_id za narudžbu #:order_id',
-            'subject' => 'Faktura za Vašu narudžbu #:order_id',
-            'summary' => 'Sažetak fakture',
+            'heading' => 'Vaša faktura #:invoice_id za porudžbinu #:order_id',
+            'subject' => 'Faktura za Vašu porudžbinu #:order_id',
+            'summary' => 'Pregled fakture',
         ],
+
         'shipment' => [
-            'heading' => 'Vaša pošiljka #:shipment_id za narudžbu #:order_id',
-            'subject' => 'Pošiljka za vašu narudžbiinu #:order_id',
-            'summary' => 'Sažetak pošiljke',
-            'carrier' => 'Kurir',
-            'tracking-number' => 'Broj za praćenje'
+            'heading' => 'Pošiljka #:shipment_id  je generisana za porudžbinu Order #:order_id',
+            'inventory-heading' => 'Nova pošiljka #:shipment_id je generisana za pošiljku #:order_id',
+            'subject' => 'Pošiljka za Vašu porudžbinu #:order_id',
+            'inventory-subject' => 'Nova pošiljka je generisana za porudžbinu #:order_id',
+            'summary' => 'Pregled pošiljke',
+            'carrier' => 'Dostavljač',
+            'tracking-number' => 'Broj za praćenje',
+            'greeting' => 'Porudžbina :order_id je postavljena na :created_at',
         ],
+
+        'refund' => [
+            'heading' => 'Vaš povrat #:refund_id za porudžbinu #:order_id',
+            'subject' => 'Povrat za porudžbinu #:order_id',
+            'summary' => 'Pregled povrata novca',
+            'adjustment-refund' => 'Regulisanje povrata',
+            'adjustment-fee' => 'Regulisanaje iznosa'
+        ],
+
         'forget-password' => [
-            'dear' => 'Dragi :name',
-            'info' => 'Ovu poruku primate zato što smo primili zahtev za resetovanje lozinke za Vaš račun', 
-            'reset-password' => 'Resetuj šifru',
-            'final-summary' => 'Ako niste poslali zahtev za resetovanje šifre, nije potrebna nikakva dalja akcija', 
+            'subject' => 'Korisničko resetovanje lozinke',
+            'dear' => 'Dragi/a :name',
+            'info' => 'Dobili ste ovu poruku, jer smo sa Vašeg naloga dobili zahtev za resetovanje lozike.',
+            'reset-password' => 'Resetuj lozinku',
+            'final-summary' => 'Ukoliko niste zatražili resetovanje lozinke, dalje radnje nisu potebne.',
             'thanks' => 'Hvala!'
+        ],
+
+        'customer' => [
+            'new' => [
+                'dear' => 'Dragi/a :customer_name',
+                'username-email' => 'Korisničko ime/Email',
+                'subject' => 'Registracija novog kupca',
+                'password' => 'Lozinka',
+                'summary' => 'Vaš nalog je kreiran.
+                Detalji o Vašem nalogu nalaze se ispod: ',
+                'thanks' => 'Hvala!',
+            ],
+
+            'registration' => [
+                'subject' => 'Registracija novog kupca',
+                'customer-registration' => 'Registracija uspešno izvršena.',
+                'dear' => 'Dragi/a :customer_name',
+                'greeting' => 'Dobrodošli i hvala Vam što ste se registrovali!',
+                'summary' => 'Vaš nalog je uspešno kreiran, možete se prijaviti koristeći Vaš email i lozinku. Nakon prijavljivanja, možete pristupiti drugim uslugama kao što je pregled prošlih porudžbina, liste želja i uređivanje podataka o Vašem nalogu.                .',
+                'thanks' => 'Hvala!',
+            ],
+
+            'verification' => [
+                'heading' => config('app.name') . ' - Email za potvrdu',
+                'subject' => 'Potvrda',
+                'verify' => 'Potvrdite Vaš nalog.',
+                'summary' => 'Ovo je poruka za potvrdu da je email adresa Vaša.
+                Kliknite na dugme dole - Potvrdite Vaš nalog - kako biste potvrdili Vaš nalog.'
+            ],
+
+            'subscription' => [
+                'subject' => 'Email za pretplatu',
+                'greeting' => ' Dobrodošli na ' . config('app.name') . ' - Email za pretplatu.',
+                'unsubscribe' => 'Otkažite pretplatu.',
+                'summary' => 'Hvala što ste se pretplatili na naš Newsletter. Prošlo je neko vreme otkako ste pročitali ' . config('app.name') . ' email i ne želimo da preopteretimo Vašu poštu. Ukoliko ne želite da primate
+                poslednje novosti, pritisnite dugme ispod'
+            ]
         ]
     ],
 
     'webkul' => [
-        'copy-right' => '© Autorsko pravo :year ICBTech, Sva prava zadržana',
+        'copy-right' => '© Copyright :year Webkul Software, All rights reserved',
     ],
 
     'response' => [
-        'create-success' => ':name uspešno kreiran.',
-        'update-success' => ':name uspešno ažuriran.',
-        'delete-success' => ':name uspešno obrisan.',
-        'submit-success' => ':name uspešno dostavljeno.'
+        'create-success' => ':name je uspešno kreirano.',
+        'update-success' => ':name je uspešno ažurirano.',
+        'delete-success' => ':name je uspešno obrisano.',
+        'submit-success' => ':name je uspešno poslato.'
     ],
 ];

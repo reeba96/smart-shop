@@ -2,12 +2,6 @@
 
 namespace Webkul\Paypal\Payment;
 
-/**
- * Paypal Standard payment method class
- *
- * @author    Jitendra Singh <jitendra@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class Standard extends Paypal
 {
     /**
@@ -32,7 +26,7 @@ class Standard extends Paypal
     /**
      * Return paypal redirect url
      *
-     * @var string
+     * @return string
      */
     public function getRedirectUrl()
     {
@@ -60,8 +54,8 @@ class Standard extends Paypal
             'item_name'       => core()->getCurrentChannel()->name,
             'amount'          => $cart->sub_total,
             'tax'             => $cart->tax_total,
-            'shipping'        => $cart->selected_shipping_rate->price,
-            'discount_amount' => $cart->discount
+            'shipping'        => $cart->selected_shipping_rate ? $cart->selected_shipping_rate->price : 0,
+            'discount_amount' => $cart->discount_amount,
         ];
 
         if ($this->getIsLineItemsEnabled()) {
@@ -72,7 +66,8 @@ class Standard extends Paypal
 
             $this->addLineItemsFields($fields);
 
-            $this->addShippingAsLineItems($fields, $cart->items()->count() + 1);
+            if ($cart->selected_shipping_rate)
+                $this->addShippingAsLineItems($fields, $cart->items()->count() + 1);
 
             if (isset($fields['tax'])) {
                 $fields['tax_cart'] = $fields['tax'];
@@ -96,8 +91,8 @@ class Standard extends Paypal
     /**
      * Add shipping as item
      *
-     * @param array $fields
-     * @param int $i
+     * @param  array  $fields
+     * @param  int    $i
      * @return void
      */
     protected function addShippingAsLineItems(&$fields, $i)

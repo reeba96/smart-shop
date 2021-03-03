@@ -1,5 +1,5 @@
 <tbody>
-    @if (count($records))
+    @if ($records instanceof \Illuminate\Pagination\LengthAwarePaginator && count($records))
         @foreach ($records as $key => $record)
             <tr>
                 @if ($enableMassActions)
@@ -39,27 +39,37 @@
                 @endforeach
 
                 @if ($enableActions)
-                    <td class="actions" style="width: 100px;" data-value=" {{ __('ui::app.datagrid.actions') }}">
+                    <td class="actions" style="white-space: nowrap; width: 100px;" data-value="{{ __('ui::app.datagrid.actions') }}">
                         <div class="action">
                             @foreach ($actions as $action)
-                                <a
-                                @if ($action['method'] == 'GET')
-                                    href="{{ route($action['route'], $record->{$action['index'] ?? $index}) }}"
+                                @php
+                                    $toDisplay = (isset($action['condition']) && gettype($action['condition']) == 'object') ? $action['condition']() : true;
+                                @endphp
+
+                                @if ($toDisplay)
+                                    <a
+                                    @if ($action['method'] == 'GET')
+                                        href="{{ route($action['route'], $record->{$action['index'] ?? $index}) }}"
+                                    @endif
+
+                                    @if ($action['method'] != 'GET')
+                                        v-on:click="doAction($event)"
+                                    @endif
+
+                                    data-method="{{ $action['method'] }}"
+                                    data-action="{{ route($action['route'], $record->{$index}) }}"
+                                    data-token="{{ csrf_token() }}"
+
+                                    @if (isset($action['target']))
+                                        target="{{ $action['target'] }}"
+                                    @endif
+
+                                    @if (isset($action['title']))
+                                        title="{{ $action['title'] }}"
+                                    @endif>
+                                        <span class="{{ $action['icon'] }}"></span>
+                                    </a>
                                 @endif
-
-                                @if ($action['method'] != 'GET')
-                                    v-on:click="doAction($event)"
-                                @endif
-
-                                data-method="{{ $action['method'] }}"
-                                data-action="{{ route($action['route'], $record->{$index}) }}"
-                                data-token="{{ csrf_token() }}"
-
-                                @if (isset($action['title']))
-                                    title="{{ $action['title'] }}"
-                                @endif>
-                                    <span class="{{ $action['icon'] }}"></span>
-                                </a>
                             @endforeach
                         </div>
                     </td>
@@ -68,7 +78,9 @@
         @endforeach
     @else
         <tr>
-            <td colspan="10" style="text-align: center;">{{ $norecords }}</td>
+            <td colspan="10">
+                <p style="text-align: center;">{{ $norecords }}</p>
+            </td>
         </tr>
     @endif
 </tbody>

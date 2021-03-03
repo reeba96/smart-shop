@@ -11,7 +11,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.exchange_rates.edit-title') }}
                     </h1>
@@ -47,6 +47,8 @@
 
                             <tbody>
                                 <tr>
+                                    {!! view_render_event('bagisto.admin.settings.exchangerate.edit.before') !!}
+
                                     <td>
                                         {{ core()->getBaseCurrencyCode() }}
                                     </td>
@@ -70,6 +72,8 @@
                                             <span class="control-error" v-if="errors.has('rate')">@{{ errors.first('rate') }}</span>
                                         </div>
                                     </td>
+
+                                    {!! view_render_event('bagisto.admin.settings.exchangerate.edit.after') !!}
                                 <tr>
                             </tbody>
                         </table>

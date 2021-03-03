@@ -11,7 +11,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.inventory_sources.edit-title') }}
                     </h1>
@@ -27,6 +27,9 @@
             <div class="page-content">
                 <div class="form-container">
                     @csrf()
+
+                    {!! view_render_event('bagisto.admin.settings.inventory.edit.before') !!}
+
                     <input name="_method" type="hidden" value="PUT">
 
                     <accordian :title="'{{ __('admin::app.settings.inventory_sources.general') }}'" :active="true">
@@ -66,11 +69,11 @@
 
                             <div class="control-group">
                                 <label for="status">{{ __('admin::app.settings.inventory_sources.status') }}</label>
-                                <span class="checkbox">
+
+                                <label class="switch">
                                     <input type="checkbox" id="status" name="status" value="{{ $inventorySource->status }}" {{ $inventorySource->status ? 'checked' : '' }}>
-                                    <label class="checkbox-view" for="status"></label>
-                                    {{ __('admin::app.settings.inventory_sources.source-is-active') }}
-                                </span>
+                                    <span class="slider round"></span>
+                                </label>
                             </div>
 
                         </div>
@@ -131,6 +134,7 @@
                         </div>
                     </accordian>
 
+                    {!! view_render_event('bagisto.admin.settings.inventory.edit.after') !!}
                 </div>
             </div>
         </form>

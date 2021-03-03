@@ -6,6 +6,8 @@
 
 @section('content')
     <div class="content" style="height: 100%;">
+        <?php $locale = request()->get('locale') ?: null; ?>
+        <?php $channel = request()->get('channel') ?: null; ?>
         <div class="page-header">
             <div class="page-title">
                 <h1>{{ __('admin::app.catalog.products.title') }}</h1>
@@ -46,4 +48,14 @@
 
 @push('scripts')
     @include('admin::export.export', ['gridName' => $products])
+    <script>
+
+        function reloadPage(getVar, getVal) {
+            let url = new URL(window.location.href);
+            url.searchParams.set(getVar, getVal);
+
+            window.location.href = url.href;
+        }
+
+    </script>
 @endpush

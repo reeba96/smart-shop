@@ -11,7 +11,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.inventory_sources.add-title') }}
                     </h1>
@@ -27,6 +27,8 @@
             <div class="page-content">
                 <div class="form-container">
                     @csrf()
+
+                    {!! view_render_event('bagisto.admin.settings.inventory.create.before') !!}
 
                     <accordian :title="'{{ __('admin::app.settings.inventory_sources.general') }}'" :active="true">
                         <div slot="body">
@@ -65,11 +67,11 @@
 
                             <div class="control-group">
                                 <label for="status">{{ __('admin::app.settings.inventory_sources.status') }}</label>
-                                <span class="checkbox">
-                                    <input type="checkbox" id="status" name="status" value="1">
-                                    <label class="checkbox-view" for="status"></label>
-                                    {{ __('admin::app.settings.inventory_sources.source-is-active') }}
-                                </span>
+
+                                <label class="switch">
+                                    <input type="checkbox" id="status" name="status" value="1" {{ old('status') ? 'checked' : '' }}>
+                                    <span class="slider round"></span>
+                                </label>
                             </div>
 
                         </div>
@@ -130,6 +132,7 @@
                         </div>
                     </accordian>
 
+                    {!! view_render_event('bagisto.admin.settings.inventory.create.after') !!}
                 </div>
             </div>
         </form>

@@ -9,5 +9,5 @@ class AttributeTranslation extends Model implements AttributeTranslationContract
 {
     public $timestamps = false;
 
-    protected $fillable = ['name'];
+    protected $guarded = ['id'];
 }

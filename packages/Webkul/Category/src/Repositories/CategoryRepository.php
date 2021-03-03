@@ -7,27 +7,12 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Category\Models\Category;
-use Webkul\Category\Models\CategoryTranslation;
+use Webkul\Category\Models\CategoryTranslationProxy;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
-/**
- * Category Reposotory
- *
- * @author    Jitendra Singh <jitendra@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class CategoryRepository extends Repository
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct(App $app)
-    {
-        parent::__construct($app);
-    }
-
     /**
      * Specify Model class name
      *
@@ -39,12 +24,12 @@ class CategoryRepository extends Repository
     }
 
     /**
-     * @param array $data
-     * @return mixed
+     * @param  array  $data
+     * @return \Webkul\Category\Contracts\Category
      */
     public function create(array $data)
     {
-        Event::fire('catalog.category.create.before');
+        Event::dispatch('catalog.category.create.before');
 
         if (isset($data['locale']) && $data['locale'] == 'all') {
             $model = app()->make($this->model());
@@ -53,6 +38,7 @@ class CategoryRepository extends Repository
                 foreach ($model->translatedAttributes as $attribute) {
                     if (isset($data[$attribute])) {
                         $data[$locale->code][$attribute] = $data[$attribute];
+                        $data[$locale->code]['locale_id'] = $locale->id;
                     }
                 }
             }
@@ -62,7 +48,11 @@ class CategoryRepository extends Repository
 
         $this->uploadImages($data, $category);
 
-        Event::fire('catalog.category.create.after', $category);
+        if (isset($data['attributes'])) {
+            $category->filterableAttributes()->sync($data['attributes']);
+        }
+
+        Event::dispatch('catalog.category.create.after', $category);
 
         return $category;
     }
@@ -70,21 +60,33 @@ class CategoryRepository extends Repository
     /**
      * Specify category tree
      *
-     * @param integer $id
-     * @return mixed
+     * @param  int  $id
+     * @return \Webkul\Category\Contracts\Category
      */
     public function getCategoryTree($id = null)
     {
         return $id
-            ? $this->model::orderBy('position', 'ASC')->where('id', '!=', $id)->get()->toTree()
-            : $this->model::orderBy('position', 'ASC')->get()->toTree();
+               ? $this->model::orderBy('position', 'ASC')->where('id', '!=', $id)->get()->toTree()
+               : $this->model::orderBy('position', 'ASC')->get()->toTree();
     }
 
+    /**
+     * Specify category tree
+     *
+     * @param  int  $id
+     * @return \Illuminate\Support\Collection
+     */
+    public function getCategoryTreeWithoutDescendant($id = null)
+    {
+        return $id
+               ? $this->model::orderBy('position', 'ASC')->where('id', '!=', $id)->whereNotDescendantOf($id)->get()->toTree()
+               : $this->model::orderBy('position', 'ASC')->get()->toTree();
+    }
 
     /**
      * Get root categories
      *
-     * @return mixed
+     * @return \Illuminate\Support\Collection
      */
     public function getRootCategories()
     {
@@ -94,34 +96,35 @@ class CategoryRepository extends Repository
     /**
      * get visible category tree
      *
-     * @param integer $id
-     * @return mixed
+     * @param  int  $id
+     * @return \Illuminate\Support\Collection
      */
     public function getVisibleCategoryTree($id = null)
     {
         static $categories = [];
 
-        if(array_key_exists($id, $categories))
+        if (array_key_exists($id, $categories)) {
             return $categories[$id];
+        }
 
         return $categories[$id] = $id
-                ? $this->model::orderBy('position', 'ASC')->where('status', 1)->descendantsOf($id)->toTree()
-                : $this->model::orderBy('position', 'ASC')->where('status', 1)->get()->toTree();
+               ? $this->model::orderBy('position', 'ASC')->where('status', 1)->descendantsAndSelf($id)->toTree($id)
+               : $this->model::orderBy('position', 'ASC')->where('status', 1)->get()->toTree();
     }
 
     /**
      * Checks slug is unique or not based on locale
      *
-     * @param integer $id
-     * @param string  $slug
-     * @return boolean
+     * @param  int  $id
+     * @param  string  $slug
+     * @return bool
      */
     public function isSlugUnique($id, $slug)
-    {
-        $exists = CategoryTranslation::where('category_id', '<>', $id)
+    {   
+        $exists = CategoryTranslationProxy::modelClass()::where('category_id', '<>', $id)
             ->where('slug', $slug)
             ->limit(1)
-            ->select(\DB::raw(1))
+            ->select(DB::raw(1))
             ->exists();
 
         return $exists ? false : true;
@@ -131,7 +134,7 @@ class CategoryRepository extends Repository
      * Retrive category from slug
      *
      * @param string $slug
-     * @return mixed
+     * @return \Webkul\Category\Contracts\Category
      */
     public function findBySlugOrFail($slug)
     {
@@ -147,42 +150,64 @@ class CategoryRepository extends Repository
     }
 
     /**
-     * @param array $data
-     * @param $id
-     * @param string $attribute
-     * @return mixed
+     * @param  string  $urlPath
+     * @return \Webkul\Category\Contracts\Category
+     */
+    public function findByPath(string $urlPath)
+    {
+        return $this->model->whereTranslation('url_path', $urlPath)->first();
+    }
+
+    /**
+     * @param  array  $data
+     * @param  int  $id
+     * @param  string  $attribute
+     * @return \Webkul\Category\Contracts\Category
      */
     public function update(array $data, $id, $attribute = "id")
     {
         $category = $this->find($id);
 
-        Event::fire('catalog.category.update.before', $id);
+        // Disable all subcategory and product under main category
+        Category::where('id', $id)->update(['status' => $data["status"]]);
+        Category::where('parent_id', $id)->update(['status' => $data["status"]]);
+        
+        $products = DB::table('product_flat')
+            ->leftJoin('product_categories', 'product_flat.product_id', '=', 'product_categories.product_id')
+            ->where('product_categories.category_id', '=', $id)
+            ->update(['status' => $data["status"]]);
+
+        Event::dispatch('catalog.category.update.before', $id);
 
         $category->update($data);
 
         $this->uploadImages($data, $category);
 
-        Event::fire('catalog.category.update.after', $id);
+        if (isset($data['attributes'])) {
+            $category->filterableAttributes()->sync($data['attributes']);
+        }
+
+        Event::dispatch('catalog.category.update.after', $id);
 
         return $category;
     }
 
     /**
-     * @param $id
+     * @param  int  $id
      * @return void
      */
     public function delete($id)
     {
-        Event::fire('catalog.category.delete.before', $id);
+        Event::dispatch('catalog.category.delete.before', $id);
 
         parent::delete($id);
 
-        Event::fire('catalog.category.delete.after', $id);
+        Event::dispatch('catalog.category.delete.after', $id);
     }
 
     /**
-     * @param array $data
-     * @param mixed $category
+     * @param  array  $data
+     * @param  \Webkul\Category\Contracts\Category  $category
      * @return void
      */
     public function uploadImages($data, $category, $type = "image")
@@ -213,16 +238,22 @@ class CategoryRepository extends Repository
         }
     }
 
-    public function getPartial()
+    /**
+     * @param  array|null  $columns
+     * @return array
+     */
+    public function getPartial($columns = null)
     {
         $categories = $this->model->all();
-        $trimmed = array();
+
+        $trimmed = [];
 
         foreach ($categories as $key => $category) {
             if ($category->name != null || $category->name != "") {
                 $trimmed[$key] = [
-                    'id' => $category->id,
-                    'name' => $category->name
+                    'id'   => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
                 ];
             }
         }

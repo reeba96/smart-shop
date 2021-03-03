@@ -2,120 +2,120 @@
 
 namespace Webkul\Admin\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use Webkul\Sales\Repositories\OrderRepository as Order;
-use Webkul\Sales\Repositories\OrderItemRepository as OrderItem;
-use Webkul\Customer\Repositories\CustomerRepository as Customer;
-use Webkul\Product\Repositories\ProductInventoryRepository as ProductInventory;
+use Webkul\Sales\Repositories\OrderRepository;
+use Webkul\Sales\Repositories\OrderItemRepository;
+use Webkul\Customer\Repositories\CustomerRepository;
+use Webkul\Product\Repositories\ProductInventoryRepository;
+use ICBTECH\Helpdesk\Models\Ticket;
 
-/**
- * Dashboard controller
- *
- * @author    Jitendra Singh <jitendra@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class DashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @var array
      */
     protected $_config;
 
     /**
      * OrderRepository object
      *
-     * @var array
+     * @var \Webkul\Sales\Repositories\OrderRepository
      */
-    protected $order;
+    protected $orderRepository;
 
     /**
      * OrderItemRepository object
      *
-     * @var array
+     * @var \Webkul\Sales\Repositories\OrderItemRepository
      */
-    protected $orderItem;
+    protected $orderItemRepository;
 
     /**
      * CustomerRepository object
      *
-     * @var array
+     * @var \Webkul\Customer\Repositories\CustomerRepository
      */
-    protected $customer;
+    protected $customerRepository;
 
     /**
      * ProductInventoryRepository object
      *
-     * @var array
+     * @var \Webkul\Product\Repositories\ProductInventoryRepository
      */
-    protected $productInventory;
+    protected $productInventoryRepository;
 
     /**
      * string object
      *
-     * @var array
+     * @var \Illuminate\Support\Carbon
      */
     protected $startDate;
 
     /**
      * string object
      *
-     * @var array
+     * @var \Illuminate\Support\Carbon
      */
     protected $lastStartDate;
 
     /**
      * string object
      *
-     * @var array
+     * @var \Illuminate\Support\Carbon
      */
     protected $endDate;
 
     /**
      * string object
      *
-     * @var array
+     * @var \Illuminate\Support\Carbon
      */
     protected $lastEndDate;
 
     /**
      * Create a new controller instance.
      *
-     * @param  \Webkul\Sales\Repositories\OrderRepository              $order
-     * @param  \Webkul\Sales\Repositories\OrderItemRepository          $orderItem
-     * @param  \Webkul\Customer\Repositories\CustomerRepository        $customer
-     * @param  \Webkul\Product\Repositories\ProductInventoryRepository $productInventory
+     * @param  \Webkul\Sales\Repositories\OrderRepository  $orderRepository
+     * @param  \Webkul\Sales\Repositories\OrderItemRepository  $orderItemRepository
+     * @param  \Webkul\Customer\Repositories\CustomerRepository  $customerRepository
+     * @param  \Webkul\Product\Repositories\ProductInventoryRepository  $productInventoryRepository
      * @return void
      */
     public function __construct(
-        Order $order,
-        OrderItem $orderItem,
-        Customer $customer,
-        ProductInventory $productInventory
+        OrderRepository $orderRepository,
+        OrderItemRepository $orderItemRepository,
+        CustomerRepository $customerRepository,
+        ProductInventoryRepository $productInventoryRepository
     )
     {
         $this->_config = request('_config');
 
         $this->middleware('admin');
 
-        $this->order = $order;
+        $this->orderRepository = $orderRepository;
 
-        $this->orderItem = $orderItem;
+        $this->orderItemRepository = $orderItemRepository;
 
-        $this->customer = $customer;
+        $this->customerRepository = $customerRepository;
 
-        $this->productInventory = $productInventory;
+        $this->productInventoryRepository = $productInventoryRepository;
     }
 
+    /**
+     * Returns percentage difference
+     *
+     * @param  int  $previous
+     * @param  int  $current
+     * @return int
+     */
     public function getPercentageChange($previous, $current)
     {
-        if (! $previous)
+        if (! $previous) {
             return $current ? 100 : 0;
+        }
 
         return ($current - $previous) / $previous * 100;
     }
@@ -123,43 +123,46 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
         $this->setStartEndDate();
 
         $statistics = [
-            'total_customers' => [
+            'total_customers'          => [
                 'previous' => $previous = $this->getCustomersBetweenDates($this->lastStartDate, $this->lastEndDate)->count(),
-                'current' => $current = $this->getCustomersBetweenDates($this->startDate, $this->endDate)->count(),
-                'progress' => $this->getPercentageChange($previous, $current)
+                'current'  => $current = $this->getCustomersBetweenDates($this->startDate, $this->endDate)->count(),
+                'progress' => $this->getPercentageChange($previous, $current),
             ],
-            'total_orders' =>  [
+            'total_orders'             =>  [
                 'previous' => $previous = $this->previousOrders()->count(),
-                'current' => $current = $this->currentOrders()->count(),
-                'progress' => $this->getPercentageChange($previous, $current)
+                'current'  => $current = $this->currentOrders()->count(),
+                'progress' => $this->getPercentageChange($previous, $current),
             ],
-            'total_sales' =>  [
-                'previous' => $previous = $this->previousOrders()->sum('base_grand_total'),
-                'current' => $current = $this->currentOrders()->sum('base_grand_total'),
-                'progress' => $this->getPercentageChange($previous, $current)
+            'total_sales'              =>  [
+                'previous' => $previous = $this->previousOrders()->sum('base_grand_total_invoiced') - $this->previousOrders()->sum('base_grand_total_refunded'),
+                'current'  => $current = $this->currentOrders()->sum('base_grand_total_invoiced') - $this->currentOrders()->sum('base_grand_total_refunded'),
+                'progress' => $this->getPercentageChange($previous, $current),
             ],
-            'avg_sales' =>  [
-                'previous' => $previous = $this->previousOrders()->avg('base_grand_total'),
-                'current' => $current = $this->currentOrders()->avg('base_grand_total'),
-                'progress' => $this->getPercentageChange($previous, $current)
+            'avg_sales'                =>  [
+                'previous' => $previous = $this->previousOrders()->avg('base_grand_total_invoiced') - $this->previousOrders()->avg('base_grand_total_refunded'),
+                'current'  => $current = $this->currentOrders()->avg('base_grand_total_invoiced') - $this->currentOrders()->avg('base_grand_total_refunded'),
+                'progress' => $this->getPercentageChange($previous, $current),
             ],
-            'top_selling_categories' => $this->getTopSellingCategories(),
-            'top_selling_products' => $this->getTopSellingProducts(),
+            'active_tickets'                =>  [
+                'current'  => $current = Ticket::where('status_id', '!=', 2)->count()
+            ],
+            'top_selling_categories'   => $this->getTopSellingCategories(),
+            'top_selling_products'     => $this->getTopSellingProducts(),
             'customer_with_most_sales' => $this->getCustomerWithMostSales(),
-            'stock_threshold' => $this->getStockThreshold(),
+            'stock_threshold'          => $this->getStockThreshold(),
         ];
 
         foreach (core()->getTimeInterval($this->startDate, $this->endDate) as $interval) {
             $statistics['sale_graph']['label'][] = $interval['start']->format('d M');
 
-            $total = $this->getOrdersBetweenDate($interval['start'], $interval['end'])->sum('base_grand_total');
+            $total = $this->getOrdersBetweenDate($interval['start'], $interval['end'])->sum('base_grand_total_invoiced') - $this->getOrdersBetweenDate($interval['start'], $interval['end'])->sum('base_grand_total_refunded');
 
             $statistics['sale_graph']['total'][] = $total;
             $statistics['sale_graph']['formated_total'][] = core()->formatBasePrice($total);
@@ -171,81 +174,86 @@ class DashboardController extends Controller
     /**
      * Returns the list of top selling categories
      *
-     * @return mixed
+     * @return \Illuminate\Support\Collection
      */
     public function getTopSellingCategories()
     {
-        return $this->orderItem->getModel()
-            ->leftJoin('products', 'order_items.product_id', 'products.id')
-            ->leftJoin('product_categories', 'products.id', 'product_categories.product_id')
-            ->leftJoin('categories', 'product_categories.category_id', 'categories.id')
-            ->leftJoin('category_translations', 'categories.id', 'category_translations.category_id')
-            ->where('category_translations.locale', app()->getLocale())
-            ->where('order_items.created_at', '>=', $this->startDate)
-            ->where('order_items.created_at', '<=', $this->endDate)
-            ->where('order_items.qty_ordered', '>', 0)
-            ->addSelect(DB::raw('SUM(qty_ordered) as total_qty_ordered'))
-            ->addSelect(DB::raw('COUNT(products.id) as total_products'))
-            ->addSelect('order_items.id', 'categories.id as category_id', 'category_translations.name')
-            ->groupBy('categories.id')
-            ->orderBy('total_qty_ordered', 'DESC')
-            ->limit(5)
-            ->get();
+        return $this->orderItemRepository->getModel()
+                    ->leftJoin('products', 'order_items.product_id', 'products.id')
+                    ->leftJoin('product_categories', 'products.id', 'product_categories.product_id')
+                    ->leftJoin('categories', 'product_categories.category_id', 'categories.id')
+                    ->leftJoin('category_translations', 'categories.id', 'category_translations.category_id')
+                    ->where('category_translations.locale', app()->getLocale())
+                    ->where('order_items.created_at', '>=', $this->startDate)
+                    ->where('order_items.created_at', '<=', $this->endDate)
+                    ->addSelect(DB::raw('SUM(qty_invoiced - qty_refunded) as total_qty_invoiced'))
+                    ->addSelect(DB::raw('COUNT(' . DB::getTablePrefix() . 'products.id) as total_products'))
+                    ->addSelect('order_items.id', 'categories.id as category_id', 'category_translations.name')
+                    ->groupBy('categories.id')
+                    ->havingRaw('SUM(qty_invoiced - qty_refunded) > 0')
+                    ->orderBy('total_qty_invoiced', 'DESC')
+                    ->limit(5)
+                    ->get();
     }
 
     /**
      * Return stock threshold.
      *
-     * @return mixed
+     * @return \Illuminate\Support\Collection
      */
     public function getStockThreshold()
     {
-        return $this->productInventory->getModel()
-            ->leftJoin('products', 'product_inventories.product_id', 'products.id')
-            ->select(DB::raw('SUM(qty) as total_qty'))
-            ->addSelect('product_inventories.product_id')
-            ->where('products.type', '!=', 'configurable')
-            ->groupBy('product_id')
-            ->orderBy('total_qty', 'ASC')
-            ->limit(5)
-            ->get();
-    }
-
-    /**
-     * Returns top selling products
-     * @return mixed
-     */
-    public function getTopSellingProducts()
-    {
-        return $this->orderItem->getModel()
-            ->select(DB::raw('SUM(qty_ordered) as total_qty_ordered'))
-            ->addSelect('id', 'product_id', 'product_type', 'name')
-            ->where('order_items.created_at', '>=', $this->startDate)
-            ->where('order_items.created_at', '<=', $this->endDate)
-            ->whereNull('parent_id')
-            ->groupBy('product_id')
-            ->orderBy('total_qty_ordered', 'DESC')
-            ->limit(5)
-            ->get();
+        return $this->productInventoryRepository->getModel()
+                    ->leftJoin('products', 'product_inventories.product_id', 'products.id')
+                    ->select(DB::raw('SUM(qty) as total_qty'))
+                    ->addSelect('product_inventories.product_id')
+                    ->groupBy('product_id')
+                    ->orderBy('total_qty', 'ASC')
+                    ->limit(5)
+                    ->get();
     }
 
     /**
      * Returns top selling products
      *
-     * @return mixed
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTopSellingProducts()
+    {
+        return $this->orderItemRepository->getModel()
+                    ->select(DB::raw('SUM(qty_ordered) as total_qty_ordered'))
+                    ->addSelect('id', 'product_id', 'product_type', 'name')
+                    ->where('order_items.created_at', '>=', $this->startDate)
+                    ->where('order_items.created_at', '<=', $this->endDate)
+                    ->whereNull('parent_id')
+                    ->groupBy('product_id')
+                    ->orderBy('total_qty_ordered', 'DESC')
+                    ->limit(5)
+                    ->get();
+    }
+
+    /**
+     * Returns top selling products
+     *
+     * @return \Illuminate\Support\Collection
      */
     public function getCustomerWithMostSales()
     {
-        return $this->order->getModel()
-            ->select(DB::raw('SUM(base_grand_total) as total_base_grand_total'))
-            ->addSelect(DB::raw('COUNT(id) as total_orders'))
-            ->addSelect('id', 'customer_id', 'customer_email', 'customer_first_name', 'customer_last_name')
-            ->where('orders.created_at', '>=', $this->startDate)
-            ->where('orders.created_at', '<=', $this->endDate)
-            ->groupBy('customer_email')
-            ->orderBy('total_base_grand_total', 'DESC')
-            ->limit(5)
-            ->get();
+        $dbPrefix = DB::getTablePrefix();
+
+        return $this->orderRepository->getModel()
+                    ->leftJoin('refunds', 'orders.id', 'refunds.order_id')
+                    ->select(DB::raw("(SUM({$dbPrefix}orders.base_grand_total) - SUM(IFNULL({$dbPrefix}refunds.base_grand_total, 0))) as total_base_grand_total"))
+                    ->addSelect(DB::raw("COUNT({$dbPrefix}orders.id) as total_orders"))
+                    ->addSelect('orders.id', 'customer_id', 'customer_email', 'customer_first_name', 'customer_last_name')
+                    ->where('orders.created_at', '>=', $this->startDate)
+                    ->where('orders.created_at', '<=', $this->endDate)
+                    ->where('orders.status', '<>', 'closed')
+                    ->where('orders.status', '<>', 'canceled')
+                    ->groupBy('customer_email')
+                    ->orderBy('total_base_grand_total', 'DESC')
+                    ->limit(5)
+                    ->get();
     }
 
     /**
@@ -256,15 +264,16 @@ class DashboardController extends Controller
     public function setStartEndDate()
     {
         $this->startDate = request()->get('start')
-            ? Carbon::createFromTimeString(request()->get('start') . " 00:00:01")
-            : Carbon::createFromTimeString(Carbon::now()->subDays(30)->format('Y-m-d') . " 00:00:01");
+                           ? Carbon::createFromTimeString(request()->get('start') . " 00:00:01")
+                           : Carbon::createFromTimeString(Carbon::now()->subDays(30)->format('Y-m-d') . " 00:00:01");
 
         $this->endDate = request()->get('end')
-            ? Carbon::createFromTimeString(request()->get('end') . " 23:59:59")
-            : Carbon::now();
+                         ? Carbon::createFromTimeString(request()->get('end') . " 23:59:59")
+                         : Carbon::now();
 
-        if ($this->endDate > Carbon::now())
+        if ($this->endDate > Carbon::now()) {
             $this->endDate = Carbon::now();
+        }
 
         $this->lastStartDate = clone $this->startDate;
         $this->lastEndDate = clone $this->startDate;
@@ -273,26 +282,50 @@ class DashboardController extends Controller
         // $this->lastEndDate->subDays($this->lastStartDate->diffInDays($this->lastEndDate));
     }
 
+    /**
+     * Returns previous order query
+     *
+     * @return Illuminate\Database\Query\Builder
+     */
     private function previousOrders()
     {
         return $this->getOrdersBetweenDate($this->lastStartDate, $this->lastEndDate);
     }
 
+    /**
+     * Returns current order query
+     *
+     * @return Illuminate\Database\Query\Builder
+     */
     private function currentOrders()
     {
         return $this->getOrdersBetweenDate($this->startDate, $this->endDate);
     }
 
+    /**
+     * Returns orders between two dates
+     *
+     * @param  \Illuminate\Support\Carbon  $start
+     * @param  \Illuminate\Support\Carbon  $end
+     * @return Illuminate\Database\Query\Builder
+     */
     private function getOrdersBetweenDate($start, $end)
     {
-        return $this->order->scopeQuery(function ($query) use ($start, $end) {
+        return $this->orderRepository->scopeQuery(function ($query) use ($start, $end) {
             return $query->where('orders.created_at', '>=', $start)->where('orders.created_at', '<=', $end);
         });
     }
 
+    /**
+     * Returns customers between two dates
+     *
+     * @param  \Illuminate\Support\Carbon  $start
+     * @param  \Illuminate\Support\Carbon  $end
+     * @return Illuminate\Database\Query\Builder
+     */
     private function getCustomersBetweenDates($start, $end)
     {
-        return $this->customer->scopeQuery(function ($query) use ($start, $end) {
+        return $this->customerRepository->scopeQuery(function ($query) use ($start, $end) {
             return $query->where('customers.created_at', '>=', $start)->where('customers.created_at', '<=', $end);
         });
     }

@@ -1,82 +1,23 @@
-require("./bootstrap");
+import Vue from 'vue';
+import VeeValidate, { Validator } from 'vee-validate';
+import de from 'vee-validate/dist/locale/de';
+import ar from 'vee-validate/dist/locale/ar';
 
-window.Vue = require("vue");
-window.VeeValidate = require("vee-validate");
+import './bootstrap';
 
-Vue.use(VeeValidate);
+window.Vue = Vue;
+window.VeeValidate = VeeValidate;
+
+Vue.use(VeeValidate, {
+    dictionary: {
+        ar: ar,
+        de: de,
+    },
+    events: 'input|change|blur',
+});
 Vue.prototype.$http = axios
 
 window.eventBus = new Vue();
-
-window.addEventListener('DOMContentLoaded', function() {
-    moveDown = 60;
-    moveUp =  -60;
-    count = 0;
-    countKeyUp = 0;
-    pageDown = 60;
-    pageUp = -60;
-    scroll = 0;
-
-    listLastElement = $('.menubar li:last-child').offset();
-
-    if (listLastElement) {
-        lastElementOfNavBar = listLastElement.top;
-    }
-
-    navbarTop = $('.navbar-left').css("top");
-    menuTopValue = $('.navbar-left').css('top');
-    menubarTopValue = menuTopValue;
-
-    documentHeight = $(document).height();
-    menubarHeight = $('ul.menubar').height();
-    navbarHeight = $('.navbar-left').height();
-    windowHeight = $(window).height();
-    contentHeight = $('.content').height();
-    innerSectionHeight = $('.inner-section').height();
-    gridHeight = $('.grid-container').height();
-    pageContentHeight = $('.page-content').height();
-
-    if (menubarHeight <= windowHeight) {
-        differenceInHeight = windowHeight - menubarHeight;
-    } else {
-        differenceInHeight = menubarHeight - windowHeight;
-    }
-
-    if (menubarHeight > windowHeight) {
-        document.addEventListener("keydown", function(event) {
-            if ((event.keyCode == 38) && count <= 0) {
-                count = count + moveDown;
-
-                $('.navbar-left').css("top", count + "px");
-            } else if ((event.keyCode == 40) && count >= -differenceInHeight) {
-                count = count + moveUp;
-
-                $('.navbar-left').css("top", count + "px");
-            } else if ((event.keyCode == 33) && countKeyUp <= 0) {
-                countKeyUp = countKeyUp + pageDown;
-
-                $('.navbar-left').css("top", countKeyUp + "px");
-            } else if ((event.keyCode == 34) && countKeyUp >= -differenceInHeight) {
-                countKeyUp = countKeyUp + pageUp;
-
-                $('.navbar-left').css("top", countKeyUp + "px");
-            } else {
-                 $('.navbar-left').css("position", "fixed");
-            }
-        });
-
-        $("body").css({minHeight: $(".menubar").outerHeight() + 100 + "px"});
-
-        window.addEventListener('scroll', function() {
-            documentScrollWhenScrolled = $(document).scrollTop();
-
-                if (documentScrollWhenScrolled <= differenceInHeight + 200) {
-                    $('.navbar-left').css('top', -documentScrollWhenScrolled + 60 + 'px');
-                    scrollTopValueWhenNavBarFixed = $(document).scrollTop();
-                }
-        });
-    }
-});
 
 $(document).ready(function () {
     Vue.config.ignoredElements = [
@@ -95,6 +36,8 @@ $(document).ready(function () {
         mounted() {
             this.addServerErrors();
             this.addFlashMessages();
+
+            this.$validator.localize(document.documentElement.lang);
         },
 
         methods: {
@@ -109,6 +52,8 @@ $(document).ready(function () {
                         e.target.submit();
                     } else {
                         this.toggleButtonDisable(false);
+
+                        eventBus.$emit('onFormError')
                     }
                 });
             },
@@ -150,6 +95,10 @@ $(document).ready(function () {
             },
 
             addFlashMessages() {
+                if (typeof flashMessages == 'undefined') {
+                    return;
+                };
+
                 const flashes = this.$refs.flashes;
 
                 flashMessages.forEach(function(flash) {

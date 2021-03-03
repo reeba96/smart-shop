@@ -14,14 +14,18 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Event::listen('user.admin.update-password', 'Webkul\Admin\Listeners\PasswordChange@sendUpdatePasswordMail');
+
         Event::listen('checkout.order.save.after', 'Webkul\Admin\Listeners\Order@sendNewOrderMail');
 
         Event::listen('sales.invoice.save.after', 'Webkul\Admin\Listeners\Order@sendNewInvoiceMail');
 
         Event::listen('sales.shipment.save.after', 'Webkul\Admin\Listeners\Order@sendNewShipmentMail');
 
-        Event::listen('checkout.order.save.after', 'Webkul\Admin\Listeners\Order@updateProductInventory');
+        Event::listen('sales.order.cancel.after','Webkul\Admin\Listeners\Order@sendCancelOrderMail');
 
-        Event::listen('products.datagrid.sync', 'Webkul\Admin\Listeners\Product@sync');
+        Event::listen('sales.refund.save.after','Webkul\Admin\Listeners\Order@sendNewRefundMail');
+
+        Event::listen('sales.order.comment.create.after','Webkul\Admin\Listeners\Order@sendOrderCommentMail');
     }
 }

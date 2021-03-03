@@ -19,16 +19,21 @@
                         <div class="cart-item-list" style="margin-top: 0">
                             @csrf
                             @foreach ($cart->items as $key => $item)
-                                <?php
-                                    if ($item->type == "configurable")
-                                        $productBaseImage = $productImageHelper->getProductBaseImage($item->child->product);
-                                    else
-                                        $productBaseImage = $productImageHelper->getProductBaseImage($item->product);
-                                ?>
+                                @php
+                                    $productBaseImage = $item->product->getTypeInstance()->getBaseImage($item);
+
+                                    if (is_null ($item->product->url_key)) {
+                                        if (! is_null($item->product->parent)) {
+                                            $url_key = $item->product->parent->url_key;
+                                        }
+                                    } else {
+                                        $url_key = $item->product->url_key;
+                                    }
+                                @endphp
 
                                 <div class="item mt-5">
                                     <div class="item-image" style="margin-right: 15px;">
-                                        <a href="{{ url()->to('/').'/products/'.$item->product->url_key }}"><img src="{{ $productBaseImage['medium_image_url'] }}" /></a>
+                                        <a href="{{ route('shop.productOrCategory.index', $url_key) }}"><img src="{{ $productBaseImage['medium_image_url'] }}" /></a>
                                     </div>
 
                                     <div class="item-details">
@@ -36,7 +41,7 @@
                                         {!! view_render_event('bagisto.shop.checkout.cart.item.name.before', ['item' => $item]) !!}
 
                                         <div class="item-title">
-                                            <a href="{{ url()->to('/').'/products/'.$item->product->url_key }}">
+                                            <a href="{{ route('shop.productOrCategory.index', $url_key) }}">
                                                 {{ $item->product->name }}
                                             </a>
                                         </div>
@@ -55,11 +60,12 @@
 
                                         {!! view_render_event('bagisto.shop.checkout.cart.item.options.before', ['item' => $item]) !!}
 
-                                        @if ($item->type == 'configurable')
+                                        @if (isset($item->additional['attributes']))
+                                            <div class="item-options">
 
-                                            <div class="summary">
-
-                                                {{ Cart::getProductAttributeOptionDetails($item->child->product)['html'] }}
+                                                @foreach ($item->additional['attributes'] as $attribute)
+                                                    <b>{{ $attribute['attribute_name'] }} : </b>{{ $attribute['option_label'] }}</br>
+                                                @endforeach
 
                                             </div>
                                         @endif
@@ -70,20 +76,12 @@
                                         {!! view_render_event('bagisto.shop.checkout.cart.item.quantity.before', ['item' => $item]) !!}
 
                                         <div class="misc">
-                                            <div class="control-group" :class="[errors.has('qty[{{$item->id}}]') ? 'has-error' : '']">
-                                                <div class="wrap">
-                                                    <label for="qty[{{$item->id}}]">{{ __('shop::app.checkout.cart.quantity.quantity') }}</label>
-
-                                                    <input class="control quantity-change" value="-" style="width: 35px; border-radius: 3px 0px 0px 3px;" onclick="updateCartQunatity('remove', {{$key}})" readonly>
-
-                                                    <input type="text" class="control quantity-change" id="cart-quantity{{ $key
-                                                    }}" v-validate="'required|numeric|min_value:1'" name="qty[{{$item->id}}]" value="{{ $item->quantity }}" data-vv-as="&quot;{{ __('shop::app.checkout.cart.quantity.quantity') }}&quot;" style="border-right: none; border-left: none; border-radius: 0px;" readonly>
-
-                                                    <input class="control quantity-change" value="+" style="width: 35px; padding: 0 12px; border-radius: 0px 3px 3px 0px;" onclick="updateCartQunatity('add', {{$key}})" readonly>
-                                                </div>
-
-                                                <span class="control-error" v-if="errors.has('qty[{{$item->id}}]')">@{{ errors.first('qty[{!!$item->id!!}]') }}</span>
-                                            </div>
+                                            @if ($item->product->getTypeInstance()->showQuantityBox() === true)
+                                                <quantity-changer
+                                                    :control-name="'qty[{{$item->id}}]'"
+                                                    quantity="{{$item->quantity}}">
+                                                </quantity-changer>
+                                            @endif
 
                                             <span class="remove">
                                                 <a href="{{ route('shop.checkout.cart.remove', $item->id) }}" onclick="removeLink('{{ __('shop::app.checkout.cart.cart-remove-action') }}')">{{ __('shop::app.checkout.cart.remove-link') }}</a></span>
@@ -118,9 +116,11 @@
                             <a href="{{ route('shop.home.index') }}" class="link">{{ __('shop::app.checkout.cart.continue-shopping') }}</a>
 
                             <div>
-                                <button type="submit" class="btn btn-lg btn-primary">
+                                @if ($cart->hasProductsWithQuantityBox())
+                                <button type="submit" class="btn btn-lg btn-primary" id="update_cart_button">
                                     {{ __('shop::app.checkout.cart.update-cart') }}
                                 </button>
+                                @endif
 
                                 @if (! cart()->hasError())
                                     <a href="{{ route('shop.checkout.onepage.index') }}" class="btn btn-lg btn-primary">
@@ -138,6 +138,8 @@
                     {!! view_render_event('bagisto.shop.checkout.cart.summary.after', ['cart' => $cart]) !!}
 
                     @include('shop::checkout.total.summary', ['cart' => $cart])
+
+                    <coupon-component></coupon-component>
 
                     {!! view_render_event('bagisto.shop.checkout.cart.summary.after', ['cart' => $cart]) !!}
                 </div>
@@ -167,7 +169,72 @@
 @endsection
 
 @push('scripts')
+    @include('shop::checkout.cart.coupon')
+
+    <script type="text/x-template" id="quantity-changer-template">
+        <div class="quantity control-group" :class="[errors.has(controlName) ? 'has-error' : '']">
+            <div class="wrap">
+                <label>{{ __('shop::app.products.quantity') }}</label>
+
+                <button type="button" class="decrease" @click="decreaseQty()">-</button>
+
+                <input :name="controlName" class="control" :value="qty" v-validate="'required|numeric|min_value:1'" data-vv-as="&quot;{{ __('shop::app.products.quantity') }}&quot;" readonly>
+
+                <button type="button" class="increase" @click="increaseQty()">+</button>
+
+                <span class="control-error" v-if="errors.has(controlName)">@{{ errors.first(controlName) }}</span>
+            </div>
+        </div>
+    </script>
+
     <script>
+        Vue.component('quantity-changer', {
+            template: '#quantity-changer-template',
+
+            inject: ['$validator'],
+
+            props: {
+                controlName: {
+                    type: String,
+                    default: 'quantity'
+                },
+
+                quantity: {
+                    type: [Number, String],
+                    default: 1
+                }
+            },
+
+            data: function() {
+                return {
+                    qty: this.quantity
+                }
+            },
+
+            watch: {
+                quantity: function (val) {
+                    this.qty = val;
+
+                    this.$emit('onQtyUpdated', this.qty)
+                }
+            },
+
+            methods: {
+                decreaseQty: function() {
+                    if (this.qty > 1)
+                        this.qty = parseInt(this.qty) - 1;
+
+                    this.$emit('onQtyUpdated', this.qty)
+                },
+
+                increaseQty: function() {
+                    this.qty = parseInt(this.qty) + 1;
+
+                    this.$emit('onQtyUpdated', this.qty)
+                }
+            }
+        });
+
         function removeLink(message) {
             if (!confirm(message))
             event.preventDefault();

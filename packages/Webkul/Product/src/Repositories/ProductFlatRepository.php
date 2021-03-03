@@ -2,35 +2,10 @@
 
 namespace Webkul\Product\Repositories;
 
-use Illuminate\Container\Container as App;
 use Webkul\Core\Eloquent\Repository;
-use Webkul\Product\Repositories\ProductRepository as Product;
 
-/**
- * Product Repository
- *
- * @author Prashant Singh <prashant.singh852@webkul.com> @prashant-webkul
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class ProductFlatRepository extends Repository
 {
-    protected $product;
-
-    /**
-     * Price Object
-     *
-     * @var array
-     */
-    protected $price;
-
-    public function __construct(
-        Product $product,
-        App $app
-    ) {
-        $this->product = $product;
-        parent::__construct($app);
-    }
-
     public function model()
     {
         return 'Webkul\Product\Contracts\ProductFlat';
@@ -39,37 +14,94 @@ class ProductFlatRepository extends Repository
     /**
      * Maximum Price of Category Product
      *
-     * @param int  $categoryId
-     * return integer
+     * @param \Webkul\Category\Contracts\Category  $category
+     * @return float
      */
-    public function getCategoryProductMaximumPrice($categoryId)
+    public function getCategoryProductMaximumPrice($category = null)
     {
-        return $this->model
-            ->leftJoin('product_categories', 'product_flat.product_id', 'product_categories.product_id')
-            ->where('product_categories.category_id', $categoryId)
-            ->max('price');
-    }
+        if (! $category) {
+            return $this->model->max('max_price');
+        }
 
-     /**
-     * Maximum Price of Product
-     *
-     * return integer
-     */
-    public function getProductMaximumPrice()
-    {
-        return $this->model->max('price');
+        return $this->model
+                    ->leftJoin('product_categories', 'product_flat.product_id', 'product_categories.product_id')
+                    ->where('product_categories.category_id', $category->id)
+                    ->max('max_price');
     }
 
     /**
-     * get Category Product
+     * get Category Product Attribute
      *
-     * return array
+     * @param  int  $categoryId
+     * @return array
      */
-    public function getCategoryProduct($categoryId)
+    public function getCategoryProductAttribute($categoryId)
     {
-        return $this->model
-            ->leftJoin('product_categories', 'product_flat.product_id', 'product_categories.product_id')
-            ->where('product_categories.category_id', $categoryId)
-            ->get();
+        $qb = $this->model
+                   ->leftJoin('product_categories', 'product_flat.product_id', 'product_categories.product_id')
+                   ->where('product_categories.category_id', $categoryId)
+                   ->where('product_flat.channel', core()->getCurrentChannelCode())
+                   ->where('product_flat.locale', app()->getLocale());
+
+        $productArrributes = $qb->leftJoin('product_attribute_values as pa', 'product_flat.product_id', 'pa.product_id')
+                                ->pluck('pa.attribute_id')
+                                ->toArray();
+
+        $productSuperArrributes = $qb->leftJoin('product_super_attributes as ps', 'product_flat.product_id', 'ps.product_id')
+                                     ->pluck('ps.attribute_id')
+                                     ->toArray();
+
+        $productCategoryArrributes = array_unique(array_merge($productArrributes, $productSuperArrributes));
+
+        return $productCategoryArrributes;
     }
+
+    /**
+     * get Filterable Attributes.
+     *
+     * @param  array  $category
+     * @param  array  $products
+     * @return \Illuminate\Support\Collection
+     */
+    public function getFilterableAttributes($category, $products) {
+        $filterAttributes = [];
+
+        if (count($category->filterableAttributes) > 0 ) {
+            $filterAttributes = $category->filterableAttributes;
+        } else {
+            $categoryProductAttributes = $this->getCategoryProductAttribute($category->id);
+
+            if ($categoryProductAttributes) {
+                foreach (app('Webkul\Attribute\Repositories\AttributeRepository')->getFilterAttributes() as $filterAttribute) {
+                    if (in_array($filterAttribute->id, $categoryProductAttributes)) {
+                        $filterAttributes[] = $filterAttribute;
+                    } else  if ($filterAttribute ['code'] == 'price') {
+                        $filterAttributes[] = $filterAttribute;
+                    }
+                }
+
+                $filterAttributes = collect($filterAttributes);
+            }
+        }
+
+        return $filterAttributes;
+    }
+
+
+    /**
+     * update product_flat custom column
+     * 
+     * @param \Webkul\Attribute\Models\Attribute $attribute
+     * @param \Webkul\Product\Listeners\ProductFlat $listener
+     */
+    public function updateAttributeColumn(
+        \Webkul\Attribute\Models\Attribute $attribute ,
+        \Webkul\Product\Listeners\ProductFlat $listener ) {
+        return $this->model
+            ->leftJoin('product_attribute_values as v', function($join) use ($attribute) {
+                $join->on('product_flat.id', '=', 'v.product_id')
+                    ->on('v.attribute_id', '=', \DB::raw($attribute->id));
+            })->update(['product_flat.'.$attribute->code => \DB::raw($listener->attributeTypeFields[$attribute->type] .'_value')]);
+    }
+
 }

@@ -2,25 +2,46 @@
 
 namespace Webkul\Admin\DataGrids;
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Ui\DataGrid\DataGrid;
-use DB;
 
-/**
- * SliderDataGrid Class
- *
- * @author Prashant Singh <prashant.singh852@webkul.com> @prashant-webkul
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class SliderDataGrid extends DataGrid
 {
     protected $index = 'slider_id';
 
-    protected $sortOrder = 'desc'; //asc or desc
+    protected $sortOrder = 'desc';
+
+    protected $locale = 'all';
+
+    protected $channel = 'all';
+
+    /** @var string[] contains the keys for which extra filters to render */
+    protected $extraFilters = [
+        'channels',
+        'locales',
+    ];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->locale = request()->get('locale') ?? 'all';
+        $this->channel = request()->get('channel') ?? 'all';
+    }
 
     public function prepareQueryBuilder()
     {
-        $queryBuilder = DB::table('sliders as sl')->addSelect('sl.id as slider_id', 'sl.title', 'ch.name')->leftJoin('channels as ch', 'sl.channel_id', '=',
-        'ch.id');
+        $queryBuilder = DB::table('sliders as sl')
+          ->addSelect('sl.id as slider_id', 'sl.title', 'sl.locale', 'ch.name', 'ch.code')
+          ->leftJoin('channels as ch', 'sl.channel_id', '=', 'ch.id');
+
+        if ($this->locale !== 'all') {
+            $queryBuilder->where('locale', $this->locale);
+        }
+
+        if ($this->channel !== 'all') {
+            $queryBuilder->where('ch.code', $this->channel);
+        }
 
         $this->addFilter('slider_id', 'sl.id');
         $this->addFilter('channel_name', 'ch.name');
@@ -31,26 +52,35 @@ class SliderDataGrid extends DataGrid
     public function addColumns()
     {
         $this->addColumn([
-            'index' => 'slider_id',
-            'label' => trans('admin::app.datagrid.id'),
-            'type' => 'number',
+            'index'      => 'slider_id',
+            'label'      => trans('admin::app.datagrid.id'),
+            'type'       => 'number',
             'searchable' => false,
-            'sortable' => true,
-            'filterable' => true
+            'sortable'   => true,
+            'filterable' => true,
         ]);
 
         $this->addColumn([
-            'index' => 'title',
-            'label' => trans('admin::app.datagrid.title'),
-            'type' => 'string',
+            'index'      => 'title',
+            'label'      => trans('admin::app.datagrid.title'),
+            'type'       => 'string',
             'searchable' => true,
-            'sortable' => true,
-            'filterable' => true
+            'sortable'   => true,
+            'filterable' => true,
         ]);
 
         $this->addColumn([
-            'index' => 'name',
-            'label' => trans('admin::app.datagrid.channel-name'),
+            'index'      => 'name',
+            'label'      => trans('admin::app.datagrid.channel-name'),
+            'type'       => 'string',
+            'searchable' => true,
+            'sortable'   => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index' => 'locale',
+            'label' => trans('admin::app.datagrid.locale'),
             'type' => 'string',
             'searchable' => true,
             'sortable' => true,
@@ -58,19 +88,20 @@ class SliderDataGrid extends DataGrid
         ]);
     }
 
-    public function prepareActions() {
+    public function prepareActions()
+    {
         $this->addAction([
-            'type' => 'Edit',
-            'method' => 'GET', // use GET request only for redirect purposes
-            'route' => 'admin.sliders.edit',
-            'icon' => 'icon pencil-lg-icon'
+            'title'  => trans('admin::app.datagrid.edit'),
+            'method' => 'GET',
+            'route'  => 'admin.sliders.edit',
+            'icon'   => 'icon pencil-lg-icon',
         ]);
 
         $this->addAction([
-            'type' => 'Delete',
-            'method' => 'POST', // use GET request only for redirect purposes
-            'route' => 'admin.sliders.delete',
-            'icon' => 'icon trash-icon'
+            'title'  => trans('admin::app.datagrid.delete'),
+            'method' => 'POST',
+            'route'  => 'admin.sliders.delete',
+            'icon'   => 'icon trash-icon',
         ]);
     }
 }

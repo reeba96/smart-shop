@@ -19,11 +19,14 @@ class CustomerResetPassword extends ResetPassword
         if (static::$toMailCallback) {
             return call_user_func(static::$toMailCallback, $notifiable, $this->token);
         }
-
+\Log::info('toMail');
         return (new MailMessage)
+            ->from(core()->getSenderEmailDetails()['email'], core()->getSenderEmailDetails()['name'])
+            ->subject(__('shop::app.mail.forget-password.subject') )
             ->view('shop::emails.customer.forget-password', [
                 'user_name' => $notifiable->name,
-                'token' => $this->token
-            ]);
+                'token'     => $this->token,
+                ]
+            );
     }
 }

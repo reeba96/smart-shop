@@ -7,11 +7,11 @@
 @section('content')
     <div class="content">
 
-        <form method="POST" action="{{ route('admin.locales.store') }}" @submit.prevent="onSubmit">
+        <form method="POST" action="{{ route('admin.locales.store') }}" @submit.prevent="onSubmit" enctype="multipart/form-data">
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.locales.add-title') }}
                     </h1>
@@ -28,6 +28,8 @@
                 <div class="form-container">
                     @csrf()
 
+                    {!! view_render_event('bagisto.admin.settings.locale.create.before') !!}
+
                     <accordian :title="'{{ __('admin::app.settings.locales.general') }}'" :active="true">
                         <div slot="body">
                             <div class="control-group" :class="[errors.has('code') ? 'has-error' : '']">
@@ -41,6 +43,17 @@
                                 <input v-validate="'required'" class="control" id="name" name="name" data-vv-as="&quot;{{ __('admin::app.settings.locales.name') }}&quot;"/>
                                 <span class="control-error" v-if="errors.has('name')">@{{ errors.first('name') }}</span>
                             </div>
+
+                            <div class="control-group" :class="[errors.has('direction') ? 'has-error' : '']">
+                                <label for="direction" class="required">{{ __('admin::app.settings.locales.direction') }}</label>
+                                <select v-validate="'required'" class="control" id="direction" name="direction" data-vv-as="&quot;{{ __('admin::app.settings.locales.direction') }}&quot;">
+                                    <option value="ltr" selected title="Text direction left to right">LTR</option>
+                                    <option value="rtl" title="Text direction right to left">RTL</option>
+                                </select>
+                                <span class="control-error" v-if="errors.has('direction')">@{{ errors.first('direction') }}</span>
+                            </div>
+
+                            {!! view_render_event('bagisto.admin.settings.locale.create.after') !!}
                         </div>
                     </accordian>
 

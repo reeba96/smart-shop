@@ -62,14 +62,14 @@ class importGroups extends Command
             $attribute_id = $attribute->id;
      //       dump(['attribute_id'=> $attribute_id]);
             $pavs = ProductAttributeValue::where('attribute_id',$attribute_id )->get();
-          
+
             $group_options = array_keys($pavs->pluck('id','text_value')->toArray());
     //dd($group_options);
             $i = 1;
             foreach( $group_options as $key => $option){
                 if (empty($option))
                     continue;
-                    
+
            //     dump([ 'key' => $key, 'option' => $option]);
                 $attribute_option = AttributeOption::firstOrCreate(
                     ['admin_name' => $option, 'attribute_id' => $attribute_id],
@@ -80,7 +80,7 @@ class importGroups extends Command
 
    //     dump(['$attribute_option->id' => $attribute_option->id]);
 
-                
+
 
       //  dump(  ['attribute_option_id' => $attribute_option->id,'locale' => $lg], [ 'label'=> $option]);
 
@@ -88,7 +88,7 @@ class importGroups extends Command
                     ['attribute_option_id' => $attribute_option->id,'locale' => $lg],
                     ['label'=> $option]
                 );
-                        
+
                     /*  DB::table('attribute_options')->insertGetId([
                             'admin_name' => $option,
                             'sort_order' => $i++,
@@ -103,7 +103,7 @@ class importGroups extends Command
                     });
 
                 };
-               
+
 
             }
             if ( !empty($group_options)){ //update attribute to select type
@@ -114,7 +114,7 @@ class importGroups extends Command
 
             foreach( $pavs as $pav){
                 if ( !empty($pav->text_value)){
-                    dump(['product_id' => $pav->product_id, 
+                    dump(['product_id' => $pav->product_id,
                         'text_value' => $pav->text_value,
                         'tran' => $attribute_option_array[$pav->text_value]]);
 
@@ -130,30 +130,30 @@ class importGroups extends Command
                         ProductFlat::where('product_id',$pav->product_id)->update($update);
                         dump(['update' => $update,'product_id'=> $pav->product_id]);
                     }
-                    
+
                 }
-                
+
 
 
             }
 
             //update product_flat table
-         //   $attribute_options = AttributeOption::where('attribute_id', $attribute_id)->get();
-//dump($attibute_options->toArray());
+            //   $attribute_options = AttributeOption::where('attribute_id', $attribute_id)->get();
+            //dump($attibute_options->toArray());
             $update = [];
             foreach ($pavs as $pav) {
-              
+
                 $update[$pav->attribute_id] = AttributeOption::where('attribute_id', $pav->attribute_id)->first()->admin_name; //todo átírni attribute translation-ra
                 //ProductFlat::whereId($pav->id)->update(['type' => 'select','is_filterable' => 1 ]);
             }
             $db_update = [];
             foreach($update as $key => $value){
-               // $db_update = 
+               // $db_update =
             }
          //   dump($update);
         }
 
-     
+
     }
 }
 

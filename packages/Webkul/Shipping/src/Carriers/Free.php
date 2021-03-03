@@ -22,12 +22,13 @@ class Free extends AbstractShipping
     /**
      * Returns rate for flatrate
      *
-     * @return array
+     * @return CartShippingRate|false
      */
     public function calculate()
     {
-        if (! $this->isAvailable())
+        if (! $this->isAvailable()) {
             return false;
+        }
 
         $object = new CartShippingRate;
 

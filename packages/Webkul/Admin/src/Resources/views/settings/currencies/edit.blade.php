@@ -7,11 +7,11 @@
 @section('content')
     <div class="content">
 
-        <form method="POST" action="{{ route('admin.currencies.update', $currency->id) }}" @submit.prevent="onSubmit">
+        <form method="POST" action="{{ route('admin.currencies.update', $currency->id) }}" @submit.prevent="onSubmit" enctype="multipart/form-data">
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.currencies.edit-title') }}
                     </h1>
@@ -29,12 +29,14 @@
                     @csrf()
                     <input name="_method" type="hidden" value="PUT">
 
+                    {!! view_render_event('bagisto.admin.settings.currencies.edit.before') !!}
+
                     <accordian :title="'{{ __('admin::app.settings.currencies.general') }}'" :active="true">
                         <div slot="body">
 
                             <div class="control-group" :class="[errors.has('code') ? 'has-error' : '']">
                                 <label for="code" class="required">{{ __('admin::app.settings.currencies.code') }}</label>
-                                <input type="text" v-validate="'required'" class="control" id="code" name="code" data-vv-as="&quot;{{ __('admin::app.settings.currencies.code') }}&quot;" value="{{ $currency->code }}" disabled="disabled"/>
+                                <input type="text" v-validate="'required'" class="control" id="code" name="code" data-vv-as="&quot;{{ __('admin::app.settings.currencies.code') }}&quot;" value="{{ old('code') ?: $currency->code }}" disabled="disabled"/>
                                 <input type="hidden" name="code" value="{{ $currency->code }}"/>
                                 <span class="control-error" v-if="errors.has('code')">@{{ errors.first('code') }}</span>
                             </div>
@@ -44,9 +46,15 @@
                                 <input v-validate="'required'" class="control" id="name" name="name" data-vv-as="&quot;{{ __('admin::app.settings.currencies.name') }}&quot;" value="{{ old('name') ?: $currency->name }}"/>
                                 <span class="control-error" v-if="errors.has('name')">@{{ errors.first('name') }}</span>
                             </div>
+
+                            <div class="control-group">
+                                <label for="symbol">{{ __('admin::app.settings.currencies.symbol') }}</label>
+                                <input class="control" id="symbol" name="symbol" value="{{ old('symbol') ?: $currency->symbol }}"/>
+                            </div>
                         </div>
                     </accordian>
 
+                    {!! view_render_event('bagisto.admin.settings.currencies.edit.after') !!}
                 </div>
             </div>
         </form>

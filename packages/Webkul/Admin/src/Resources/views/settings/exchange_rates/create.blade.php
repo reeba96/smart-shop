@@ -11,7 +11,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.exchange_rates.add-title') }}
                     </h1>
@@ -46,6 +46,8 @@
 
                             <tbody>
                                 <tr>
+                                    {!! view_render_event('bagisto.admin.settings.exchangerate.create.before') !!}
+
                                     <td>
                                         {{ core()->getBaseCurrencyCode() }}
                                     </td>
@@ -54,7 +56,7 @@
                                         <div class="control-group" :class="[errors.has('target_currency') ? 'has-error' : '']">
                                             <select v-validate="'required'" class="control" name="target_currency" data-vv-as="&quot;{{ __('admin::app.settings.exchange_rates.target_currency') }}&quot;">
                                                 @foreach ($currencies as $currency)
-                                                    @if (is_null($currency->CurrencyExchangeRate))
+                                                    @if (is_null($currency->exchange_rate))
                                                         <option value="{{ $currency->id }}">{{ $currency->name }}</option>
                                                     @endif
                                                 @endforeach
@@ -69,6 +71,8 @@
                                             <span class="control-error" v-if="errors.has('rate')">@{{ errors.first('rate') }}</span>
                                         </div>
                                     </td>
+
+                                    {!! view_render_event('bagisto.admin.settings.exchangerate.create.after') !!}
                                 </tr>
                             </tbody>
                         </table>

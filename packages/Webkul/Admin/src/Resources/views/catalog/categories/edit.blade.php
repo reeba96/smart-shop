@@ -13,7 +13,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.catalog.categories.edit-title') }}
                     </h1>
@@ -52,7 +52,7 @@
 
                             <div class="control-group" :class="[errors.has('{{$locale}}[name]') ? 'has-error' : '']">
                                 <label for="name" class="required">{{ __('admin::app.catalog.categories.name') }}</label>
-                                <input type="text" v-validate="'required'" class="control" id="name" name="{{$locale}}[name]" value="{{ old($locale)['name'] ?: $category->translate($locale)['name'] }}" data-vv-as="&quot;{{ __('admin::app.catalog.categories.name') }}&quot;"/>
+                                <input type="text" v-validate="'required'" class="control" id="name" name="{{$locale}}[name]" value="{{ old($locale)['name'] ?? ($category->translate($locale)['name'] ?? '') }}" data-vv-as="&quot;{{ __('admin::app.catalog.categories.name') }}&quot;" v-slugify-target="'slug'"/>
                                 <span class="control-error" v-if="errors.has('{{$locale}}[name]')">@{{ errors.first('{!!$locale!!}[name]') }}</span>
                             </div>
 
@@ -109,7 +109,7 @@
                             <description></description>
 
                             <div class="control-group {!! $errors->has('image.*') ? 'has-error' : '' !!}">
-                                <label>{{ __('admin::app.catalog.categories.image') }}
+                                <label>{{ __('admin::app.catalog.categories.image') }}</label>
 
                                 <image-wrapper :button-label="'{{ __('admin::app.catalog.products.add-image-btn-title') }}'" input-name="image" :multiple="false"  :images='"{{ $category->image_url }}"'></image-wrapper>
 
@@ -148,6 +148,28 @@
 
                     @endif
 
+                    <accordian :title="'{{ __('admin::app.catalog.categories.filterable-attributes') }}'" :active="true">
+                        <div slot="body">
+
+                            <?php $selectedaAtributes = old('attributes') ?? $category->filterableAttributes->pluck('id')->toArray() ?>
+
+                            <div class="control-group" :class="[errors.has('attributes[]') ? 'has-error' : '']">
+                                <label for="attributes" class="required">{{ __('admin::app.catalog.categories.attributes') }}</label>
+                                <select class="control" name="attributes[]" v-validate="'required'" data-vv-as="&quot;{{ __('admin::app.catalog.categories.attributes') }}&quot;" multiple>
+
+                                    @foreach ($attributes as $attribute)
+                                        <option value="{{ $attribute->id }}" {{ in_array($attribute->id, $selectedaAtributes) ? 'selected' : ''}}>
+                                            {{ $attribute->name ? $attribute->name : $attribute->admin_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                                <span class="control-error" v-if="errors.has('attributes[]')">
+                                    @{{ errors.first('attributes[]') }}
+                                </span>
+                            </div>
+                        </div>
+                    </accordian>
 
                     {!! view_render_event('bagisto.admin.catalog.category.edit_form_accordian.seo.before', ['category' => $category]) !!}
 
@@ -158,23 +180,23 @@
 
                             <div class="control-group">
                                 <label for="meta_title">{{ __('admin::app.catalog.categories.meta_title') }}</label>
-                                <input type="text" class="control" id="meta_title" name="{{$locale}}[meta_title]" value="{{ old($locale)['meta_title'] ?: $category->translate($locale)['meta_title'] }}"/>
+                                <input type="text" class="control" id="meta_title" name="{{$locale}}[meta_title]" value="{{ old($locale)['meta_title'] ?? ($category->translate($locale)['meta_title'] ?? '') }}"/>
                             </div>
 
                             <div class="control-group" :class="[errors.has('{{$locale}}[slug]') ? 'has-error' : '']">
                                 <label for="slug" class="required">{{ __('admin::app.catalog.categories.slug') }}</label>
-                                <input type="text" v-validate="'required'" class="control" id="slug" name="{{$locale}}[slug]" value="{{ old($locale)['slug'] ?: $category->translate($locale)['slug'] }}" data-vv-as="&quot;{{ __('admin::app.catalog.categories.slug') }}&quot;" v-slugify/>
+                                <input type="text" v-validate="'required'" class="control" id="slug" name="{{$locale}}[slug]" value="{{ old($locale)['slug'] ?? ($category->translate($locale)['slug'] ?? '') }}" data-vv-as="&quot;{{ __('admin::app.catalog.categories.slug') }}&quot;" v-slugify/>
                                 <span class="control-error" v-if="errors.has('{{$locale}}[slug]')">@{{ errors.first('{!!$locale!!}[slug]') }}</span>
                             </div>
 
                             <div class="control-group">
                                 <label for="meta_description">{{ __('admin::app.catalog.categories.meta_description') }}</label>
-                                <textarea class="control" id="meta_description" name="{{$locale}}[meta_description]">{{ old($locale)['meta_description'] ?: $category->translate($locale)['meta_description'] }}</textarea>
+                                <textarea class="control" id="meta_description" name="{{$locale}}[meta_description]">{{ old($locale)['meta_description'] ?? ($category->translate($locale)['meta_description'] ?? '') }}</textarea>
                             </div>
 
                             <div class="control-group">
                                 <label for="meta_keywords">{{ __('admin::app.catalog.categories.meta_keywords') }}</label>
-                                <textarea class="control" id="meta_keywords" name="{{$locale}}[meta_keywords]">{{ old($locale)['meta_keywords'] ?: $category->translate($locale)['meta_keywords'] }}</textarea>
+                                <textarea class="control" id="meta_keywords" name="{{$locale}}[meta_keywords]">{{ old($locale)['meta_keywords'] ?? ($category->translate($locale)['meta_keywords'] ?? '') }}</textarea>
                             </div>
 
                             {!! view_render_event('bagisto.admin.catalog.category.edit_form_accordian.seo.controls.after', ['category' => $category]) !!}
@@ -198,7 +220,7 @@
 
         <div class="control-group" :class="[errors.has('{{$locale}}[description]') ? 'has-error' : '']">
             <label for="description" :class="isRequired ? 'required' : ''">{{ __('admin::app.catalog.categories.description') }}</label>
-            <textarea v-validate="isRequired ? 'required' : ''" class="control" id="description" name="{{$locale}}[description]" data-vv-as="&quot;{{ __('admin::app.catalog.categories.description') }}&quot;">{{ old($locale)['description'] ?: $category->translate($locale)['description'] }}</textarea>
+            <textarea v-validate="isRequired ? 'required' : ''" class="control" id="description" name="{{$locale}}[description]" data-vv-as="&quot;{{ __('admin::app.catalog.categories.description') }}&quot;">{{ old($locale)['description'] ?? ($category->translate($locale)['description'] ?? '') }}</textarea>
             <span class="control-error" v-if="errors.has('{{$locale}}[description]')">@{{ errors.first('{!!$locale!!}[description]') }}</span>
         </div>
 
@@ -210,8 +232,8 @@
                 selector: 'textarea#description',
                 height: 200,
                 width: "100%",
-                plugins: 'image imagetools media wordcount save fullscreen code',
-                toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent  | removeformat | code',
+                plugins: 'image imagetools media wordcount save fullscreen code table lists link hr',
+                toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor link hr | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent  | removeformat | code | table',
                 image_advtab: true
             });
         });

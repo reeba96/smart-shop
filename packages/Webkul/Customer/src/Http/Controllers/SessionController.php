@@ -2,56 +2,93 @@
 
 namespace Webkul\Customer\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
-use Webkul\Customer\Models\Customer;
-use Webkul\Customer\Http\Listeners\CustomerEventsHandler;
-use Cart;
 use Cookie;
-
-/**
- * Session controller for the user customer
- *
- * @author    Prashant Singh <prashant.singh852@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
+use Illuminate\Support\Facades\Hash;
+use Webkul\Customer\Models\Customer;
+use Illuminate\Support\Facades\Auth;
 class SessionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Contains route related configuration
      *
-     * @return \Illuminate\Http\Response
+     * @var array
      */
     protected $_config;
 
+    /**
+     * Create a new Repository instance.
+     *
+     * @return void
+    */
     public function __construct()
     {
         $this->middleware('customer')->except(['show','create']);
+
         $this->_config = request('_config');
-
-        $subscriber = new CustomerEventsHandler;
-
-        Event::subscribe($subscriber);
     }
 
+    /**
+     * Display the resource.
+     *
+     * @return \Illuminate\View\View
+     */
     public function show()
     {
         if (auth()->guard('customer')->check()) {
-            return redirect()->route('customer.session.index');
+            return redirect()->route('customer.profile.index');
         } else {
             return view($this->_config['view']);
         }
     }
 
-    public function create(Request $request)
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+        $data = $this->validate(request(), [
+            'email'    => 'required|email',
+            'password' => 'required',
         ]);
 
-        if (! auth()->guard('customer')->attempt(request(['email', 'password']))) {
+        
+        $client = new \GuzzleHttp\Client();
+        $api_url = config('app.bodywave_api').'/shop_get_hash';
+
+        $token = config('app.bodywave_token');
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,        
+            'Accept'        => 'application/json',
+        ];
+
+        $res = $client->request('post',$api_url, [
+            'headers' => $headers,
+            'form_params' => ['email' => $data['email']]
+        ]);
+
+        $result = json_decode($res->getBody()->getContents());
+//dd($result->hash);
+//dd($data['password'],Hash::check($data['password'], $result->hash));
+        if (Hash::check($data['password'], $result->hash)) {
+            
+            $user = Customer::where('email',$data['email'])->first();
+
+            if ( $user){
+                auth()->guard('customer')->login($user);
+                Event::dispatch('customer.after.login', request('email'));
+                return redirect()->intended(route($this->_config['redirect']));
+            }
+        }
+        else{
+            session()->flash('error', trans('shop::app.customer.login-form.invalid-creds'));
+
+            return redirect()->back();
+        }
+      /*  if (! auth()->guard('customer')->attempt(request(['email', 'password']))) {
             session()->flash('error', trans('shop::app.customer.login-form.invalid-creds'));
 
             return redirect()->back();
@@ -70,7 +107,7 @@ class SessionController extends Controller
 
             Cookie::queue(Cookie::make('enable-resend', 'true', 1));
 
-            Cookie::queue(Cookie::make('email-for-resend', $request->input('email'), 1));
+            Cookie::queue(Cookie::make('email-for-resend', request('email'), 1));
 
             auth()->guard('customer')->logout();
 
@@ -78,16 +115,22 @@ class SessionController extends Controller
         }
 
         //Event passed to prepare cart after login
-        Event::fire('customer.after.login', $request->input('email'));
+        Event::dispatch('customer.after.login', request('email'));
 
-        return redirect()->intended(route($this->_config['redirect']));
+        return redirect()->intended(route($this->_config['redirect']));*/
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         auth()->guard('customer')->logout();
 
-        Event::fire('customer.after.logout', $id);
+        Event::dispatch('customer.after.logout', $id);
 
         return redirect()->route($this->_config['redirect']);
     }

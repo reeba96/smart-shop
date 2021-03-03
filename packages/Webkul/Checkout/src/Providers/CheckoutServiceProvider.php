@@ -3,23 +3,23 @@
 namespace Webkul\Checkout\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Routing\Router;
 use Illuminate\Foundation\AliasLoader;
-use Webkul\Customer\Http\Middleware\RedirectIfNotCustomer;
 use Webkul\Checkout\Facades\Cart;
-use Webkul\Checkout\Providers\ComposerServiceProvider;
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 
 class CheckoutServiceProvider extends ServiceProvider
 {
-
-    public function boot(Router $router)
+    public function boot()
     {
         include __DIR__ . '/../Http/helpers.php';
 
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
         $this->app->register(ModuleServiceProvider::class);
+
+        $this->app->register(EventServiceProvider::class);
+
+        $this->registerEloquentFactoriesFrom(__DIR__ . '/../Database/Factories');
     }
 
     /**
@@ -50,5 +50,17 @@ class CheckoutServiceProvider extends ServiceProvider
         });
 
         $this->app->bind('cart', 'Webkul\Checkout\Cart');
+    }
+
+    /**
+     * Register factories.
+     *
+     * @param string $path
+     *
+     * @return void
+     */
+    protected function registerEloquentFactoriesFrom($path): void
+    {
+        $this->app->make(EloquentFactory::class)->load($path);
     }
 }

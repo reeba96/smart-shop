@@ -17,9 +17,10 @@ class Payment
         $paymentMethods = $this->getPaymentMethods();
 
         return [
-                'jump_to_section' => 'payment',
-                'html' => view('shop::checkout.onepage.payment', compact('paymentMethods'))->render()
-            ];
+            'jump_to_section' => 'payment',
+            'paymentMethods'  => $paymentMethods,
+            'html'            => view('shop::checkout.onepage.payment', compact('paymentMethods'))->render(),
+        ];
     }
 
     /**
@@ -36,10 +37,10 @@ class Payment
 
             if ($object->isAvailable()) {
                 $paymentMethods[] = [
-                    'method' => $object->getCode(),
+                    'method'       => $object->getCode(),
                     'method_title' => $object->getTitle(),
-                    'description' => $object->getDescription(),
-                    'sort' => $object->getSortOrder(),
+                    'description'  => $object->getDescription(),
+                    'sort'         => $object->getSortOrder(),
                 ];
             }
         }
@@ -58,12 +59,26 @@ class Payment
     /**
      * Returns payment redirect url if have any
      *
-     * @return array
+     * @param  \Webkul\Checkout\Contracts\Cart  $cart
+     * @return string
      */
     public function getRedirectUrl($cart)
     {
         $payment = app(Config::get('paymentmethods.' . $cart->payment->method . '.class'));
 
         return $payment->getRedirectUrl();
+    }
+
+    /**
+     * Returns payment method additional information
+     *
+     * @param  string  $code
+     * @return array
+     */
+    public static function getAdditionalDetails($code)
+    {
+        $paymentMethodClass =  app(Config::get('paymentmethods.' . $code . '.class'));
+        
+        return $paymentMethodClass->getAdditionalDetails();
     }
 }

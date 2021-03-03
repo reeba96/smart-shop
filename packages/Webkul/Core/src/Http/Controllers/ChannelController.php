@@ -2,17 +2,9 @@
 
 namespace Webkul\Core\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Event;
-use Webkul\Core\Repositories\ChannelRepository as Channel;
+use Webkul\Core\Repositories\ChannelRepository;
 
-/**
- * Channel controller
- *
- * @author Jitendra Singh <jitendra@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class ChannelController extends Controller
 {
     /**
@@ -25,19 +17,19 @@ class ChannelController extends Controller
     /**
      * ChannelRepository object
      *
-     * @var Object
+     * @var \Webkul\Core\Repositories\ChannelRepository
      */
-    protected $channel;
+    protected $channelRepository;
 
     /**
      * Create a new controller instance.
      *
-     * @param  \Webkul\Core\Repositories\ChannelRepository $channel
+     * @param  \Webkul\Core\Repositories\ChannelRepository  $channelRepository
      * @return void
      */
-    public function __construct(Channel $channel)
+    public function __construct(ChannelRepository $channelRepository)
     {
-        $this->channel = $channel;
+        $this->channelRepository = $channelRepository;
 
         $this->_config = request('_config');
     }
@@ -45,7 +37,7 @@ class ChannelController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -55,7 +47,7 @@ class ChannelController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function create()
     {
@@ -70,22 +62,40 @@ class ChannelController extends Controller
     public function store()
     {
         $this->validate(request(), [
-            'code' => ['required', 'unique:channels,code', new \Webkul\Core\Contracts\Validations\Code],
-            'name' => 'required',
-            'locales' => 'required|array|min:1',
-            'default_locale_id' => 'required',
-            'currencies' => 'required|array|min:1',
-            'base_currency_id' => 'required',
-            'root_category_id' => 'required',
-            'logo.*' => 'mimes:jpeg,jpg,bmp,png',
-            'favicon.*' => 'mimes:jpeg,jpg,bmp,png'
+            'code'              => ['required', 'unique:channels,code', new \Webkul\Core\Contracts\Validations\Code],
+            'name'              => 'required',
+            'locales'           => 'required|array|min:1',
+            'default_locale_id' => 'required|in_array:locales.*',
+            'currencies'        => 'required|array|min:1',
+            'base_currency_id'  => 'required|in_array:currencies.*',
+            'root_category_id'  => 'required',
+            'logo.*'            => 'mimes:jpeg,jpg,bmp,png',
+            'favicon.*'         => 'mimes:jpeg,jpg,bmp,png',
+            'seo_title'         => 'required|string',
+            'seo_description'   => 'required|string',
+            'seo_keywords'      => 'required|string',
+            'hostname'          => 'unique:channels,hostname',
         ]);
 
-        Event::fire('core.channel.create.before');
+        $data = request()->all();
 
-        $channel = $this->channel->create(request()->all());
+        $data['seo']['meta_title'] = $data['seo_title'];
+        $data['seo']['meta_description'] = $data['seo_description'];
+        $data['seo']['meta_keywords'] = $data['seo_keywords'];
 
-        Event::fire('core.channel.create.after', $channel);
+        unset($data['seo_title']);
+        unset($data['seo_description']);
+        unset($data['seo_keywords']);
+
+        $data['home_seo'] = json_encode($data['seo']);
+
+        unset($data['seo']);
+
+        Event::dispatch('core.channel.create.before');
+
+        $channel = $this->channelRepository->create($data);
+
+        Event::dispatch('core.channel.create.after', $channel);
 
         session()->flash('success', trans('admin::app.settings.channels.create-success'));
 
@@ -96,11 +106,11 @@ class ChannelController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function edit($id)
     {
-        $channel = $this->channel->with(['locales', 'currencies'])->findOrFail($id);
+        $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($id);
 
         return view($this->_config['view'], compact('channel'));
     }
@@ -108,30 +118,42 @@ class ChannelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id)
     {
         $this->validate(request(), [
-            'code' => ['required', 'unique:channels,code,' . $id, new \Webkul\Core\Contracts\Validations\Code],
-            'name' => 'required',
-            'locales' => 'required|array|min:1',
+            'code'              => ['required', 'unique:channels,code,' . $id, new \Webkul\Core\Contracts\Validations\Code],
+            'name'              => 'required',
+            'locales'           => 'required|array|min:1',
             'inventory_sources' => 'required|array|min:1',
-            'default_locale_id' => 'required',
-            'currencies' => 'required|array|min:1',
-            'base_currency_id' => 'required',
-            'root_category_id' => 'required',
-            'logo.*' => 'mimes:jpeg,jpg,bmp,png',
-            'favicon.*' => 'mimes:jpeg,jpg,bmp,png'
+            'default_locale_id' => 'required|in_array:locales.*',
+            'currencies'        => 'required|array|min:1',
+            'base_currency_id'  => 'required|in_array:currencies.*',
+            'root_category_id'  => 'required',
+            'logo.*'            => 'mimes:jpeg,jpg,bmp,png',
+            'favicon.*'         => 'mimes:jpeg,jpg,bmp,png',
+            'hostname'          => 'unique:channels,hostname,' . $id,
         ]);
 
-        Event::fire('core.channel.update.before', $id);
+        $data = request()->all();
 
-        $channel = $this->channel->update(request()->all(), $id);
+        $data['seo']['meta_title'] = $data['seo_title'];
+        $data['seo']['meta_description'] = $data['seo_description'];
+        $data['seo']['meta_keywords'] = $data['seo_keywords'];
 
-        Event::fire('core.channel.update.after', $channel);
+        unset($data['seo_title']);
+        unset($data['seo_description']);
+        unset($data['seo_keywords']);
+
+        $data['home_seo'] = json_encode($data['seo']);
+
+        Event::dispatch('core.channel.update.before', $id);
+
+        $channel = $this->channelRepository->update($data, $id);
+
+        Event::dispatch('core.channel.update.after', $channel);
 
         session()->flash('success', trans('admin::app.settings.channels.update-success'));
 
@@ -146,17 +168,17 @@ class ChannelController extends Controller
      */
     public function destroy($id)
     {
-        $channel = $this->channel->findOrFail($id);
+        $channel = $this->channelRepository->findOrFail($id);
 
         if ($channel->code == config('app.channel')) {
             session()->flash('error', trans('admin::app.settings.channels.last-delete-error'));
         } else {
             try {
-                Event::fire('core.channel.delete.before', $id);
+                Event::dispatch('core.channel.delete.before', $id);
 
-                $this->channel->delete($id);
+                $this->channelRepository->delete($id);
 
-                Event::fire('core.channel.delete.after', $id);
+                Event::dispatch('core.channel.delete.after', $id);
 
                 session()->flash('success', trans('admin::app.settings.channels.delete-success'));
 

@@ -1,3 +1,5 @@
+/docker-compose-collection
+/storage/dcc-data/
 /node_modules
 /public/hot
 /public/storage
@@ -5,8 +7,9 @@
 /public/js
 /public/vendor
 /public/themes
-/storage/*.key
+/public/fonts
 /vendor
+/data
 /.idea
 /.vscode
 /.vagrant
@@ -16,6 +19,11 @@ npm-debug.log
 yarn-error.log
 .env
 /ignorables/*
-composer.lock
+yarn.lock
 package-lock.json
 yarn.lock
+.php_cs.cache
+storage/*.key
+/resources/themes/velocity/*
+/resources/lang/vendor/webkul/admin/*
+packages/ICBTECH/Bodywave/node_modules/

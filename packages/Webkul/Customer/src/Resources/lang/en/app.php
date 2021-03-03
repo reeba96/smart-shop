@@ -12,6 +12,10 @@ return [
         'remove-all-success' => 'All The Items From Your Wishlist Have Been Removed',
     ],
     'reviews' => [
-        'empty' => 'You Have Not Reviewed Any Of Product Yet'
+        'empty' => 'You have not reviewed any of product yet'
+    ],
+    'forget_password' => [
+        'reset_link_sent' => 'We have e-mailed your reset password link.',
+        'email_not_exist' => "We can't find a user with that e-mail address"
     ]
 ];

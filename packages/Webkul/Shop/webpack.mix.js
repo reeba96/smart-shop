@@ -1,4 +1,9 @@
-const { mix } = require("laravel-mix");
+const mix = require("laravel-mix");
+
+if (mix == 'undefined') {
+    const { mix } = require("laravel-mix");
+}
+
 require("laravel-mix-merge-manifest");
 
 if (mix.inProduction()) {
@@ -16,6 +21,10 @@ mix.js([__dirname + "/src/Resources/assets/js/app.js"], "js/shop.js")
     .options({
         processCssUrls: false
     });
+
+if (!mix.inProduction()) {
+    mix.sourceMaps();
+}
 
 if (mix.inProduction()) {
     mix.version();

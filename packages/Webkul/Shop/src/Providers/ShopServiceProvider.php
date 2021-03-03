@@ -4,19 +4,12 @@ namespace Webkul\Shop\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Pagination\Paginator;
 use Webkul\Shop\Http\Middleware\Locale;
 use Webkul\Shop\Http\Middleware\Theme;
 use Webkul\Shop\Http\Middleware\Currency;
 use Webkul\Core\Tree;
 
-/**
- * Shop service provider
- *
- * @author    Jitendra Singh <jitendra@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class ShopServiceProvider extends ServiceProvider
 {
     /**
@@ -26,6 +19,8 @@ class ShopServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
+
         $this->loadRoutesFrom(__DIR__ . '/../Http/routes.php');
 
         $this->loadTranslationsFrom(__DIR__ . '/../Resources/lang', 'shop');
@@ -85,6 +80,10 @@ class ShopServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(
             dirname(__DIR__) . '/Config/menu.php', 'menu.customer'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__) . '/Config/system.php', 'core'
         );
     }
 }

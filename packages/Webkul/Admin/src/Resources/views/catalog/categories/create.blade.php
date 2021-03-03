@@ -12,7 +12,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.catalog.categories.add-title') }}
                     </h1>
@@ -39,7 +39,7 @@
 
                             <div class="control-group" :class="[errors.has('name') ? 'has-error' : '']">
                                 <label for="name" class="required">{{ __('admin::app.catalog.categories.name') }}</label>
-                                <input type="text" v-validate="'required'" class="control" id="name" name="name" value="{{ old('name') }}" data-vv-as="&quot;{{ __('admin::app.catalog.categories.name') }}&quot;"/>
+                                <input type="text" v-validate="'required'" class="control" id="name" name="name" value="{{ old('name') }}" data-vv-as="&quot;{{ __('admin::app.catalog.categories.name') }}&quot;" v-slugify-target="'slug'"/>
                                 <span class="control-error" v-if="errors.has('name')">@{{ errors.first('name') }}</span>
                             </div>
 
@@ -96,7 +96,7 @@
                             <description></description>
 
                             <div class="control-group {!! $errors->has('image.*') ? 'has-error' : '' !!}">
-                                <label>{{ __('admin::app.catalog.categories.image') }}
+                                <label>{{ __('admin::app.catalog.categories.image') }}</label>
 
                                 <image-wrapper :button-label="'{{ __('admin::app.catalog.products.add-image-btn-title') }}'" input-name="image" :multiple="false"></image-wrapper>
 
@@ -136,6 +136,28 @@
 
                     @endif
 
+                    <accordian :title="'{{ __('admin::app.catalog.categories.filterable-attributes') }}'" :active="true">
+                        <div slot="body">
+
+                            <?php $selectedaAtributes = old('attributes') ? old('attributes') : ['11']  ?>
+
+                            <div class="control-group" :class="[errors.has('attributes[]') ? 'has-error' : '']">
+                                <label for="attributes" class="required">{{ __('admin::app.catalog.categories.attributes') }}</label>
+                                <select class="control" name="attributes[]" v-validate="'required'" data-vv-as="&quot;{{ __('admin::app.catalog.categories.attributes') }}&quot;" multiple>
+
+                                    @foreach ($attributes as $attribute)
+                                        <option value="{{ $attribute->id }}" {{ in_array($attribute->id, $selectedaAtributes) ? 'selected' : ''}}>
+                                            {{ $attribute->name ? $attribute->name : $attribute->admin_name }}
+                                        </option>
+                                    @endforeach
+
+                                </select>
+                                <span class="control-error" v-if="errors.has('attributes[]')">
+                                    @{{ errors.first('attributes[]') }}
+                                </span>
+                            </div>
+                        </div>
+                    </accordian>
 
                     {!! view_render_event('bagisto.admin.catalog.category.create_form_accordian.seo.before') !!}
 
@@ -198,8 +220,8 @@
                 selector: 'textarea#description',
                 height: 200,
                 width: "100%",
-                plugins: 'image imagetools media wordcount save fullscreen code',
-                toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent  | removeformat | code',
+                plugins: 'image imagetools media wordcount save fullscreen code table lists link hr',
+                toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor link hr | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent  | removeformat | code | table',
                 image_advtab: true
             });
         });

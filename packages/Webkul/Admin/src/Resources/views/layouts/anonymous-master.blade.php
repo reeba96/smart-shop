@@ -7,8 +7,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <link rel="icon" sizes="16x16" href="{{ asset('vendor/webkul/ui/assets/images/favicon.ico') }}" />
-
+        @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
+            <link rel="icon" sizes="16x16" href="{{ \Illuminate\Support\Facades\Storage::url($favicon) }}" />
+        @else
+            <link rel="icon" sizes="16x16" href="{{ asset('vendor/webkul/ui/assets/images/favicon.ico') }}" />
+        @endif
+        
         <link rel="stylesheet" href="{{ asset('vendor/webkul/admin/assets/css/admin.css') }}">
         <link rel="stylesheet" href="{{ asset('vendor/webkul/ui/assets/css/ui.css') }}">
 
@@ -67,7 +71,7 @@
 
         {!! view_render_event('bagisto.admin.layout.head') !!}
     </head>
-    <body @if (app()->getLocale() == 'ar') class="rtl" @endif style="scroll-behavior: smooth;">
+    <body style="scroll-behavior: smooth;">
         <div id="app" class="container">
 
             <flash-wrapper ref='flashes'></flash-wrapper>
@@ -78,9 +82,9 @@
 
                     <div class="brand-logo">
                         @if (core()->getConfigData('general.design.admin_logo.logo_image'))
-                            <img src="{{ \Illuminate\Support\Facades\Storage::url(core()->getConfigData('general.design.admin_logo.logo_image')) }}" alt="Bagisto" style="height: 40px; width: 110px;"/>
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url(core()->getConfigData('general.design.admin_logo.logo_image')) }}" alt="{{ config('app.name') }}" style="height: 40px; width: 110px;"/>
                         @else
-                            <img src="{{ asset('vendor/webkul/ui/assets/images/logo.png') }}" alt="Bagisto"/>
+                            <img src="{{ asset('vendor/webkul/ui/assets/images/logo.png') }}" alt="{{ config('app.name') }}"/>
                         @endif
                     </div>
 
@@ -90,16 +94,17 @@
 
                     {!! view_render_event('bagisto.admin.layout.content.after') !!}
 
-                    <div class="footer">
-                        <p>
-                            @if (core()->getConfigData('general.content.footer.footer_content'))
-                                {{ core()->getConfigData('general.content.footer.footer_content') }}
-                            @else
-                                {{ trans('admin::app.footer.copy-right') }}
-                            @endif
-                        </p>
-                    </div>
-
+                    @if (core()->getConfigData('general.content.footer.footer_toggle'))
+                        <div class="footer">
+                            <p style="text-align: center;">
+                                @if (core()->getConfigData('general.content.footer.footer_content'))
+                                    {{ core()->getConfigData('general.content.footer.footer_content') }}
+                                @else
+                                    {!! trans('admin::app.footer.copy-right') !!}
+                                @endif
+                            </p>
+                        </div>
+                    @endif
                 </div>
 
             </div>
@@ -117,8 +122,10 @@
             @endif
 
             window.serverErrors = [];
-            @if (count($errors))
-                window.serverErrors = @json($errors->getMessages());
+            @if (isset($errors))
+                @if (count($errors))
+                    window.serverErrors = @json($errors->getMessages());
+                @endif
             @endif
         </script>
 

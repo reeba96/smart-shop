@@ -13,15 +13,13 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
     //unsubscribe
     Route::get('/unsubscribe/{token}', 'Webkul\Shop\Http\Controllers\SubscriptionController@unsubscribe')->name('shop.unsubscribe');
 
-    //Store front header nav-menu fetch
-    Route::get('/categories/{slug}', 'Webkul\Shop\Http\Controllers\CategoryController@index')->defaults('_config', [
-        'view' => 'shop::products.index'
-    ])->name('shop.categories.index');
-
     //Store front search
     Route::get('/search', 'Webkul\Shop\Http\Controllers\SearchController@index')->defaults('_config', [
         'view' => 'shop::search.search'
     ])->name('shop.search.index');
+
+    //Upload image for search product
+    Route::post('/upload-search-image', 'Webkul\Shop\Http\Controllers\HomeController@upload')->name('shop.image.search.upload');
 
     //Country State Selector
     Route::get('get/countries', 'Webkul\Core\Http\Controllers\CountryStateController@getCountries')->defaults('_config', [
@@ -39,17 +37,14 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
         'view' => 'shop::checkout.cart.index'
     ])->name('shop.checkout.cart.index');
 
-        Route::post('checkout/check/coupons', 'Webkul\Shop\Http\Controllers\OnepageController@applyCoupon')->name('shop.checkout.check.coupons');
+    Route::post('checkout/cart/coupon', 'Webkul\Shop\Http\Controllers\CartController@applyCoupon')->name('shop.checkout.cart.coupon.apply');
 
-        Route::post('checkout/remove/coupon', 'Webkul\Shop\Http\Controllers\OnepageController@removeCoupon')->name('shop.checkout.remove.coupon');
+    Route::delete('checkout/cart/coupon', 'Webkul\Shop\Http\Controllers\CartController@removeCoupon')->name('shop.checkout.coupon.remove.coupon');
 
     //Cart Items Add
     Route::post('checkout/cart/add/{id}', 'Webkul\Shop\Http\Controllers\CartController@add')->defaults('_config', [
         'redirect' => 'shop.checkout.cart.index'
     ])->name('cart.add');
-
-    //Cart Items Add Configurable for more
-    Route::get('checkout/cart/addconfigurable/{slug}', 'Webkul\Shop\Http\Controllers\CartController@addConfigurable')->name('cart.add.configurable');
 
     //Cart Items Remove
     Route::get('checkout/cart/remove/{id}', 'Webkul\Shop\Http\Controllers\CartController@remove')->name('cart.remove');
@@ -90,15 +85,9 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
     ])->name('shop.checkout.success');
 
     //Shop buynow button action
-    Route::get('buynow/{id}', 'Webkul\Shop\Http\Controllers\CartController@buyNow')->name('shop.product.buynow');
-
-    //Shop buynow button action
     Route::get('move/wishlist/{id}', 'Webkul\Shop\Http\Controllers\CartController@moveToWishlist')->name('shop.movetowishlist');
 
-    //Show Product Details Page(For individually Viewable Product)
-    Route::get('/products/{slug}', 'Webkul\Shop\Http\Controllers\ProductController@index')->defaults('_config', [
-        'view' => 'shop::products.view'
-    ])->name('shop.products.index');
+    Route::get('/downloadable/download-sample/{type}/{id}', 'Webkul\Shop\Http\Controllers\ProductController@downloadSample')->name('shop.downloadable.download_sample');
 
     // Show Product Review Form
     Route::get('/reviews/{slug}', 'Webkul\Shop\Http\Controllers\ReviewController@show')->defaults('_config', [
@@ -169,6 +158,12 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
         //resend verification email
         Route::get('/resend/verification/{email}', 'Webkul\Customer\Http\Controllers\RegistrationController@resendVerificationEmail')->name('customer.resend.verification-email');
 
+        // for customer login checkout
+        Route::post('/customer/exist', 'Webkul\Shop\Http\Controllers\OnepageController@checkExistCustomer')->name('customer.checkout.exist');
+
+        // for customer login checkout
+        Route::post('/customer/checkout/login', 'Webkul\Shop\Http\Controllers\OnepageController@loginForCheckout')->name('customer.checkout.login');
+
         // Auth Routes
         Route::group(['middleware' => ['customer']], function () {
 
@@ -209,7 +204,13 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
                 //Customer Profile Edit Form Store
                 Route::post('profile/edit', 'Webkul\Customer\Http\Controllers\CustomerController@update')->defaults('_config', [
                     'redirect' => 'customer.profile.index'
-                ])->name('customer.profile.edit');
+                ])->name('customer.profile.store');
+
+                //Customer Profile Delete Form Store
+                Route::post('profile/destroy', 'Webkul\Customer\Http\Controllers\CustomerController@destroy')->defaults('_config', [
+                    'redirect' => 'customer.profile.index'
+                ])->name('customer.profile.destroy');
+
                 /*  Profile Routes Ends Here  */
 
                 /*    Routes for Addresses   */
@@ -227,7 +228,7 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
                 Route::post('addresses/create', 'Webkul\Customer\Http\Controllers\AddressController@store')->defaults('_config', [
                     'view' => 'shop::customers.account.address.address',
                     'redirect' => 'customer.address.index'
-                ])->name('customer.address.create');
+                ])->name('customer.address.store');
 
                 //Customer Address Edit Form Show
                 Route::get('addresses/edit/{id}', 'Webkul\Customer\Http\Controllers\AddressController@edit')->defaults('_config', [
@@ -237,7 +238,7 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
                 //Customer Address Edit Form Store
                 Route::put('addresses/edit/{id}', 'Webkul\Customer\Http\Controllers\AddressController@update')->defaults('_config', [
                     'redirect' => 'customer.address.index'
-                ])->name('customer.address.edit');
+                ])->name('customer.address.update');
 
                 //Customer Address Make Default
                 Route::get('addresses/default/{id}', 'Webkul\Customer\Http\Controllers\AddressController@makeDefault')->name('make.default.address');
@@ -257,15 +258,46 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
                     'view' => 'shop::customers.account.orders.index'
                 ])->name('customer.orders.index');
 
+                //Customer downloadable products(listing)
+                Route::get('downloadable-products', 'Webkul\Shop\Http\Controllers\DownloadableProductController@index')->defaults('_config', [
+                    'view' => 'shop::customers.account.downloadable_products.index'
+                ])->name('customer.downloadable_products.index');
+
+                //Customer downloadable products(listing)
+                Route::get('downloadable-products/download/{id}', 'Webkul\Shop\Http\Controllers\DownloadableProductController@download')->defaults('_config', [
+                    'view' => 'shop::customers.account.downloadable_products.index'
+                ])->name('customer.downloadable_products.download');
+
                 //Customer orders view summary and status
                 Route::get('orders/view/{id}', 'Webkul\Shop\Http\Controllers\OrderController@view')->defaults('_config', [
                     'view' => 'shop::customers.account.orders.view'
                 ])->name('customer.orders.view');
 
+                //Customer helpdesk routes
+                Route::get('tickets', 'ICBTECH\Helpdesk\Http\Controllers\TicketsController@index')->defaults('_config', [
+                    'view' => 'shop::customers.account.helpdesk.index'
+                ])->name('customer.helpdesk.index');
+
+                //Customer show ticket
+                Route::get('tickets/show/{id}', 'ICBTECH\Helpdesk\Http\Controllers\TicketsController@show')->name('customer.helpdesk.show');
+                
+                //Customer create ticket
+                Route::get('tickets/create', 'ICBTECH\Helpdesk\Http\Controllers\TicketsController@create')->defaults('_config', [
+                    'view' => 'shop::customers.account.helpdesk.create'
+                ])->name('customer.helpdesk.create');
+
+                //Customer save ticket
+                Route::post('tickets/save', 'ICBTECH\Helpdesk\Http\Controllers\TicketsController@store')->name('customer.helpdesk.save');
+
+                //Customer reply ticket
+                Route::post('tickets/reply', 'ICBTECH\Helpdesk\Http\Controllers\CommentsController@store')->name('customer.helpdesk.reply');
+            
                 //Prints invoice
                 Route::get('orders/print/{id}', 'Webkul\Shop\Http\Controllers\OrderController@print')->defaults('_config', [
                     'view' => 'shop::customers.account.orders.print'
                 ])->name('customer.orders.print');
+
+                Route::get('/orders/cancel/{id}', 'Webkul\Shop\Http\Controllers\OrderController@cancel')->name('customer.orders.cancel');
 
                 /* Reviews route */
                 //Customer reviews
@@ -287,5 +319,12 @@ Route::group(['middleware' => ['web', 'locale', 'theme', 'currency']], function 
     });
     //customer routes end here
 
-    Route::fallback('Webkul\Shop\Http\Controllers\HomeController@notFound');
+    Route::get('page/{slug}', 'Webkul\CMS\Http\Controllers\Shop\PagePresenterController@presenter')->name('shop.cms.page');
+
+    Route::fallback(\Webkul\Shop\Http\Controllers\ProductsCategoriesProxyController::class . '@index')
+        ->defaults('_config', [
+            'product_view' => 'shop::products.view',
+            'category_view' => 'shop::products.index'
+        ])
+        ->name('shop.productOrCategory.index');
 });

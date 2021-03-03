@@ -7,8 +7,18 @@ use Intervention\Image\Filters\FilterInterface;
 
 class Small implements FilterInterface
 {
+    /**
+     * @param  \Intervention\Image\Image  $image
+     * @return \Intervention\Image\Image
+     */
     public function applyFilter(Image $image)
     {
-        return $image->resize(120, 120);
+        $width = $height = 120;
+
+        $image->resize($width, $height, function ($constraint) {
+            $constraint->aspectRatio();
+        });
+
+        return $image->resizeCanvas($width, $height, 'center', false, '#fff');
     }
 }

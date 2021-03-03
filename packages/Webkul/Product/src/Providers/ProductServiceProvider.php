@@ -2,10 +2,12 @@
 
 namespace Webkul\Product\Providers;
 
+use Illuminate\Database\Eloquent\Factory as EloquentFactory;
 use Illuminate\Support\ServiceProvider;
-use Webkul\Product\Providers\EventServiceProvider;
-use Illuminate\Routing\Router;
-use Webkul\Product\Models\Product;
+use Webkul\Product\Models\ProductProxy;
+use Webkul\Product\Observers\ProductObserver;
+use Webkul\Product\Console\Commands\PriceUpdate;
+use Webkul\Product\Console\Commands\GenerateProducts;
 
 class ProductServiceProvider extends ServiceProvider
 {
@@ -14,17 +16,19 @@ class ProductServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(Router $router)
+    public function boot()
     {
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
 
-        $this->app->register(EventServiceProvider::class);
+        $this->app->make(EloquentFactory::class)->load(__DIR__ . '/../Database/Factories');
 
-        $this->composeView();
+        $this->app->register(EventServiceProvider::class);
 
         $this->publishes([
             dirname(__DIR__) . '/Config/imagecache.php' => config_path('imagecache.php'),
         ]);
+
+        ProductProxy::observe(ProductObserver::class);
     }
 
     /**
@@ -32,30 +36,47 @@ class ProductServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
+
+        $this->registerCommands();
+
+        $this->registerEloquentFactoriesFrom(__DIR__ . '/../Database/Factories');
     }
 
-    public function registerConfig() {
+    /**
+     * Register Configuration
+     *
+     * @return void
+     */
+    public function registerConfig(): void
+    {
         $this->mergeConfigFrom(
-            dirname(__DIR__) . '/Config/product-types.php', 'product-types'
+            dirname(__DIR__) . '/Config/product_types.php', 'product_types'
         );
     }
 
-    public function composeView() {
-        view()->composer(['admin::catalog.products.create'], function ($view) {
-            $items = array();
+    /**
+     * Register the console commands of this package
+     *
+     * @return void
+     */
+    protected function registerCommands(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([PriceUpdate::class, GenerateProducts::class,]);
+        }
+    }
 
-            foreach (config('product-types') as $item) {
-                $item['children'] = [];
-
-                array_push($items, $item);
-            }
-
-            $types = core()->sortItems($items);
-
-            $view->with('productTypes', $types);
-        });
+    /**
+     * Register factories.
+     *
+     * @param  string  $path
+     * @return void
+     */
+    protected function registerEloquentFactoriesFrom($path): void
+    {
+        $this->app->make(EloquentFactory::class)->load($path);
     }
 }

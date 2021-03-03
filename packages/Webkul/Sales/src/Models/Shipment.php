@@ -8,7 +8,11 @@ use Webkul\Sales\Contracts\Shipment as ShipmentContract;
 
 class Shipment extends Model implements ShipmentContract
 {
-    protected $guarded = ['id', 'created_at', 'updated_at'];
+    protected $guarded = [
+        'id',
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * Get the order that belongs to the invoice.
@@ -43,10 +47,11 @@ class Shipment extends Model implements ShipmentContract
     }
 
     /**
-     * Get the addresses for the shipment.
+     * Get the address for the shipment.
      */
     public function address()
     {
-        return $this->belongsTo(OrderAddressProxy::modelClass(), 'order_address_id');
+        return $this->belongsTo(OrderAddressProxy::modelClass(), 'order_address_id')
+            ->where('address_type', OrderAddress::ADDRESS_TYPE_SHIPPING);
     }
 }

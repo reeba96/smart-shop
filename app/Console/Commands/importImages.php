@@ -17,7 +17,7 @@ class importImages extends Command
      *
      * @var string
      */
-    protected $signature = 'command:importImages';
+    protected $signature = 'command:importImages {params?}';
 
     /**
      * The console command description.
@@ -43,59 +43,80 @@ class importImages extends Command
      */
     public function handle()
     {
-        DB::table('product_images')->whereRaw('1=1')->delete();
+        if ($this->argument('params') == 'fresh'){
+            DB::table('product_images')->whereRaw('1=1')->delete();
+        }
 
-        $xml_string = Storage::disk('local')->get('data\ewe.xml');
+        
+       // $xml_string = Storage::disk('local')->get('data\ewe.xml');
 
-        $array = XmlToArray::convert($xml_string);
-      
-        $products = collect($array['product']);
+     //   $array = XmlToArray::convert($xml_string);
+     //   $products = collect($array['product']);
 
+        $streamer = \Prewk\XmlStringStreamer::createStringWalkerParser( ltrim(Storage::disk('local')->url('app/data/ewe.xml'),'/' ) );
+        $i = 0;
+        while ($node = $streamer->getNode()) {
+            
+            $simpleXmlNode = simplexml_load_string($node);
 
-        $bar = $this->output->createProgressBar(count($products));
-        $bar->start();
+            $product = XmlToArray::convert($node);
 
+            if ( empty($product['ean'])) {
+                //   dump($product); exit;
+                $product['ean'] = $product['id'];
+            }
+            $product_sku = $product['ean'];
 
-        foreach($products as $xml_product) {
+            //$product_image = (string)$simpleXmlNode->images;
+            //$bar = $this->output->createProgressBar(count($products));
+            //$bar->start();
+            echo $i++.' '.$product_sku ."\n";
+         
+            if ( isset($product['images']['image'])  ){
+              
+                $db_product = Product::where('sku',strtolower($product_sku))->first();
 
-            if ( isset($xml_product['images'] ) ){
-
-                $product = Product::where('sku',strtolower($xml_product['id']))->first();
-                if ($product){
-                    foreach($xml_product['images'] as $image){
-
-                        if( is_array($image)) {
-                            foreach($image as $image_item){
-                                $this->saveImage($product->id,$image_item);
-                            }
+                if ($db_product){
+                    if ( is_array( $product['images']['image']) ){
+                        foreach( $product['images']['image'] as $key => $image_item){
+                            $this->saveImage($db_product->id,(string)$image_item);
                         }
-                        else{
-                            $this->saveImage($product->id,$image);
-                        }
-                        
+                    }
+                    else{
+                        $this->saveImage($db_product->id,$product['images']['image']);
                     }
                 }
             } 
-            $bar->advance();
+         //   $bar->advance();
         }
-        $bar->finish();
+        //$bar->finish();
     }
 
     public function saveImage($product_id, $image){
-
-        $img = file_get_contents($image);
 
         $image_arr = explode('/',$image);
         $filename = end($image_arr);
         $path = 'product/'.$product_id.'/'.$filename;
 
-        $product_image = new ProductImage;
-        $product_image->product_id = $product_id;
-        $product_image->path = $path;
+        $product_image = ProductImage::where('product_id',$product_id)->where('path',$path)->first();
+        if($product_image) {
+            $found = true;
 
-        $product_image->save();
-        
-        Storage::put($path, $img);
+        }
+        else $found = false;
+        if ( $product_id == 75540 )
+            dump(['image found' => $found,'product_id' => $product_id, 'path' => $path]);
+        if ($this->argument('params') == 'fresh' || !$product_image ) {
+            $img = file_get_contents($image);
 
+            dump( $path );
+            $product_image = new ProductImage;
+            $product_image->product_id = $product_id;
+            $product_image->path = $path;
+            $product_image->save();
+            
+            Storage::put($path, $img);
+        }
+      
     }
 }

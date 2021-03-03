@@ -6,10 +6,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Webkul\User\Models\Role;
 use Webkul\User\Notifications\AdminResetPassword;
+
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Webkul\User\Contracts\Admin as AdminContract;
 
 
-class Admin extends Authenticatable implements AdminContract
+class Admin extends Authenticatable implements AdminContract, JWTSubject
 {
     use Notifiable;
 
@@ -19,7 +21,12 @@ class Admin extends Authenticatable implements AdminContract
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role_id', 'status',
+        'name',
+        'email',
+        'password',
+        'api_token',
+        'role_id',
+        'status',
     ];
 
     /**
@@ -28,7 +35,9 @@ class Admin extends Authenticatable implements AdminContract
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'api_token',
+        'remember_token',
     ];
 
     /**
@@ -58,9 +67,31 @@ class Admin extends Authenticatable implements AdminContract
      */
     public function hasPermission($permission)
     {
-        if ($this->role->permission_type == 'custom' && ! $this->role->permissions)
+        if ($this->role->permission_type == 'custom' && ! $this->role->permissions) {
             return false;
+        }
 
         return in_array($permission, $this->role->permissions);
+    }
+
+
+     /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

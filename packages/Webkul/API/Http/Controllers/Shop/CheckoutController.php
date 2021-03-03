@@ -12,14 +12,11 @@ use Webkul\API\Http\Resources\Checkout\CartShippingRate as CartShippingRateResou
 use Webkul\API\Http\Resources\Sales\Order as OrderResource;
 use Webkul\Checkout\Http\Requests\CustomerAddressForm;
 use Webkul\Sales\Repositories\OrderRepository;
+use Illuminate\Support\Str;
 use Cart;
+use Exception;
+use Webkul\Shop\Http\Controllers\OnepageController;
 
-/**
- * Checkout controller
- *
- * @author    Jitendra Singh <jitendra@webkul.com>
- * @copyright 2018 Webkul Software Pvt Ltd (http://www.webkul.com)
- */
 class CheckoutController extends Controller
 {
     /**
@@ -32,23 +29,23 @@ class CheckoutController extends Controller
     /**
      * CartRepository object
      *
-     * @var Object
+     * @var \Webkul\Checkout\Repositories\CartRepository
      */
     protected $cartRepository;
 
     /**
      * CartItemRepository object
      *
-     * @var Object
+     * @var \Webkul\Checkout\Repositories\CartItemRepository
      */
     protected $cartItemRepository;
 
     /**
      * Controller instance
      *
-     * @param Webkul\Checkout\Repositories\CartRepository     $cartRepository
-     * @param Webkul\Checkout\Repositories\CartItemRepository $cartItemRepository
-     * @param Webkul\Sales\Repositories\OrderRepository       $orderRepository
+     * @param  \Webkul\Checkout\Repositories\CartRepository  $cartRepository
+     * @param  \Webkul\Checkout\Repositories\CartItemRepository  $cartItemRepository
+     * @param  \Webkul\Sales\Repositories\OrderRepository  $orderRepository
      */
     public function __construct(
         CartRepository $cartRepository,
@@ -60,9 +57,8 @@ class CheckoutController extends Controller
 
         auth()->setDefaultDriver($this->guard);
 
-        
         // $this->middleware('auth:' . $this->guard);
-        
+
         $this->_config = request('_config');
 
         $this->cartRepository = $cartRepository;
@@ -83,6 +79,7 @@ class CheckoutController extends Controller
         $data = request()->all();
 
         $data['billing']['address1'] = implode(PHP_EOL, array_filter($data['billing']['address1']));
+
         $data['shipping']['address1'] = implode(PHP_EOL, array_filter($data['shipping']['address1']));
 
         if (isset($data['billing']['id']) && str_contains($data['billing']['id'], 'address_')) {
@@ -90,21 +87,22 @@ class CheckoutController extends Controller
             unset($data['billing']['address_id']);
         }
 
-        if (isset($data['shipping']['id']) && str_contains($data['shipping']['id'], 'address_')) {
+        if (isset($data['shipping']['id']) && Str::contains($data['shipping']['id'], 'address_')) {
             unset($data['shipping']['id']);
             unset($data['shipping']['address_id']);
         }
 
 
-        if (Cart::hasError() || ! Cart::saveCustomerAddress($data) || ! Shipping::collectRates())
+        if (Cart::hasError() || ! Cart::saveCustomerAddress($data) || ! Shipping::collectRates()) {
             abort(400);
+        }
 
         $rates = [];
 
         foreach (Shipping::getGroupedAllShippingRates() as $code => $shippingMethod) {
             $rates[] = [
                 'carrier_title' => $shippingMethod['carrier_title'],
-                'rates' => CartShippingRateResource::collection(collect($shippingMethod['rates']))
+                'rates'         => CartShippingRateResource::collection(collect($shippingMethod['rates'])),
             ];
         }
 
@@ -113,7 +111,7 @@ class CheckoutController extends Controller
         return response()->json([
             'data' => [
                 'rates' => $rates,
-                'cart' => new CartResource(Cart::getCart())
+                'cart'  => new CartResource(Cart::getCart()),
             ]
         ]);
     }
@@ -127,15 +125,19 @@ class CheckoutController extends Controller
     {
         $shippingMethod = request()->get('shipping_method');
 
-        if (Cart::hasError() || !$shippingMethod || ! Cart::saveShippingMethod($shippingMethod))
+        if (Cart::hasError()
+            || !$shippingMethod
+            || ! Cart::saveShippingMethod($shippingMethod)
+        ) {
             abort(400);
+        }
 
         Cart::collectTotals();
 
         return response()->json([
             'data' => [
                 'methods' => Payment::getPaymentMethods(),
-                'cart' => new CartResource(Cart::getCart())
+                'cart'    => new CartResource(Cart::getCart()),
             ]
         ]);
     }
@@ -149,12 +151,13 @@ class CheckoutController extends Controller
     {
         $payment = request()->get('payment');
 
-        if (Cart::hasError() || ! $payment || ! Cart::savePaymentMethod($payment))
+        if (Cart::hasError() || ! $payment || ! Cart::savePaymentMethod($payment)) {
             abort(400);
+        }
 
         return response()->json([
             'data' => [
-                'cart' => new CartResource(Cart::getCart())
+                'cart' => new CartResource(Cart::getCart()),
             ]
         ]);
     }
@@ -166,8 +169,9 @@ class CheckoutController extends Controller
     */
     public function saveOrder()
     {
-        if (Cart::hasError())
+        if (Cart::hasError()) {
             abort(400);
+        }
 
         Cart::collectTotals();
 
@@ -177,8 +181,8 @@ class CheckoutController extends Controller
 
         if ($redirectUrl = Payment::getRedirectUrl($cart)) {
             return response()->json([
-                    'success' => true,
-                    'redirect_url' => $redirectUrl
+                    'success'      => true,
+                    'redirect_url' => $redirectUrl,
                 ]);
         }
 
@@ -187,34 +191,18 @@ class CheckoutController extends Controller
         Cart::deActivateCart();
 
         return response()->json([
-                'success' => true,
-                'order' => new OrderResource($order),
-            ]);
+            'success' => true,
+            'order'   => new OrderResource($order),
+        ]);
     }
 
     /**
      * Validate order before creation
      *
-     * @return mixed
+     * @throws Exception
      */
-    public function validateOrder()
+    public function validateOrder(): void
     {
-        $cart = Cart::getCart();
-
-        if (! $cart->shipping_address) {
-            throw new \Exception(trans('Please check shipping address.'));
-        }
-
-        if (! $cart->billing_address) {
-            throw new \Exception(trans('Please check billing address.'));
-        }
-
-        if (! $cart->selected_shipping_rate) {
-            throw new \Exception(trans('Please specify shipping method.'));
-        }
-
-        if (! $cart->payment) {
-            throw new \Exception(trans('Please specify payment method.'));
-        }
+        app(OnepageController::class)->validateOrder();
     }
 }

@@ -11,7 +11,7 @@
             <div class="page-header">
                 <div class="page-title">
                     <h1>
-                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ url('/admin/dashboard') }}';"></i>
+                        <i class="icon angle-left-icon back-link" onclick="history.length > 1 ? history.go(-1) : window.location = '{{ route('admin.dashboard.index') }}';"></i>
 
                         {{ __('admin::app.settings.channels.add-title') }}
                     </h1>
@@ -27,6 +27,8 @@
             <div class="page-content">
                 <div class="form-container">
                     @csrf()
+
+                    {!! view_render_event('bagisto.admin.settings.channel.create.before') !!}
 
                     <accordian :title="'{{ __('admin::app.settings.channels.general') }}'" :active="true">
                         <div slot="body">
@@ -51,7 +53,7 @@
                             <div class="control-group" :class="[errors.has('inventory_sources[]') ? 'has-error' : '']">
                                 <label for="inventory_sources" class="required">{{ __('admin::app.settings.channels.inventory_sources') }}</label>
                                 <select v-validate="'required'" class="control" id="inventory_sources" name="inventory_sources[]" data-vv-as="&quot;{{ __('admin::app.settings.channels.inventory_sources') }}&quot;" multiple>
-                                    @foreach (app('Webkul\Inventory\Repositories\InventorySourceRepository')->all() as $inventorySource)
+                                    @foreach (app('Webkul\Inventory\Repositories\InventorySourceRepository')->findWhere(['status' => 1]) as $inventorySource)
                                         <option value="{{ $inventorySource->id }}" {{ old('inventory_sources') && in_array($inventorySource->id, old('inventory_sources')) ? 'selected' : '' }}>
                                             {{ $inventorySource->name }}
                                         </option>
@@ -72,9 +74,11 @@
                                 <span class="control-error" v-if="errors.has('root_category_id')">@{{ errors.first('root_category_id') }}</span>
                             </div>
 
-                            <div class="control-group">
+                            <div class="control-group"  :class="[errors.has('hostname') ? 'has-error' : '']">
                                 <label for="hostname">{{ __('admin::app.settings.channels.hostname') }}</label>
-                                <input class="control" id="hostname" name="hostname" value="{{ old('hostname') }}" placeholder="https://www.example.com"/>
+                                <input class="control" v-validate="''" id="hostname" name="hostname" value="{{ old('hostname') }}" placeholder="https://www.example.com"/>
+
+                                <span class="control-error" v-if="errors.has('hostname')">@{{ errors.first('hostname') }}</span>
                             </div>
 
                         </div>
@@ -139,9 +143,9 @@
                             <div class="control-group">
                                 <label for="theme">{{ __('admin::app.settings.channels.theme') }}</label>
                                 <select class="control" id="theme" name="theme">
-                                    @foreach (themes()->all() as $theme)
-                                        <option value="{{ $theme->code }}" {{ old('theme') == $theme->code ? 'selected' : '' }}>
-                                            {{ $theme->name }}
+                                    @foreach (config('themes.themes') as $themeCode => $theme)
+                                        <option value="{{ $themeCode }}" {{ old('theme') == $themeCode ? 'selected' : '' }}>
+                                            {{ $theme['name'] }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -158,13 +162,13 @@
                             </div>
 
                             <div class="control-group">
-                                <label>{{ __('admin::app.settings.channels.logo') }}
+                                <label>{{ __('admin::app.settings.channels.logo') }}</label>
 
                                 <image-wrapper :button-label="'{{ __('admin::app.catalog.products.add-image-btn-title') }}'" input-name="logo" :multiple="false"></image-wrapper>
                             </div>
 
                             <div class="control-group">
-                                <label>{{ __('admin::app.settings.channels.favicon') }}
+                                <label>{{ __('admin::app.settings.channels.favicon') }}</label>
 
                                 <image-wrapper :button-label="'{{ __('admin::app.catalog.products.add-image-btn-title') }}'" input-name="logo" :multiple="false"></image-wrapper>
                             </div>
@@ -172,6 +176,33 @@
                         </div>
                     </accordian>
 
+                    <accordian :title="'{{ __('admin::app.settings.channels.seo') }}'" :active="true">
+                        <div slot="body">
+                            <div class="control-group" :class="[errors.has('seo_title') ? 'has-error' : '']">
+                                <label for="seo_title" class="required">{{ __('admin::app.settings.channels.seo-title') }}</label>
+                                <input v-validate="'required'" class="control" id="seo_title" name="seo_title" data-vv-as="&quot;{{ __('admin::app.settings.channels.seo-title') }}&quot;" value="{{ old('seo_title') }}"/>
+                                <span class="control-error" v-if="errors.has('seo_title')">@{{ errors.first('seo_title') }}</span>
+                            </div>
+
+                            <div class="control-group" :class="[errors.has('seo_description') ? 'has-error' : '']">
+                                <label for="seo_description" class="required">{{ __('admin::app.settings.channels.seo-description') }}</label>
+
+                                <textarea v-validate="'required'" class="control" id="seo_description" name="seo_description" data-vv-as="&quot;{{ __('admin::app.settings.channels.seo-description') }}&quot;" value="{{ old('seo_description') }}"></textarea>
+
+                                <span class="control-error" v-if="errors.has('seo_description')">@{{ errors.first('seo_description') }}</span>
+                            </div>
+
+                            <div class="control-group" :class="[errors.has('seo_keywords') ? 'has-error' : '']">
+                                <label for="seo_keywords" class="required">{{ __('admin::app.settings.channels.seo-keywords') }}</label>
+
+                                <textarea v-validate="'required'" class="control" id="seo_keywords" name="seo_keywords" data-vv-as="&quot;{{ __('admin::app.settings.channels.seo-keywords') }}&quot;" value="{{ old('seo_keywords') }}"></textarea>
+
+                                <span class="control-error" v-if="errors.has('seo_keywords')">@{{ errors.first('seo_keywords') }}</span>
+                            </div>
+                        </div>
+                    </accordian>
+
+                    {!! view_render_event('bagisto.admin.settings.channel.create.after') !!}
                 </div>
             </div>
         </form>
@@ -187,8 +218,8 @@
                 selector: 'textarea#home_page_content,textarea#footer_content',
                 height: 200,
                 width: "100%",
-                plugins: 'image imagetools media wordcount save fullscreen code',
-                toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor | link | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat | code',
+                plugins: 'image imagetools media wordcount save fullscreen code table lists link hr',
+                toolbar1: 'formatselect | bold italic strikethrough forecolor backcolor link hr | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | removeformat | code | table',
                 image_advtab: true,
                 valid_elements : '*[*]'
             });
