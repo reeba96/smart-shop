@@ -51,39 +51,14 @@ class ResetPasswordController extends Controller
      */
     public function store()
     {
-        //try {
-            $data = $this->validate(request(), [
+        try {
+            $this->validate(request(), [
                 'token'    => 'required',
                 'email'    => 'required|email',
                 'password' => 'required|confirmed|min:6',
             ]);
 
-            $formdata = [];
-            $formdata['hash'] = Hash::make($data['password']);
-            $formdata['email'] = $data['email'];
-    
-            $client = new \GuzzleHttp\Client();
-            $api_url = config('app.bodywave_api').'shop_change_password';
-    
-            $token = config('app.bodywave_token');
-    
-            $headers = [
-                'Authorization' => 'Bearer ' . $token,        
-                'Accept'        => 'application/json',
-            ];
-            
-            $res = $client->request('post',$api_url, [
-                'headers' => $headers,
-                'form_params' => $formdata
-            ]);
-         
-            $result = json_decode($res->getBody()->getContents());
-            if ($result->status =='OK'){
-                return redirect()->route($this->_config['redirect']);    
-            }
-            
-    
-        /*    $response = $this->broker()->reset(
+            $response = $this->broker()->reset(
                 request(['email', 'password', 'password_confirmation', 'token']), function ($customer, $password) {
                     $this->resetPassword($customer, $password);
                 }
@@ -92,17 +67,17 @@ class ResetPasswordController extends Controller
             if ($response == Password::PASSWORD_RESET) {
                 return redirect()->route($this->_config['redirect']);
             }
-*/
+
             return back()
                 ->withInput(request(['email']))
                 ->withErrors([
                     'email' => trans($response),
                 ]);
-      /*  } catch(\Exception $e) {
+        } catch(\Exception $e) {
             session()->flash('error', trans($e->getMessage()));
 
             return redirect()->back();
-        }*/
+        }
     }
 
     /**
@@ -114,24 +89,7 @@ class ResetPasswordController extends Controller
      */
     protected function resetPassword($customer, $password)
     {
-        
-        $formdata = [];
-        $formdata['hash'] = Hash::make($password);
-
-        $client = new \GuzzleHttp\Client();
-        $api_url = config('app.bodywave_api').'/changePassword';
-
-        $token = config('app.bodywave_token');
-
-        $headers = [
-            'Authorization' => 'Bearer ' . $token,        
-            'Accept'        => 'application/json',
-        ];
-        
-        $res = $client->request('post',$api_url, [
-            'headers' => $headers,
-            'form_params' => $formdata
-        ]);
+        $customer->password = Hash::make($password);
 
         $customer->setRememberToken(Str::random(60));
 

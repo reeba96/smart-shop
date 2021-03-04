@@ -80,55 +80,14 @@ class RegistrationController extends Controller
             'password'   => 'confirmed|min:6|required',
         ]);
 
-        $data = request()->input();
-
-        $data['name'] = $data['first_name'].' '.$data['last_name'];
-        $formdata = $data;
-        
-        unset($formdata['first_name']);
-        unset($formdata['last_name']);
-        unset($formdata['_token']);
-        unset($formdata['password_confirmation']);
-
-        $formdata['password'] = Hash::make($formdata['password']); // Crypt::encryptString($formdata['password']);
-
-        $client = new \GuzzleHttp\Client();
-        $api_url = config('app.bodywave_api').'/shop_register';
-
-        $token = config('app.bodywave_token');
-
-        $headers = [
-            'Authorization' => 'Bearer ' . $token,        
-            'Accept'        => 'application/json',
-        ];
-
-    //   dd($headers);
-        
-        $res = $client->request('post',$api_url, [
-            'headers' => $headers,
-            'form_params' => $formdata
-          
+        $data = array_merge(request()->input(), [
+            'password'          => bcrypt(request()->input('password')),
+            'api_token'         => Str::random(80),
+            'is_verified'       => core()->getConfigData('customer.settings.email.verification') ? 0 : 1,
+            'customer_group_id' => $this->customerGroupRepository->findOneWhere(['code' => 'general'])->id,
+            'token'             => md5(uniqid(rand(), true)),
+            'subscribed_to_news_letter' => isset(request()->input()['is_subscribed']) ? 1 : 0,
         ]);
-   //     echo $res->getStatusCode();
-        // "200"
-   //     echo $res->getHeader('content-type')[0];
-        // 'application/json; charset=utf8'
-    //    dd( $res->getBody()->getContents());
-
-        $data['password'] = '';// bcrypt($data['password']);
-        $data['api_token'] = Str::random(80);
-
-        if (core()->getConfigData('customer.settings.email.verification')) {
-            $data['is_verified'] = 0;
-        } else {
-            $data['is_verified'] = 1;
-        }
-
-        $data['customer_group_id'] = $this->customerGroupRepository->findOneWhere(['code' => 'general'])->id;
-
-        $verificationData['email'] = $data['email'];
-        $verificationData['token'] = md5(uniqid(rand(), true));
-        $data['token'] = $verificationData['token'];
 
         Event::dispatch('customer.registration.before');
 
@@ -136,41 +95,66 @@ class RegistrationController extends Controller
 
         Event::dispatch('customer.registration.after', $customer);
 
-        if ($customer) {
-            if (core()->getConfigData('customer.settings.email.verification')) {
-                try {
-                    $configKey = 'emails.general.notifications.emails.general.notifications.verification';
-                    if (core()->getConfigData($configKey)) {
-                        Mail::queue(new VerificationEmail($verificationData));
-                    }
-
-                    session()->flash('success', trans('shop::app.customer.signup-form.success-verify'));
-                } catch (\Exception $e) {
-                    report($e);
-                    session()->flash('info', trans('shop::app.customer.signup-form.success-verify-email-unsent'));
-                }
-            } else {
-                try {
-                    $configKey = 'emails.general.notifications.emails.general.notifications.registration';
-                    if (core()->getConfigData($configKey)) {
-                        Mail::queue(new RegistrationEmail(request()->all()));
-                    }
-
-                    session()->flash('success', trans('shop::app.customer.signup-form.success-verify')); //customer registered successfully
-                } catch (\Exception $e) {
-                    report($e);
-                    session()->flash('info', trans('shop::app.customer.signup-form.success-verify-email-unsent'));
-                }
-
-                session()->flash('success', trans('shop::app.customer.signup-form.success'));
-            }
-
-            return redirect()->route($this->_config['redirect']);
-        } else {
+        if (! $customer) {
             session()->flash('error', trans('shop::app.customer.signup-form.failed'));
 
             return redirect()->back();
         }
+
+        if (isset($data['is_subscribed'])) {
+            $subscription = $this->subscriptionRepository->findOneWhere(['email' => $data['email']]);
+
+            if ($subscription) {
+                $this->subscriptionRepository->update([
+                    'customer_id' => $customer->id,
+                ], $subscription->id);
+            } else {
+                $this->subscriptionRepository->create([
+                    'email'         => $data['email'],
+                    'customer_id'   => $customer->id,
+                    'channel_id'    => core()->getCurrentChannel()->id,
+                    'is_subscribed' => 1,
+                    'token'         => $token = uniqid(),
+                ]);
+
+                try {
+                    Mail::queue(new SubscriptionEmail([
+                        'email' => $data['email'],
+                        'token' => $token,
+                    ]));
+                } catch (\Exception $e) { }
+            }
+        }
+
+        if (core()->getConfigData('customer.settings.email.verification')) {
+            try {
+                if (core()->getConfigData('emails.general.notifications.emails.general.notifications.verification')) {
+                    Mail::queue(new VerificationEmail(['email' => $data['email'], 'token' => $data['token']]));
+                }
+
+                session()->flash('success', trans('shop::app.customer.signup-form.success-verify'));
+            } catch (\Exception $e) {
+                report($e);
+
+                session()->flash('info', trans('shop::app.customer.signup-form.success-verify-email-unsent'));
+            }
+        } else {
+            try {
+                if (core()->getConfigData('emails.general.notifications.emails.general.notifications.registration')) {
+                    Mail::queue(new RegistrationEmail(request()->all()));
+                }
+
+                session()->flash('success', trans('shop::app.customer.signup-form.success-verify'));
+            } catch (\Exception $e) {
+                report($e);
+
+                session()->flash('info', trans('shop::app.customer.signup-form.success-verify-email-unsent'));
+            }
+
+            session()->flash('success', trans('shop::app.customer.signup-form.success'));
+        }
+
+        return redirect()->route($this->_config['redirect']);
     }
 
     /**

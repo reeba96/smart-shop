@@ -49,46 +49,12 @@ class SessionController extends Controller
      */
     public function create()
     {
-        $data = $this->validate(request(), [
+        $this->validate(request(), [
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
-        
-        $client = new \GuzzleHttp\Client();
-        $api_url = config('app.bodywave_api').'/shop_get_hash';
-
-        $token = config('app.bodywave_token');
-
-        $headers = [
-            'Authorization' => 'Bearer ' . $token,        
-            'Accept'        => 'application/json',
-        ];
-
-        $res = $client->request('post',$api_url, [
-            'headers' => $headers,
-            'form_params' => ['email' => $data['email']]
-        ]);
-
-        $result = json_decode($res->getBody()->getContents());
-//dd($result->hash);
-//dd($data['password'],Hash::check($data['password'], $result->hash));
-        if (Hash::check($data['password'], $result->hash)) {
-            
-            $user = Customer::where('email',$data['email'])->first();
-
-            if ( $user){
-                auth()->guard('customer')->login($user);
-                Event::dispatch('customer.after.login', request('email'));
-                return redirect()->intended(route($this->_config['redirect']));
-            }
-        }
-        else{
-            session()->flash('error', trans('shop::app.customer.login-form.invalid-creds'));
-
-            return redirect()->back();
-        }
-      /*  if (! auth()->guard('customer')->attempt(request(['email', 'password']))) {
+        if (! auth()->guard('customer')->attempt(request(['email', 'password']))) {
             session()->flash('error', trans('shop::app.customer.login-form.invalid-creds'));
 
             return redirect()->back();
@@ -117,7 +83,7 @@ class SessionController extends Controller
         //Event passed to prepare cart after login
         Event::dispatch('customer.after.login', request('email'));
 
-        return redirect()->intended(route($this->_config['redirect']));*/
+        return redirect()->intended(route($this->_config['redirect']));
     }
 
     /**

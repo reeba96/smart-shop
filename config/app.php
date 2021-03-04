@@ -157,11 +157,6 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-
-    'bodywave_api' => env('BODYWAVE_API') ,
-
-    'bodywave_token' => env('BODYWAVE_ACCESS_TOKEN'),
-
     /*
         Code Editor
     */
