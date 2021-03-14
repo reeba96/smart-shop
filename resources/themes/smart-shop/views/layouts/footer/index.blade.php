@@ -10,15 +10,15 @@
                 </div>
             
                 <div class="subscribe-newsletter col-lg-8">
-                    <img src="/themes/bodywave/assets/images/AmericanExpress50.jpg" class="p-1" alt="American Express">
-                    <img src="/themes/bodywave/assets/images/diners_50.gif" class="p-1" alt="Diners Club International">
-                    <img src="/themes/bodywave/assets/images/Visa50.gif" class="p-1" alt="Visa">
-                    <img src="/themes/bodywave/assets/images/MasterCard50.gif" class="p-1" alt="MasterCard">
-                    <img src="/themes/bodywave/assets/images/maestro50.gif" class="p-1" alt="Maestro">
-                    <img src="/themes/bodywave/assets/images/discover_50.gif" class="p-1" alt="Discover">
-                    <img src="/themes/bodywave/assets/images/dinacard50.png" class="p-1" alt="DinaCard">
-                    <img src="/themes/bodywave/assets/images/mastercard-identity-check.png" class="p-1" alt="MasterCard Indentity Check">
-                    <img src="/themes/bodywave/assets/images/visa-secure.png" class="p-1" alt="Visa Secure">
+                    <img src="/themes/smart-shop/assets/images/AmericanExpress50.jpg" class="p-1" alt="American Express">
+                    <img src="/themes/smart-shop/assets/images/diners_50.gif" class="p-1" alt="Diners Club International">
+                    <img src="/themes/smart-shop/assets/images/Visa50.gif" class="p-1" alt="Visa">
+                    <img src="/themes/smart-shop/assets/images/MasterCard50.gif" class="p-1" alt="MasterCard">
+                    <img src="/themes/smart-shop/assets/images/maestro50.gif" class="p-1" alt="Maestro">
+                    <img src="/themes/smart-shop/assets/images/discover_50.gif" class="p-1" alt="Discover">
+                    <img src="/themes/smart-shop/assets/images/dinacard50.png" class="p-1" alt="DinaCard">
+                    <img src="/themes/smart-shop/assets/images/mastercard-identity-check.png" class="p-1" alt="MasterCard Indentity Check">
+                    <img src="/themes/smart-shop/assets/images/visa-secure.png" class="p-1" alt="Visa Secure">
                 </div>
             </div>
         </div>

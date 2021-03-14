@@ -23,7 +23,7 @@
         @if ($favicon = core()->getCurrentChannel()->favicon_url)
             <link rel="icon" sizes="16x16" href="{{ $favicon }}" />
         @else
-            <link rel="icon" sizes="16x16" href="{{ asset('/themes/bodywave/assets/images/favicon.ico') }}" />
+            <link rel="icon" sizes="16x16" href="{{ asset('/themes/smart-shop/assets/images/favicon.png') }}" />
         @endif
 
         <script

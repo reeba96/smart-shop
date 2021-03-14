@@ -51,7 +51,7 @@
         @if ($logo = core()->getCurrentChannel()->logo_url)
             <img class="logo" src="{{ $logo }}" />
         @else
-            <img class="logo" src="{{ asset('themes/bodywave/assets/images/black-logo-small.png') }}" />
+            <img class="logo" src="{{ asset('themes/smart-shop/assets/images/logos/rsz_smart_shop-logos.jpg') }}" />
         @endif
     </a>
 </script>

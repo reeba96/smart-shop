@@ -1,9 +1,9 @@
 .dashboard .dashboard-stats .dashboard-card .data {
-    color: #99b73c;
+    color: #1064b4;
 }
 
 .btn.btn-primary {
-    background: #99b73c;
+    background: #1064b4;
 }
 
 .navbar-top .navbar-top-left {
@@ -44,21 +44,21 @@
 }
 
 .pagination .page-item.active {
-    background: #99b73c;
+    background: #1064b4;
     color: #fff;
-    border-color: #99b73c;
+    border-color: #1064b4;
 }
 
 .control-group .control:focus {
-    border-color: #99b73c;
+    border-color: #1064b4;
 }
 
 .search-filter .control:focus {
-    border-color: #819c2d !important;
+    border-color: #1064b4 !important;
 }
 
 .control-group input:checked+.slider {
-    background-color: #819c2d;
+    background-color: #1064b4;
 }
 
 a:active,
@@ -67,7 +67,7 @@ a:hover,
 a:link,
 a:visited {
     text-decoration: none;
-    color: #99b73c !important;
+    color: #1064b4 !important;
 }
 
 a.btn.btn-primary:active,
@@ -96,7 +96,7 @@ a.btn.btn-primary:visited {
 }
 
 .tabs ul li.active a {
-    border-bottom: 3px solid #99b73c;
+    border-bottom: 3px solid #1064b4;
 }
 
 .accordian-up-icon {

@@ -24,10 +24,10 @@ return [
             'parent' => 'default'
         ],
 
-        'bodywave' => [
-            'views_path' => 'resources/themes/bodywave/views',
-            'assets_path' => 'public/themes/bodywave/assets',
-            'name' => 'Bodywave',
+        'smart-shop' => [
+            'views_path' => 'resources/themes/smart-shop/views',
+            'assets_path' => 'public/themes/smart-shop/assets',
+            'name' => 'Smart Shop',
             'parent' => 'velocity'
         ],
     ],
