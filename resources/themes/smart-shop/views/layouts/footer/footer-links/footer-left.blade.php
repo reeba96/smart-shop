@@ -6,7 +6,7 @@
                     src="{{ $logo }}"
                     class="logo full-img" />
             @else
-                <img src="{{ asset('themes/smart-shop/assets/images/logos/smart_shop_logos.jpeg') }}" class="logo full-img" />
+                <img src="{{ asset('themes/smart-shop/assets/images/logos/rsz_smart_shop-logos.jpg') }}" class="logo full-img" />
             @endif
 
         </a>

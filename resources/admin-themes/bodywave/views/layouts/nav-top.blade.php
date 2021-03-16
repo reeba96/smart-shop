@@ -1,5 +1,5 @@
 <div class="navbar-top">
-    <div class="navbar-top-left">
+    <!-- <div class="navbar-top-left">
         <div class="brand-logo">
             <a href="{{ route('admin.dashboard.index') }}">
                 @if (core()->getConfigData('general.design.admin_logo.logo_image'))
@@ -9,11 +9,11 @@
                 @endif
             </a>
         </div>
-    </div>
+    </div> -->
     <div class="navbar-top-left-append">
         <div class="brand-logo">
             <a href="{{ route('admin.dashboard.index') }}">
-                <img src="{{ bagisto_asset('images/bodywave-text-logo.png') }}" alt="{{ config('app.name') }}"/>
+                <img src="{{ bagisto_asset('images/logos/smart_shop_logos.jpg') }}" alt="{{ config('app.name') }}"/>
             </a>
         </div>
     </div>
@@ -23,7 +23,7 @@
             <span class="avatar">
             </span>
 
-            <div class="profile-info">
+            <div class="profile-info" style="margin-right: -80px;">
                 <div class="dropdown-toggle">
                     <div style="display: inline-block; vertical-align: middle;">
                         <span class="name">

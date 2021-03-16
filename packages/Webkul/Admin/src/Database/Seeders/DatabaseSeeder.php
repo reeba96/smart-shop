@@ -12,6 +12,7 @@ use Webkul\Inventory\Database\Seeders\DatabaseSeeder as InventorySeeder;
 use Webkul\CMS\Database\Seeders\DatabaseSeeder as CMSSeeder;
 use Webkul\SocialLogin\Database\Seeders\DatabaseSeeder as SocialLoginSeeder;
 use ICBTECH\Helpdesk\Database\Seeders\DatabaseSeeder as TicketitTableSeeder;
+use Webkul\Product\Database\Seeders\DatabaseSeeder as ProductSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,5 +32,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CMSSeeder::class);
         $this->call(SocialLoginSeeder::class);
         $this->call(TicketitTableSeeder::class);
+        $this->call(ProductSeeder::class);
     }
 }

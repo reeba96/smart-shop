@@ -81,11 +81,11 @@
 
                 <div class="adjacent-center">
 
-                    <div class="brand-logo">
+                    <div class="brand-logo" style="margin-left: -35px;">
                         @if (core()->getConfigData('general.design.admin_logo.logo_image'))
                             <img src="{{ \Illuminate\Support\Facades\Storage::url(core()->getConfigData('general.design.admin_logo.logo_image')) }}" alt="{{ config('app.name') }}" style="height: 40px; width: 110px;"/>
                         @else
-                            <img src="{{ bagisto_asset('images/bodywave-logo-b.png') }}" alt="{{ config('app.name') }}"/>
+                            <img src="{{ bagisto_asset('images/logos/smart_shop_logos.jpg') }}" alt="{{ config('app.name') }}"/>
                         @endif
                     </div>
 
