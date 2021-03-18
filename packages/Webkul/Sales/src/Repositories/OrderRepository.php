@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Sales\Contracts\Order;
+use Webkul\Product\Models\Product;
 use Webkul\Sales\Models\Order as OrderModel;
 use Webkul\Shop\Generators\Sequencer;
 use Webkul\Shop\Generators\OrderNumberIdSequencer;
+use GuzzleHttp\Client;
+use Carbon\Carbon;
 
 class OrderRepository extends Repository
 {
@@ -70,8 +73,10 @@ class OrderRepository extends Repository
             if (isset($data['customer']) && $data['customer']) {
                 $data['customer_id'] = $data['customer']->id;
                 $data['customer_type'] = get_class($data['customer']);
+                $customer_id = $data['customer_id'];
             } else {
                 unset($data['customer']);
+                $customer_id = 0;       // If guest bought
             }
 
             if (isset($data['channel']) && $data['channel']) {
@@ -95,10 +100,38 @@ class OrderRepository extends Repository
             $order->addresses()->create($data['billing_address']);
 
             foreach ($data['items'] as $item) {
+                
                 Event::dispatch('checkout.order.orderitem.save.before', $data);
 
                 $orderItem = $this->orderItemRepository->create(array_merge($item, ['order_id' => $order->id]));
 
+                $product = Product::where('sku', $orderItem->sku)->first();
+
+                // Send buy data to PredictionIO
+                $client = new Client([
+                    'headers' => [
+                        'Content-Type' => 'application/json',
+                    ],
+                ]);
+              
+                try {
+                    $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+                    $response = $client->post($url, [
+                        \GuzzleHttp\RequestOptions::JSON => [
+                            "event" => "buy",
+                            "entityType" => "user",
+                            "entityId" => $customer_id,
+                            "targetEntityType" => "item",
+                            "targetEntityId" => $product->id,
+                            "eventTime" => Carbon::now()
+                        ] 
+                    ]);
+                } catch (GuzzleException $exception) {
+                    session()->flash('error', trans('shop::app.customer.signup-form.failed'));
+
+                    return redirect()->back();
+                }
+                
                 if (isset($item['children']) && $item['children']) {
                     foreach ($item['children'] as $child) {
                         $this->orderItemRepository->create(array_merge($child, ['order_id' => $order->id, 'parent_id' => $orderItem->id]));

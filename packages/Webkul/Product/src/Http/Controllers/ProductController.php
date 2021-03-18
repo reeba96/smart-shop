@@ -16,6 +16,7 @@ use Webkul\Inventory\Repositories\InventorySourceRepository;
 use Webkul\Product\Repositories\ProductDownloadableLinkRepository;
 use Webkul\Product\Repositories\ProductDownloadableSampleRepository;
 use Webkul\Product\Repositories\ProductAttributeValueRepository;
+use GuzzleHttp\Client;
 
 class ProductController extends Controller
 {
@@ -234,6 +235,32 @@ class ProductController extends Controller
         }
 
         $product = $this->productRepository->update($data, $id);
+
+        // Send product to PredictionIO
+        $client = new Client([
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+        
+        try {
+            $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+            $response = $client->post($url, [
+                \GuzzleHttp\RequestOptions::JSON => [
+                    "event" => "\$set",
+                    "entityType" => "item",
+                    "entityId" => $id,
+                    "properties" => [
+                        "categories" => json_encode($data["categories"])
+                    ],
+                    "eventTime" => $product->created_at
+                ] 
+            ]);
+        } catch (GuzzleException $exception) {
+            session()->flash('error', trans('shop::app.customer.signup-form.failed'));
+
+            return redirect()->back();
+        }
 
         session()->flash('success', trans('admin::app.response.update-success', ['name' => 'Product']));
 

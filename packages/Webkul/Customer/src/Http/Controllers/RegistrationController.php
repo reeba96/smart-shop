@@ -11,6 +11,7 @@ use Webkul\Customer\Mail\VerificationEmail;
 use Webkul\Customer\Repositories\CustomerRepository;
 use Webkul\Customer\Repositories\CustomerGroupRepository;
 use Cookie;
+use GuzzleHttp\Client;
 //use Illuminate\Support\Facades\Crypt;
 
 class RegistrationController extends Controller
@@ -92,6 +93,29 @@ class RegistrationController extends Controller
         Event::dispatch('customer.registration.before');
 
         $customer = $this->customerRepository->create($data);
+
+        // Send user to PredictionIO
+        $client = new Client([
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
+        
+        try {
+            $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+            $response = $client->post($url, [
+                \GuzzleHttp\RequestOptions::JSON => [
+                    "event" => "\$set",
+                    "entityType" => "user",
+                    "entityId" => $customer->id,
+                    "eventTime" => $customer->created_at
+                ] 
+            ]);
+        } catch (GuzzleException $exception) {
+            session()->flash('error', trans('shop::app.customer.signup-form.failed'));
+
+            return redirect()->back();
+        }
 
         Event::dispatch('customer.registration.after', $customer);
 

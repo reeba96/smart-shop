@@ -6,6 +6,8 @@ namespace Webkul\Shop\Http\Controllers;
 use Illuminate\Http\Request;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Product\Repositories\ProductRepository;
+use GuzzleHttp\Client;
+use Carbon\Carbon;
 
 class ProductsCategoriesProxyController extends Controller
 {
@@ -66,6 +68,36 @@ class ProductsCategoriesProxyController extends Controller
                 if($product["status"] == 1){
                     $customer = auth()->guard('customer')->user();
 
+                    // Check if logged in some user
+                    if($customer){
+
+                        // Send view data to PredictionIO
+                        $client = new Client([
+                            'headers' => [
+                                'Content-Type' => 'application/json',
+                            ],
+                        ]);
+                    
+                        try {
+                            $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+                            $response = $client->post($url, [
+                                \GuzzleHttp\RequestOptions::JSON => [
+                                    "event" => "view",
+                                    "entityType" => "user",
+                                    "entityId" => $customer->id,
+                                    "targetEntityType" => "item",
+                                    "targetEntityId" => $product->id,
+                                    "eventTime" => Carbon::now()
+                                ] 
+                            ]);
+                        } catch (GuzzleException $exception) {
+                            session()->flash('error', trans('shop::app.customer.signup-form.failed'));
+
+                            return redirect()->back();
+                        }
+                        
+                    }
+        
                     return view($this->_config['product_view'], compact('product', 'customer'));
                 }
             }
