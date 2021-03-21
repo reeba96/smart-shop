@@ -26,4 +26,4 @@ yarn.lock
 storage/*.key
 /resources/themes/velocity/*
 /resources/lang/vendor/webkul/admin/*
-packages/ICBTECH/Bodywave/node_modules/
+packages/ICBTECH/PredictionIO/node_modules/

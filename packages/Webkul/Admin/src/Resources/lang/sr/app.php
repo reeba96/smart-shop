@@ -76,7 +76,8 @@ return [
         'promotions' => 'Promocije',
         'discount' => 'Popust',
         'cms' => 'CMS',
-        'Helpdesk' => 'Helpdesk'
+        'Helpdesk' => 'Helpdesk',
+        'predictionio' => 'PredictionIO'
     ],
 
     'acl' => [

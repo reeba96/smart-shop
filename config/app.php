@@ -285,7 +285,7 @@ return [
 
         //ICBTECH packages
         ICBTECH\Helpdesk\Providers\HelpdeskServiceProvider::class,
-        ICBTECH\Bodywave\Providers\BodywaveServiceProvider::class,
+        ICBTECH\PredictionIO\Providers\PredictionIOServiceProvider::class,
     ],
 
     /*

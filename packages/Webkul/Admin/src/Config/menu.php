@@ -253,5 +253,11 @@ return [
         'route'      => 'admin.helpdesk.configuration.index',
         'sort'       => 6,
         'icon-class' => '',
+    ], [
+        'key'        => 'predictionio',
+        'name'       => 'admin::app.layouts.predictionio',
+        'route'      => 'admin.predictionio.users',
+        'sort'       => 4,
+        'icon-class' => 'export-icon',
     ]
 ];

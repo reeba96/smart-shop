@@ -47,6 +47,14 @@ return [
         'delete' => 'Are you sure you want to delete this ticket ?'
     ],
 
+    'predictionio' => [
+        'users' => 'Users',
+        'items' => 'Items',
+        'views' => 'Views',
+        'purchases' => 'Purchases',
+        'settings' => 'Settings'
+    ],
+
     'layouts' => [
         'app-version' => 'Version : :version',
         'my-account' => 'My Account',
@@ -83,7 +91,8 @@ return [
         'promotions' => 'Promotions',
         'discount' => 'Discount',
         'cms' => 'CMS',
-        'helpdesk' => 'Helpdesk'
+        'helpdesk' => 'Helpdesk',
+        'predictionio' => 'PredictionIO'
     ],
 
     'acl' => [

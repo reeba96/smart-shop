@@ -32,7 +32,7 @@ return [
         ],
     ],
 
-    'admin-default' => 'bodywave',
+    'admin-default' => 'smart-shop',
 
     'admin-themes' => [
         'default' => [
@@ -40,10 +40,10 @@ return [
             'assets_path' => 'public/admin-themes/default/assets',
             'name' => 'Default'
         ],
-        'bodywave' => [
-            'views_path' => 'resources/admin-themes/bodywave/views',
-            'assets_path' => 'public/admin-themes/bodywave/assets',
-            'name' => 'BodyWave'
+        'smart-shop' => [
+            'views_path' => 'resources/admin-themes/smart-shop/views',
+            'assets_path' => 'public/admin-themes/smart-shop/assets',
+            'name' => 'Smart Shop'
         ]
     ]
 ];

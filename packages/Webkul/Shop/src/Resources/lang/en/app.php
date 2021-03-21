@@ -13,7 +13,8 @@ return [
         'wishlist' => 'Wishlist',
         'orders' => 'Orders',
         'downloadable-products' => 'Downloadable Products',
-        'helpdesk' => 'Helpdesk'
+        'helpdesk' => 'Helpdesk',
+        'predictionio' => 'PredictionIO'
     ],
 
     'common' => [
@@ -742,4 +743,5 @@ return [
         'delete-success' => ':name deleted successfully.',
         'submit-success' => ':name submitted successfully.'
     ],
+
 ];

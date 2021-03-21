@@ -1,0 +1,219 @@
+.dashboard .dashboard-stats .dashboard-card .data {
+    color: #1064b4;
+}
+
+.btn.btn-primary {
+    background: #1064b4;
+}
+
+.navbar-top .navbar-top-left {
+    width: 90px;
+}
+
+.navbar-top .navbar-top-left .brand-logo {
+    background-color: #000;
+    padding: 14px 0 0 5px;
+}
+
+.navbar-top .navbar-top-left-append {
+    width: 190px;
+    height: 60px;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #ffffff;
+}
+
+.navbar-top .navbar-top-left-append .brand-logo {
+
+    padding: 6px 0 0 5px;
+}
+
+.content.full-page.dashboard {
+    margin-top: -25px;
+}
+
+.navbar-top .navbar-top-left .brand-logo img {
+    height: 36px;
+}
+
+.navbar-top .navbar-top-right {
+    /* Firefox */
+    width: -moz-calc(100% - 280px);
+    /* WebKit */
+    width: -webkit-calc(100% - 280px);
+    /* Opera */
+    width: -o-calc(100% - 280px);
+    /* Standard */
+    width: calc(100% - 280px);
+}
+
+.pagination .page-item.active {
+    background: #1064b4;
+    color: #fff;
+    border-color: #1064b4;
+}
+
+.control-group .control:focus {
+    border-color: #1064b4;
+}
+
+.search-filter .control:focus {
+    border-color: #1064b4 !important;
+}
+
+.control-group input:checked+.slider {
+    background-color: #1064b4;
+}
+
+a:active,
+a:focus,
+a:hover,
+a:link,
+a:visited {
+    text-decoration: none;
+    color: #1064b4 !important;
+}
+
+a.btn.btn-primary:active,
+a.btn.btn-primary:focus,
+a.btn.btn-primary:hover,
+a.btn.btn-primary:link,
+a.btn.btn-primary:visited {
+
+    color: #fff !important;
+}
+
+.navbar-left a:focus,
+.navbar-left a:hover,
+.navbar-left a:link,
+.navbar-left a:visited {
+    text-decoration: none;
+    color: #000 !important;
+}
+
+.navbar-left ul.menubar li.active a {
+    color: white !important;
+}
+
+.content-container .aside-nav a {
+    color: #000311 !important;
+}
+
+.tabs ul li.active a {
+    border-bottom: 3px solid #1064b4;
+}
+
+.accordian-up-icon {
+    background-image: url(../images/Accordion-Arrow-Up.svg);
+}
+
+.accordian-down-icon {
+    background-image: url(../images/Accordion-Arrow-Down.svg);
+}
+
+.checkbox input:checked+.checkbox-view {
+    background-image: url(../images/Checkbox-Checked.svg);
+}
+
+.checkbox .checkbox-view {
+    background-image: url(../images/Checkbox.svg);
+}
+
+.active .dashboard-icon {
+    background-image: url(../images/Icon-Dashboard-Active.svg);
+}
+
+.dashboard-icon {
+    background-image: url(../images/Icon-Dashboard.svg);
+}
+
+.active .note-icon {
+    background-image: url(../images/icon-note-active.svg);
+}
+
+.note-icon {
+    background-image: url(../images/icon-note.svg);
+    height: 48px;
+    width: 48px;
+}
+
+.active .sales-icon {
+    background-image: url(../images/Icon-Sales-Active.svg);
+}
+
+.sales-icon {
+    background-image: url(../images/Icon-Sales.svg);
+}
+
+.active .catalog-icon {
+    background-image: url(../images/Icon-Catalog-Active.svg);
+}
+
+.catalog-icon {
+    background-image: url(../images/Icon-Catalog.svg);
+}
+
+.active .customer-icon {
+    background-image: url(../images/Icon-Customers-Active.svg);
+}
+
+.customer-icon {
+    background-image: url(../images/Icon-Customers.svg);
+}
+
+.active .promotion-icon {
+    background-image: url(../images/icon-promotion-active.svg);
+}
+
+.promotion-icon {
+    background-image: url(../images/icon-promotion.svg);
+}
+
+.active .cms-icon {
+    background-image: url(../images/Icon-CMS-Active.svg);
+}
+
+.cms-icon {
+    background-image: url(../images/Icon-CMS.svg);
+}
+
+.active .settings-icon {
+    background-image: url(../images/Icon-Settings-Active.svg);
+}
+
+.settings-icon {
+    background-image: url(../images/Icon-Settings.svg);
+}
+
+.active .configuration-icon {
+    background-image: url(../images/Icon-Configure-Active.svg);
+}
+
+.configuration-icon {
+    background-image: url(../images/Icon-Configure.svg);
+}
+
+.active.velocity-icon,
+.active .velocity-icon,
+.router-link-active.velocity-icon,
+.router-link-active .velocity-icon {
+    background-image: url(../images/Icon-Velocity-Active.svg);
+}
+
+.velocity-icon {
+    width: 60px;
+    height: 55px;
+    display: inline-block;
+    background-size: cover;
+    background-image: url(../images/Icon-Velocity.svg) !important;
+}
+
+.predictionio_table{
+    margin-top: 25px;
+    text-align: center;
+    margin-left: 0px;
+}
+
+td {
+    padding-top:10px;  
+  }

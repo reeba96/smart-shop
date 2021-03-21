@@ -120,7 +120,7 @@
         "Webkul\\BookingProduct\\": "packages/Webkul/BookingProduct/src",
         "Webkul\\SocialLogin\\": "packages/Webkul/SocialLogin/src",
         "ICBTECH\\Helpdesk\\": "packages/ICBTECH/Helpdesk/src",
-        "ICBTECH\\Bodywave\\": "packages/ICBTECH/Bodywave/src"
+        "ICBTECH\\PredictionIO\\": "packages/ICBTECH/PredictionIO/src"
       }
     },
 
