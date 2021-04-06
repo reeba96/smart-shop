@@ -1,25 +1,36 @@
 @extends('predictionio::layouts.master')
 
 @section('page_title')
-{{ __('admin::app.predictionio.users') }}
+    {{ __('admin::app.predictionio.views') }}
 @stop
 
 @section('content')
     <div class="content">
         <div class="page-header">
+
             <div class="page-title">
                 <h1>{{ __('admin::app.predictionio.views') }}</h1>
             </div>
+
+            <div class="page-action">
+                <a href="{{ route('admin.predictionio.deleteViews') }}" class="btn btn-lg btn-primary">
+                    {{ __('admin::app.predictionio.delete_saved_views_from_table') }}
+                </a>
+                <a href="{{ route('admin.predictionio.importViews') }}" class="btn btn-lg btn-primary">
+                    {{ __('admin::app.predictionio.import_existing_views') }}
+                </a>
+            </div>
+
         </div>
     </div>
 
     <table class="table predictionio_table">
         <tr>
             <th class="grid_head"></th>
-            <th class="grid_head">ID</th>
-            <th class="grid_head">Event</th>
-            <th class="grid_head">Entity Type</th>
-            <th class="grid_head">Event Time</th>
+            <th class="grid_head">{{ __('admin::app.predictionio.id') }}</th>
+            <th class="grid_head">{{ __('admin::app.predictionio.event') }}</th>
+            <th class="grid_head">{{ __('admin::app.predictionio.event_type') }}</th>
+            <th class="grid_head">{{ __('admin::app.predictionio.event_time') }}</th>
         </tr>
         <tbody>
             <?php $i = 1; ?>

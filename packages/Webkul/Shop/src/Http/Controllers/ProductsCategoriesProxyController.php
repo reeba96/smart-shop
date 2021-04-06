@@ -8,6 +8,7 @@ use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
+use ICBTECH\PredictionIO\Models\Views;
 
 class ProductsCategoriesProxyController extends Controller
 {
@@ -70,6 +71,12 @@ class ProductsCategoriesProxyController extends Controller
 
                     // Check if logged in some user
                     if($customer){
+
+                        // Save view to DB
+                        Views::create([
+                            'customer_id' => $customer->id,
+                            'product_id' => $product->id
+                        ]);
 
                         // Send view data to PredictionIO
                         $client = new Client([

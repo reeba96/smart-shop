@@ -69,6 +69,7 @@ class OrderController extends Controller
      */
     public function view($id)
     {
+        dd($id);
         $order = $this->orderRepository->findOrFail($id);
 
         return view($this->_config['view'], compact('order'));

@@ -47,6 +47,7 @@
         "prettus/l5-repository": "^2.6",
         "prewk/xml-string-streamer": "^0.14.0",
         "spatie/laravel-cookie-consent": "^2.12",
+        "symfony/process": "^5.2",
         "tymon/jwt-auth": "^1.0.0",
         "yajra/laravel-datatables-oracle": "~9.0"
     },
