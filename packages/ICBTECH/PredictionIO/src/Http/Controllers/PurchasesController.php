@@ -80,7 +80,7 @@ class PurchasesController extends Controller
                 ],
             ]);
 
-            $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+            $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
                 
             foreach($orders as $order){
                 

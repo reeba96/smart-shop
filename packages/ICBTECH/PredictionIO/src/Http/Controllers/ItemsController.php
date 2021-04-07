@@ -73,7 +73,7 @@ class ItemsController extends Controller
             ],
         ]);
 
-        $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+        $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
         $products = Product::get();
 
         try {
