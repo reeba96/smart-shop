@@ -102,7 +102,7 @@ class RegistrationController extends Controller
         ]);
         
         try {
-            $url = env('PREDICTIONIO_URL').env('PREDICTIONIO_ACCESS_KEY');
+            $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
             $response = $client->post($url, [
                 \GuzzleHttp\RequestOptions::JSON => [
                     "event" => "\$set",
