@@ -109,7 +109,12 @@ class HomeController extends Controller
             ->get()
             ->toArray();
 
-        return view($this->_config['view'], compact('sliderData', 'product_1', 'product_2', 'product_3'));
+        if(isset($product_1) && isset($product_2) && isset($product_3)) {
+            return view($this->_config['view'], compact('sliderData', 'product_1', 'product_2', 'product_3'));
+        } else {
+            return view($this->_config['view'], compact('sliderData'));
+        }
+        
     }
 
     /**

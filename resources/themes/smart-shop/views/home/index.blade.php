@@ -58,7 +58,7 @@
     <div class="full-content-wrapper">
         {!! view_render_event('bagisto.shop.home.content.before') !!}
         
-            @if($product_1 && $product_2 && $product_3)
+            @if(isset($product_1) && isset($product_2) && isset($product_3))
    
                 <div class="container-fluid advertisement-four-container">
                     <div class="row">
