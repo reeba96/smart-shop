@@ -93,9 +93,13 @@ class HomeController extends Controller
                 $product_1 = $products[1];
                 $product_1 = $products[3];
             } else {
-                $product_1 = $related_products[0];
-                $product_2 = $related_products[1];
-                $product_3 = $related_products[2];
+
+                if( $related_products[0] ) {
+                    $product_1 = $related_products[0];
+                    $product_2 = $related_products[1];
+                    $product_3 = $related_products[2];
+                }
+                
             }
         }
         
