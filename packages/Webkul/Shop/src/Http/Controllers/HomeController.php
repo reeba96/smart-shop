@@ -94,7 +94,7 @@ class HomeController extends Controller
                 $product_1 = $products[3];
             } else {
 
-                if( $related_products[0] ) {
+                if( isset($related_products[0]) ) {
                     $product_1 = $related_products[0];
                     $product_2 = $related_products[1];
                     $product_3 = $related_products[2];
