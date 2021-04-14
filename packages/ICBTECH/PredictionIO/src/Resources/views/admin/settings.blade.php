@@ -23,6 +23,19 @@
                     <tr>
                         <td>
                             <button class="btn btn-lg btn-primary">
+                                <a href="{{ route('admin.predictionio.start') }}"><font color="white"> Start</font></a> 
+                            </button>
+                        </td>
+                        <td>
+                            <div class="control-group">
+                                Start PredictionIO! 
+                                <font color="red">{{ __('admin::app.predictionio.not_working') }}</font>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="btn btn-lg btn-primary">
                                 <a href="{{ route('admin.predictionio.build') }}"><font color="white"> {{ __('admin::app.predictionio.build') }}</font></a> 
                             </button>
                         </td>

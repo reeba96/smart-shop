@@ -44,6 +44,35 @@ class SettingsController extends Controller
         return view('predictionio::admin.settings');
     }
 
+    /**
+     * Call console command for starting
+     *
+     * @return \Illuminate\View\View
+     */
+    public function start()
+    {   
+        $process = new Process(['pio-start-all'], null,  ['PATH' => '/home/pio/PredictionIO-0.14.0/bin']);
+
+        $process->setWorkingDirectory('/home/pio/SmartShopECommerceRecommendation/');
+
+        $process->run();
+
+        // Executes after the command finishes
+        if (!$process->isSuccessful()) {
+            \Log::info(new ProcessFailedException($process));
+
+            session()->flash('error', 'Failed' );
+
+            return back()->with('status', 'Failed' );
+        }
+        
+        \Log::info($process->getOutput());
+
+        session()->flash('success', 'Started');
+
+        return back()->with('status', 'Started');
+    }
+
 
     /**
      * Call console command for building
