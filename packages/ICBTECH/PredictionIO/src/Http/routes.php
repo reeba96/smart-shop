@@ -33,7 +33,7 @@ Route::group(['middleware' => ['web', 'admin']], function () {
         Route::get('predictionio/settings', 'ICBTECH\PredictionIO\Http\Controllers\SettingsController@index')->name('admin.predictionio.settings');
 
         // Start
-        Route::post('predictionio/start', 'ICBTECH\PredictionIO\Http\Controllers\SettingsController@start')->name('admin.predictionio.start');
+        Route::get('predictionio/start', 'ICBTECH\PredictionIO\Http\Controllers\SettingsController@start')->name('admin.predictionio.start');
 
         // Build
         Route::get('predictionio/build', 'ICBTECH\PredictionIO\Http\Controllers\SettingsController@build')->name('admin.predictionio.build');

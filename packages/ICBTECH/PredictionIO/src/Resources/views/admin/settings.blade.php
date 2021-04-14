@@ -22,9 +22,9 @@
                 <tbody>
                     <tr>
                         <td>
-                            <button class="btn btn-lg btn-primary">
+                            {{-- <button class="btn btn-lg btn-primary"> --}}
                                 <a href="{{ route('admin.predictionio.start') }}"><font color="white"> Start</font></a> 
-                            </button>
+                            {{-- </button> --}}
                         </td>
                         <td>
                             <div class="control-group">
