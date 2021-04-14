@@ -51,9 +51,9 @@ class SettingsController extends Controller
      */
     public function start()
     {   
-        $process = new Process(['pio-start-all']);
+        $process = new Process(['/home/pio/PredictionIO-0.14.0/bin/pio-start-all']);
 
-        $process->setWorkingDirectory('/home/pio/PredictionIO-0.14.0/bin');
+        // $process->setWorkingDirectory('/home/pio/PredictionIO-0.14.0/bin');
 
         $process->run();
 
