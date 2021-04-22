@@ -258,6 +258,6 @@ return [
         'name'       => 'admin::app.layouts.predictionio',
         'route'      => 'admin.predictionio.users',
         'sort'       => 4,
-        'icon-class' => 'export-icon',
+        'icon-class' => 'folder-icon-black',
     ]
 ];

@@ -137,6 +137,12 @@ a.btn.btn-primary:visited {
     width: 48px;
 }
 
+.folder-icon-black {
+    background-image: url(../images/folder-icon-black.svg);
+    height: 30px;
+    width: 38px;
+}
+
 .active .sales-icon {
     background-image: url(../images/Icon-Sales-Active.svg);
 }
