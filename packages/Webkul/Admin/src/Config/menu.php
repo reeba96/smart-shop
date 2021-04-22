@@ -257,7 +257,37 @@ return [
         'key'        => 'predictionio',
         'name'       => 'admin::app.layouts.predictionio',
         'route'      => 'admin.predictionio.users',
-        'sort'       => 4,
+        'sort'       => 1,
         'icon-class' => 'folder-icon-black',
+    ], [
+        'key'        => 'predictionio.users',
+        'name'       => 'admin::app.layouts.predictionio',
+        'route'      => 'admin.predictionio.users',
+        'sort'       => 2,
+        'icon-class' => '',
+    ], [
+        'key'        => 'predictionio.items',
+        'name'       => 'admin::app.layouts.predictionio',
+        'route'      => 'admin.predictionio.items',
+        'sort'       => 3,
+        'icon-class' => '',
+    ], [
+        'key'        => 'predictionio.views',
+        'name'       => 'admin::app.layouts.predictionio',
+        'route'      => 'admin.predictionio.views',
+        'sort'       => 3,
+        'icon-class' => '',
+    ], [
+        'key'        => 'predictionio.purchases',
+        'name'       => 'admin::app.layouts.predictionio',
+        'route'      => 'admin.predictionio.purchases',
+        'sort'       => 4,
+        'icon-class' => '',
+    ], [
+        'key'        => 'predictionio.settings',
+        'name'       => 'admin::app.layouts.predictionio',
+        'route'      => 'admin.predictionio.settings',
+        'sort'       => 5,
+        'icon-class' => '',
     ]
 ];
