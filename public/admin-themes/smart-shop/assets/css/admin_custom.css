@@ -137,6 +137,10 @@ a.btn.btn-primary:visited {
     width: 48px;
 }
 
+.active .folder-icon-black {
+    background-image: url(../folder-icon-black-active.svg);
+}
+
 .folder-icon-black {
     background-image: url(../images/folder-icon-black.svg);
     height: 30px;

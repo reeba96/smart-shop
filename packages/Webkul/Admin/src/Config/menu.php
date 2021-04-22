@@ -257,7 +257,7 @@ return [
         'key'        => 'predictionio',
         'name'       => 'admin::app.layouts.predictionio',
         'route'      => 'admin.predictionio.users',
-        'sort'       => 1,
+        'sort'       => 4,
         'icon-class' => 'folder-icon-black',
     ], [
         'key'        => 'predictionio.users',
