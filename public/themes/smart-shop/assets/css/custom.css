@@ -1,0 +1,118 @@
+header .logo {
+    height: 40px;
+    margin-left: -5px;
+    margin-top: 5px;
+
+}
+
+.content-list.right {
+    background-color: #1064b4;
+    margin-top: 2px;
+}
+
+.main-content-wrapper .content-list ul {
+    background-color: #1064b4;
+}
+
+.theme-btn.mb20 {
+    border-color: #1064b4 !important;
+    background-color: #1064b4 !important;
+}
+
+.customer-name {
+    background: #1064b4;
+}
+
+header #search-form #header-search-icon {
+    background-color: #1064b4;
+    border: 1px solid #1064b4;
+}
+
+header #search-form input {
+    border: 1px solid #1064b4;
+}
+
+header #search-form .btn-group select {
+    border: 1px solid #1064b4;
+}
+
+.btn.btn-primary.btn-lg {
+    background-color: #1064b4;
+    border-color: #1064b4;
+}
+
+a.theme-btn.light.unset.pull-right {
+    color: #1064b4 !important;
+}
+.theme-btn, .cart-details .continue-shopping-btn, .account-content .account-layout .account-table-content #datagrid-filters .dropdown-filters
+.dropdown-container button.btn, .account-content.dropdown-filters .dropdown-container .quantity button, .quantity .account-content .account-layout
+.account-table-content #datagrid-filters .dropdown-filters .dropdown-container button, .account-content .account-layout .bottom-toolbar .pagination .page-item {
+    background-color: #1064b4 !important;
+    border-color: #1064b4 !important;
+}
+
+.theme-btn:hover, .cart-details .continue-shopping-btn:hover, .account-content .account-layout .account-table-content #datagrid-filters
+.dropdown-filters .dropdown-container button.btn:hover, .account-content .account-layout .account-table-content #datagrid-filters .dropdown-filters 
+.dropdown-container .quantity button:hover, .quantity .account-content .account-layout .account-table-content #datagrid-filters .dropdown-filters 
+.dropdown-container button:hover, .account-content .account-layout .bottom-toolbar .pagination .page-item:hover, .btn-add-to-cart:hover {
+    opacity: 0.75 !important;
+    border: none !important;
+}
+
+.open-ticket {
+    background-color: #1064b4 !important;
+    border: 1px solid #1064b4 !important;
+}
+
+.open-ticket:hover {
+    opacity: 0.75;
+    border: none;
+}
+
+.theme-btn:hover, .cart-details .continue-shopping-btn:hover, .account-content .account-layout .account-table-content #datagrid-filters .dropdown-filters
+.dropdown-container button.btn:hover, .account-content .account-layout .account-table-content #datagrid-filters .dropdown-filters .dropdown-container
+.quantity button:hover, .quantity .account-content .account-layout .account-table-content #datagrid-filters .dropdown-filters .dropdown-container button:hover, 
+.account-content .account-layout .bottom-toolbar .pagination .page-item:hover, .btn-add-to-cart:hover {
+    background-color: #1064b4 !important;
+    border: 1px solid #1064b4 !important;
+}
+
+.card-body.pb-0 {
+    margin-bottom: 10px;
+}
+
+.account-content .account-layout .sale-container .tabs ul li.active {
+    border-bottom: 2px solid #1064b4;
+}
+
+.newsletter-subscription {
+    background-color: #1064b4 !important;
+}
+
+.footer .footer-content .newsletter-subscription .newsletter-wrapper .social-icons .within-circle {
+    background: #1064b4;
+}
+
+.logo.full-img {
+    padding-bottom: 10px;
+}
+
+#perPage:focus {
+    border-color: #1064b4;
+}
+
+.filter-column-select.control:focus {
+    border-color: #1064b4 !important;
+}
+
+#search-field:focus {
+    border-color: #1064b4 !important; 
+}
+
+#perPage:hover {
+    border-color: #1064b4 !important;
+}
+
+.btn-group.full-width {
+    margin-left: 170px;
+}
