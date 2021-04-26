@@ -35,16 +35,14 @@
         <tbody>
             <?php $i = 1; ?>
             @foreach ($entities as $entity)
-                @if ($entity->entityType == 'user' && $entity->event == 'view')
-                    <tr>
-                        <td data-value="Number">{{ $i }}</td>
-                        <td data-value="ID">{{$entity->eventId}}</td>
-                        <td data-value="Event">{{$entity->event}}</td>
-                        <td data-value="Entity Type">{{$entity->entityType}}</td>
-                        <td data-value="Event Time">{{$entity->eventTime}}</td>
-                    </tr>
-                    <?php $i = $i + 1; ?>
-                @endif
+                <tr>
+                    <td data-value="Number">{{ $i }}</td>
+                    <td data-value="ID">{{$entity->eventId}}</td>
+                    <td data-value="Event">{{$entity->event}}</td>
+                    <td data-value="Entity Type">{{$entity->entityType}}</td>
+                    <td data-value="Event Time">{{$entity->eventTime}}</td>
+                </tr>
+                <?php $i = $i + 1; ?>
             @endforeach
         </tbody>
     </table>
