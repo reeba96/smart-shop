@@ -783,7 +783,6 @@
 
 .review-page-container > div:first-child {
   top: 40px;
-  position: -webkit-sticky;
   position: sticky;
   height: -webkit-max-content;
   height: -moz-max-content;
@@ -2267,7 +2266,6 @@
   height: -webkit-max-content;
   height: -moz-max-content;
   height: max-content;
-  position: -webkit-sticky !important;
   position: sticky !important;
   max-width: 500px !important;
 }
@@ -2400,7 +2398,6 @@
 .main-container-wrapper .sticky-header {
   top: 0px;
   z-index: 100;
-  position: -webkit-sticky;
   position: sticky;
   background: white;
 }
@@ -3908,7 +3905,6 @@ body::after {
 
 .cd-quick-view .product-gallery {
   top: 10px;
-  position: -webkit-sticky;
   position: sticky;
 }
 
@@ -5301,7 +5297,6 @@ button[disabled] {
 .product-detail #product-form .form-container > .left {
   top: 60px;
   padding: 0px;
-  position: -webkit-sticky;
   position: sticky;
 }
 
@@ -5895,7 +5890,6 @@ button[disabled] {
     top: 0;
     width: 100%;
     display: table;
-    position: -webkit-sticky;
     position: sticky;
     color: #111111;
     background-color: #FFFFFF;

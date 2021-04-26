@@ -215,7 +215,7 @@ a.btn.btn-primary:visited {
     height: 55px;
     display: inline-block;
     background-size: cover;
-    background-image: url(../images/Icon-Velocity.svg) !important;
+    background-image: url(../images/Icon-Velocity.svg);
 }
 
 .predictionio_table{

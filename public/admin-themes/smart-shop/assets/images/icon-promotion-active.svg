@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" version="1.1" style=""><rect id="backgroundrect" width="100%" height="100%" x="0" y="0" fill="none" stroke="none"/>
     <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
     <title>Icon-Promition-Active</title>
     <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Icon-Promition-Active" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-        <g id="Group" transform="translate(8.000000, 10.000000)" stroke="#0041FF" stroke-width="2">
-            <polygon id="Rectangle-15" points="5 8.96186626 22 1.91619318 22 26.0838068 5 19.0381337"></polygon>
-            <path d="M22,0 L22,28" id="Path-17"></path>
-            <path d="M3.5,9 L5,9 L5,19 L3.5,19 C1.56700338,19 2.36723813e-16,17.4329966 0,15.5 L0,12.5 C-2.36723813e-16,10.5670034 1.56700338,9 3.5,9 Z" id="Rectangle-15"></path>
-            <path d="M8,21 L8,22.5494015 C8,24.2446714 9.1212786,25.7355564 10.75,26.2058824 L10.75,26.2058824 C12.3703103,26.6737794 14.1023615,25.9901587 14.9663265,24.5417467 L15.5,23.6470588" id="Path-18"></path>
-            <path d="M26,14.25 L32,14.25" id="Path-19"></path>
-            <path d="M26,9.24264069 L30.2426407,5" id="Path-19"></path>
-            <path d="M26,23.1213203 L30.2426407,18.8786797" id="Path-19" transform="translate(28.121320, 21.000000) scale(-1, 1) translate(-28.121320, -21.000000) "></path>
+    <defs/>
+    
+<g class="currentLayer" style=""><title>Layer 1</title><g id="Icon-Promition-Active" stroke="#ffffff" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" class="selected" stroke-opacity="1">
+        <g id="Group" stroke="#ffffff" stroke-width="2" stroke-opacity="1">
+            <polygon id="Rectangle-15" points="13,18.96186637878418 30,11.91619324684143 30,36.08380699157715 13,29.03813362121582 " stroke="#ffffff" stroke-opacity="1"/>
+            <path d="M30,10 L30,38 " id="Path-17" stroke="#ffffff" stroke-opacity="1"/>
+            <path d="M11.5,19 L13,19 L13,29 L11.5,29 C9.56700338,29 8,27.4329966 8,25.5 L8,22.5 C8,20.5670034 9.56700338,19 11.5,19 z" id="Rectangle-15" stroke="#ffffff" stroke-opacity="1"/>
+            <path d="M16,31 L16,32.5494015 C16,34.2446714 17.1212786,35.7355564 18.75,36.2058824 L18.75,36.2058824 C20.3703103,36.6737794 22.1023615,35.990158699999995 22.9663265,34.541746700000004 L23.5,33.647058799999996 " id="Path-18" stroke="#ffffff" stroke-opacity="1"/>
+            <path d="M34,24.25 L40,24.25 " id="Path-19" stroke="#ffffff" stroke-opacity="1"/>
+            <path d="M34,19.24264069 L38.242640699999995,15 " id="Path-19" stroke="#ffffff" stroke-opacity="1"/>
+            <path d="M38.24264144897461,33.1213203 L34.000000748974614,28.8786797 " id="Path-19" stroke="#ffffff" stroke-opacity="1"/>
         </g>
-    </g>
-</svg>
+    </g></g></svg>
