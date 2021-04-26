@@ -5,6 +5,8 @@
 /public/storage
 /public/vendor
 /public/fonts
+/public/css
+/public/js
 /vendor
 /data
 /.idea
