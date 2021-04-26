@@ -54,6 +54,7 @@ class ItemsController extends Controller
             return view('predictionio::admin.items', compact('entities'));
             
         } catch (\Exception $e) {
+            \Log::info($e);
             session()->flash('error', trans('admin::app.predictionio.empty_pio') );
 
             return redirect()->back();
