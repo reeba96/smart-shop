@@ -52,6 +52,7 @@ class ViewsController extends Controller
             return view('predictionio::admin.views', compact('entities'));
 
         } catch (\Exception $e) {
+            \Log::info($e);
             session()->flash('error', trans('admin::app.predictionio.empty_pio') );
 
             return redirect()->back();
