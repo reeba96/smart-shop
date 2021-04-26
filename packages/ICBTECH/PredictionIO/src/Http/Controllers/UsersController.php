@@ -44,7 +44,7 @@ class UsersController extends Controller
         ]);
         
         try {
-            $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY')."&event=$set&entityType=user&limit=".env('PREDICTIONIO_QUERY_LIMIT');
+            $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY')."&event=\$set&entityType=user&limit=".env('PREDICTIONIO_QUERY_LIMIT');
             $response = $client->get($url);
             $entities = json_decode($response->getBody()->getContents());
 
