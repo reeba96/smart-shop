@@ -71,6 +71,7 @@ return [
         'import_existing_purchases' => 'Import existing purchases',
         'items_successfully_imported' => 'Items successfully imported!',
         'users_successfully_imported' => 'Users successfully imported!',
+        'purchases_successfully_imported' => 'Purchases successfully imported!',
         'unexpected_error_occured' => 'Unexpected error occured!',
         'recommend' => 'Recommend',
         'recommended_products' => 'Please fill recommended products number field!',

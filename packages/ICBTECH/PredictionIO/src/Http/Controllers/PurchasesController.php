@@ -2,14 +2,15 @@
 
 namespace ICBTECH\PredictionIO\Http\Controllers;
 
+use Carbon\Carbon;
+use GuzzleHttp\Client;
+use Webkul\Sales\Models\Order;
 use Illuminate\Routing\Controller;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Support\Facades\DB;
 use Webkul\Sales\Models\OrderItem;
-use Webkul\Sales\Models\Order;
-use GuzzleHttp\Client;
-use Carbon\Carbon;
+use Modules\Pro\Jobs\importPurchasesJob;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class PurchasesController extends Controller
 {
@@ -68,43 +69,11 @@ class PurchasesController extends Controller
      */
     public function importPurchases()
     {   
-        $orders = DB::table('order_items')
-            ->join('orders', 'order_items.order_id', '=', 'orders.id')
-            ->select('orders.customer_id as customer_id', 'order_items.product_id as product_id', 'order_items.created_at as created_at')
-            ->get();
+        importPurchasesJob::dispatch()->onQueue('importPurchases');
 
-        try {
-
-            $client = new Client([
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
-
-            $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
-                
-            foreach($orders as $order){
-                
-                $response = $client->post($url, [
-                    \GuzzleHttp\RequestOptions::JSON => [
-                        "event" => "buy",
-                        "entityType" => "user",
-                        "entityId" => $order->customer_id,
-                        "targetEntityType" => "item",
-                        "targetEntityId" => $order->product_id
-                    ] 
-                ]); 
-                   
-            }
-            
-            session()->flash('success', trans('admin::app.predictionio.users_successfully_imported') );
-            return redirect()->back();   
+        session()->flash('success', trans('admin::app.predictionio.purchases_successfully_imported') );
         
-        } catch (\GuzzleException $e) {
-            \Log::info($e);
-            session()->flash('error', trans('admin::app.predictionio.unexpected_error_occured') );
-            return redirect()->back();
-        }
+        return redirect()->back();  
     }
 
 }

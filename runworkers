@@ -1,0 +1,3 @@
+#!/bin/sh
+echo "Listener started"
+php artisan queue:work --queue=importPurchases --timeout=180 --max-time=299 --tries=5
