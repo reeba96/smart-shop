@@ -8,7 +8,7 @@ use Webkul\Sales\Models\Order;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Webkul\Sales\Models\OrderItem;
-use Modules\Pro\Jobs\importPurchasesJob;
+use ICBTECH\PredictionIO\Jobs\importPurchasesJob;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 
