@@ -2,12 +2,13 @@
 
 namespace ICBTECH\PredictionIO\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Routing\Controller;
+use ICBTECH\PredictionIO\Models\Views;
+use GuzzleHttp\Exception\GuzzleException;
+use ICBTECH\PredictionIO\Jobs\importViewsJob;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use ICBTECH\PredictionIO\Models\Views;
 
 class ViewsController extends Controller
 {
@@ -66,39 +67,11 @@ class ViewsController extends Controller
      */
     public function importViews()
     {   
-        $client = new Client([
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        importViewsJob::dispatch()->onQueue('importViews');
 
-        $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
-
-        $views = Views::get();
-            
-        try {
-            foreach($views as $view){
-               
-                $response = $client->post($url, [
-                    \GuzzleHttp\RequestOptions::JSON => [
-                        "event" => "view",
-                        "entityType" => "user",
-                        "entityId" => $view->customer_id,
-                        "targetEntityType" => "item",
-                        "targetEntityId" => $view->product_id,
-                        "eventTime" => $view->created_at
-                    ] 
-                ]); 
-                
-            }
-           
-            session()->flash('success', trans('admin::app.predictionio.views_successfully_imported') );
-            return redirect()->back();   
+        session()->flash('success', trans('admin::app.predictionio.views_successfully_imported') );
         
-        } catch (\Exception $e) {
-            session()->flash('error', trans('admin::app.predictionio.unexpected_error_occured') );
-            return redirect()->back();
-        }
+        return redirect()->back();
     }
 
     /**

@@ -2,13 +2,14 @@
 
 namespace ICBTECH\PredictionIO\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Webkul\Product\Models\Product;
+use Illuminate\Support\LazyCollection;
+use ICBTECH\PredictionIO\Jobs\importItemsJob;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\LazyCollection;
-use Webkul\Product\Models\Product;
-use GuzzleHttp\Client;
 
 class ItemsController extends Controller
 {
@@ -68,42 +69,11 @@ class ItemsController extends Controller
      */
     public function importItems()
     {   
-        $client = new Client([
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        importItemsJob::dispatch()->onQueue('importItems');
 
-        $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
-        $products = Product::get();
-
-        try {
-            foreach($products as $product){
-                
-                $categories = DB::table('product_categories')->where('product_id', $product->id)->pluck('category_id');
-
-                $response = $client->post($url, [
-                    \GuzzleHttp\RequestOptions::JSON => [
-                        "event" => "\$set",
-                        "entityType" => "item",
-                        "entityId" => $product->id,
-                        "properties" => [
-                            "categories" => $categories
-                        ],
-                        "eventTime" => $product->created_at
-                    ] 
-                ]); 
-                
-            }
-
-            session()->flash('success', trans('admin::app.predictionio.items_successfully_imported') );
-            return redirect()->back();   
+        session()->flash('success', trans('admin::app.predictionio.items_successfully_imported') );
         
-        } catch (\Exception $e) {
-            \Log::info($e);
-            session()->flash('error', trans('admin::app.predictionio.unexpected_error_occured') );
-            return redirect()->back();
-        }
+        return redirect()->back();
     }
 
 }

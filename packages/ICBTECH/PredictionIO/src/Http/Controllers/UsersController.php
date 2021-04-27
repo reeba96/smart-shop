@@ -2,11 +2,12 @@
 
 namespace ICBTECH\PredictionIO\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Routing\Controller;
+use Webkul\Customer\Models\Customer;
+use ICBTECH\PredictionIO\Jobs\importUsersJob;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Webkul\Customer\Models\Customer;
-use GuzzleHttp\Client;
 
 class UsersController extends Controller
 {
@@ -65,36 +66,11 @@ class UsersController extends Controller
      */
     public function importUsers()
     {   
-        $client = new Client([
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-        ]);
+        importUsersJob::dispatch()->onQueue('importUsers');
 
-        $url = env('PREDICTIONIO_URL').'/events.json?accessKey='.env('PREDICTIONIO_ACCESS_KEY');
-        $customers = Customer::get();
-
-        try {
-            foreach($customers as $customer){
-            
-                $response = $client->post($url, [
-                    \GuzzleHttp\RequestOptions::JSON => [
-                        "event" => "\$set",
-                        "entityType" => "user",
-                        "entityId" => $customer->id,
-                        "eventTime" => $customer->created_at
-                    ] 
-                ]); 
-                
-            }
-
-            session()->flash('success', trans('admin::app.predictionio.users_successfully_imported') );
-            return redirect()->back();   
+        session()->flash('success', trans('admin::app.predictionio.users_successfully_imported') );
         
-        } catch (\Exception $e) {
-            session()->flash('error', trans('admin::app.predictionio.unexpected_error_occured') );
-            return redirect()->back();
-        }
+        return redirect()->back();  
     }
 
 }
