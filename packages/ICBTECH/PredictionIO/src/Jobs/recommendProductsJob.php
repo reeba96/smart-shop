@@ -53,7 +53,7 @@ class recommendProductsJob implements ShouldQueue
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
 
-            $product_number = $this->key_number;
+            $product_number = $this->recommended_product_number;
             
             foreach($customers as $customer){
             
