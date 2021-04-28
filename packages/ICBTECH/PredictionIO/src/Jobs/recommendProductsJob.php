@@ -42,7 +42,7 @@ class recommendProductsJob implements ShouldQueue
     {   
         try {
             $customers = Customer::get();
-
+            \Log::info("ITT LOG: " . $this->recommended_product_number);
             RecommendedProducts::truncate();
 
             $client = new Client([
@@ -52,7 +52,7 @@ class recommendProductsJob implements ShouldQueue
             ]);
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
-            \Log::info("ITT LOG: " . $this->recommended_product_number);
+            
             $product_number = $this->recommended_product_number;
             
             foreach($customers as $customer){
