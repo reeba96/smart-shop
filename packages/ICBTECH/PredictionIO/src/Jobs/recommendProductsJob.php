@@ -49,11 +49,13 @@ class recommendProductsJob implements ShouldQueue
             ]);
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
-
+            \Log::info("FROM 52 ROW");
+            
             $customers = Customer::get();
             
             RecommendedProducts::truncate();
-    
+                
+            
             foreach($customers as $customer){
             
                 $response = $client->post($url, [
