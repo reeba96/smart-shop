@@ -26,7 +26,7 @@ class recommendProductsJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct()
     {
 
     }
