@@ -30,9 +30,7 @@ class recommendProductsJob implements ShouldQueue
      */
     public function __construct($data)
     {
-        
         $this->recommended_product_number = $data["recommended_product_number"];
-        \Log::info("FROM CONSTRUCTOR: ". $this->recommended_product_number);
     }
 
     /**
@@ -55,15 +53,13 @@ class recommendProductsJob implements ShouldQueue
             $customers = Customer::get();
             
             RecommendedProducts::truncate();
-            
-            $product_number = $this->recommended_product_number;
-            
+    
             foreach($customers as $customer){
             
                 $response = $client->post($url, [
                     \GuzzleHttp\RequestOptions::JSON => [
                         "user" => $customer->id,
-                        "num" => $product_number
+                        "num" => $this->recommended_product_number
                     ] 
                 ]); 
 
