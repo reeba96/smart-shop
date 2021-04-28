@@ -194,6 +194,7 @@ class SettingsController extends Controller
      */
     public function recommend(Request $request)
     {   
+        dd($request);
         $recommended_product_number = (int)$request->product_number;
 
         recommendProductsJob::dispatch(['recommended_product_number' => $recommended_product_number])->onQueue('recommendProducts');
