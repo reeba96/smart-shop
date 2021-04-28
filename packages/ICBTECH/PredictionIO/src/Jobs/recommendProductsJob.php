@@ -40,47 +40,40 @@ class recommendProductsJob implements ShouldQueue
      */
     public function handle()
     {   
-        try {
-            \Log::info("FROM 52 ROW");
-            $client = new Client([
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
+        $client = new Client([
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
+        ]);
 
-            $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
-            
-
-            $customers = Customer::get();
-            
-            RecommendedProducts::truncate();
-                
-            
-            foreach($customers as $customer){
-            
-                $response = $client->post($url, [
-                    \GuzzleHttp\RequestOptions::JSON => [
-                        "user" => $customer->id,
-                        "num" => $this->recommended_product_number
-                    ] 
-                ]); 
-
-                $recommended_products = (array)json_decode($response->getBody()->getContents());
-                
-                foreach($recommended_products["itemScores"] as $recommended_product){
-                    
-                    RecommendedProducts::create([
-                        'customer_id' => $customer->id,
-                        'product_id' => $recommended_product->item,
-                        'score' => $recommended_product->score
-                    ]);
-                   
-                }
-            } 
-            
-        } catch (\Exception $e) {
-            \Log::info($e);
-        }
+        $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
         
+
+        $customers = Customer::get();
+        
+        RecommendedProducts::truncate();
+            
+        
+        foreach($customers as $customer){
+        
+            $response = $client->post($url, [
+                \GuzzleHttp\RequestOptions::JSON => [
+                    "user" => $customer->id,
+                    "num" => $this->recommended_product_number
+                ] 
+            ]); 
+
+            $recommended_products = (array)json_decode($response->getBody()->getContents());
+            
+            foreach($recommended_products["itemScores"] as $recommended_product){
+                
+                RecommendedProducts::create([
+                    'customer_id' => $customer->id,
+                    'product_id' => $recommended_product->item,
+                    'score' => $recommended_product->score
+                ]);
+                
+            }
+        } 
     }
 }
