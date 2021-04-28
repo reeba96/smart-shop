@@ -41,7 +41,7 @@ class recommendProductsJob implements ShouldQueue
     public function handle()
     {   
         try {
-
+            \Log::info("FROM 52 ROW");
             $client = new Client([
                 'headers' => [
                     'Content-Type' => 'application/json',
@@ -49,8 +49,8 @@ class recommendProductsJob implements ShouldQueue
             ]);
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
-            \Log::info("FROM 52 ROW");
             
+
             $customers = Customer::get();
             
             RecommendedProducts::truncate();
