@@ -40,7 +40,6 @@ class recommendProductsJob implements ShouldQueue
      */
     public function handle()
     {   
-        dd(2);
         try {
             
             $customers = Customer::get();
