@@ -194,7 +194,9 @@ class SettingsController extends Controller
      */
     public function recommend(Request $request)
     {   
-        recommendProductsJob::dispatch()->onQueue('recommendProducts');
+        $recommended_product_number = (int)$request->product_number;
+
+        recommendProductsJob::dispatch(['recommended_product_number' => $recommended_product_number])->onQueue('recommendProducts');
 
         session()->flash('success', trans('admin::app.predictionio.successfully_recommended') );
         

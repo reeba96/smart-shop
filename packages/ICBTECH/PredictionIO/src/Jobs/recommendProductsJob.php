@@ -21,14 +21,16 @@ class recommendProductsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $recommended_product_number = [];
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($data)
     {
-
+        $this->recommended_product_number = $data["recommended_product_number"];
     }
 
     /**
@@ -50,7 +52,8 @@ class recommendProductsJob implements ShouldQueue
             ]);
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
-            $product_number = (int)$request->product_number;
+
+            $product_number = $this->key_number;
             
             foreach($customers as $customer){
             
