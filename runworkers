@@ -1,3 +1,3 @@
 #!/bin/sh
 echo "Listener started"
-php artisan queue:work --queue=importPurchases,importUsers,importItems,importViews, recommendProducts --timeout=999999 --tries=5
+php artisan queue:work --queue=importPurchases,importUsers,importItems,importViews,recommendProducts --timeout=999999 --tries=5
