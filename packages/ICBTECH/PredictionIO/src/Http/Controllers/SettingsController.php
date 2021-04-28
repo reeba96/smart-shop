@@ -204,7 +204,7 @@ class SettingsController extends Controller
                 ],
             ]);
 
-            $url = env('PREDICTIONIO_RECOMMEND_URL');
+            $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
             $product_number = (int)$request->product_number;
             
             foreach($customers as $customer){
