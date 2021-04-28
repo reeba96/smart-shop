@@ -21,8 +21,6 @@ class recommendProductsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $recommended_product_number = [];
-
     /**
      * Create a new job instance.
      *
@@ -30,7 +28,7 @@ class recommendProductsJob implements ShouldQueue
      */
     public function __construct($data)
     {
-        $this->recommended_product_number = $data["recommended_product_number"];
+
     }
 
     /**
@@ -43,7 +41,7 @@ class recommendProductsJob implements ShouldQueue
         try {
             
             $customers = Customer::get();
-            \Log::info("ITT LOG: " . $this->recommended_product_number);
+
             RecommendedProducts::truncate();
 
             $client = new Client([
@@ -54,14 +52,12 @@ class recommendProductsJob implements ShouldQueue
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
             
-            $product_number = $this->recommended_product_number;
-            
             foreach($customers as $customer){
             
                 $response = $client->post($url, [
                     \GuzzleHttp\RequestOptions::JSON => [
                         "user" => $customer->id,
-                        "num" => $product_number
+                        "num" => 4
                     ] 
                 ]); 
 
