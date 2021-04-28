@@ -41,6 +41,7 @@ class recommendProductsJob implements ShouldQueue
     public function handle()
     {   
         try {
+            /*
             $customers = Customer::get();
             \Log::info("ITT LOG: " . $this->recommended_product_number);
             RecommendedProducts::truncate();
@@ -76,7 +77,7 @@ class recommendProductsJob implements ShouldQueue
                    
                 }
             } 
-        
+            */
         } catch (\Exception $e) {
             \Log::info($e);
         }
