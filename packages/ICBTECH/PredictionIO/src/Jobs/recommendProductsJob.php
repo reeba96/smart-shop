@@ -17,7 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use ICBTECH\PredictionIO\Models\RecommendedProducts;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
-class importItemsJob implements ShouldQueue
+class recommendProductsJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
