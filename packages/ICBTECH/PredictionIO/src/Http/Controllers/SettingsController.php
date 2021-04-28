@@ -2,16 +2,17 @@
 
 namespace ICBTECH\PredictionIO\Http\Controllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\Request;
-use Symfony\Component\Process\Process;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Webkul\Customer\Models\Customer;
+use Symfony\Component\Process\Process;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use ICBTECH\PredictionIO\Jobs\recommendProductsJob;
 use ICBTECH\PredictionIO\Models\RecommendedProducts;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class SettingsController extends Controller
 {
@@ -193,50 +194,11 @@ class SettingsController extends Controller
      */
     public function recommend(Request $request)
     {   
-        try {
-            $customers = Customer::get();
+        recommendProductsJob::dispatch()->onQueue('recommendProducts');
 
-            RecommendedProducts::truncate();
-
-            $client = new Client([
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                ],
-            ]);
-
-            $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
-            $product_number = (int)$request->product_number;
-            
-            foreach($customers as $customer){
-            
-                $response = $client->post($url, [
-                    \GuzzleHttp\RequestOptions::JSON => [
-                        "user" => $customer->id,
-                        "num" => $product_number
-                    ] 
-                ]); 
-
-                $recommended_products = (array)json_decode($response->getBody()->getContents());
-                
-                foreach($recommended_products["itemScores"] as $recommended_product){
-                    
-                    RecommendedProducts::create([
-                        'customer_id' => $customer->id,
-                        'product_id' => $recommended_product->item,
-                        'score' => $recommended_product->score
-                    ]);
-                   
-                }
-                
-            }
-            
-            session()->flash('success', trans('admin::app.predictionio.successfully_recommended') );
-            return redirect()->back();   
+        session()->flash('success', trans('admin::app.predictionio.successfully_recommended') );
         
-        } catch (\Exception $e) {
-            \Log::info($e);
-            session()->flash('error', trans('admin::app.predictionio.unexpected_error_occured') );
-            return redirect()->back();
-        }
+        return redirect()->back();
+
     }
 }
