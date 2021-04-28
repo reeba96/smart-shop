@@ -30,7 +30,9 @@ class recommendProductsJob implements ShouldQueue
      */
     public function __construct($data)
     {
+        
         $this->recommended_product_number = $data["recommended_product_number"];
+        \Log::info("FROM CONSTRUCTOR: ". $this->recommended_product_number);
     }
 
     /**
@@ -41,10 +43,6 @@ class recommendProductsJob implements ShouldQueue
     public function handle()
     {   
         try {
-            
-            $customers = Customer::get();
-            
-            RecommendedProducts::truncate();
 
             $client = new Client([
                 'headers' => [
@@ -53,6 +51,10 @@ class recommendProductsJob implements ShouldQueue
             ]);
 
             $url = env('PREDICTIONIO_RECOMMEND_URL')."/queries.json";
+
+            $customers = Customer::get();
+            
+            RecommendedProducts::truncate();
             
             $product_number = $this->recommended_product_number;
             
