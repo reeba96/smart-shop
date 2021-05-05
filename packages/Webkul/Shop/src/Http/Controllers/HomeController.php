@@ -60,38 +60,66 @@ class HomeController extends Controller
                 ->join('recommended_products', 'products.id', '=', 'recommended_products.product_id')
                 ->join('product_images', 'products.id', '=', 'product_images.product_id')
                 ->join('product_flat', 'products.id', '=', 'product_flat.product_id')
-                ->select('products.*','product_images.*', 'product_flat.*')
+                ->select('products.id as id','product_images.path as path', 'product_flat.*', 'recommended_products.*')
                 ->where('recommended_products.customer_id', $customer->id )
                 ->orderBy('score', 'desc')
                 ->get();
+
+            $previous_product_id = null;
+
+            foreach($products as $key => $product){
+                
+                if($product->id == $previous_product_id) {
+                    unset($products[$key]);
+                }
+
+                $previous_product_id = $product->id;
+            }
+
+            $products = $products->values()->all();
             
             // Check recommended products number
             $number_of_products = count($products);
-
-            // Rroducts wit heigh scores
+            
+            // Products with height scores
             $related_products = DB::table('products')
                 ->join('recommended_products', 'products.id', '=', 'recommended_products.product_id')
                 ->join('product_images', 'products.id', '=', 'product_images.product_id')
                 ->join('product_flat', 'products.id', '=', 'product_flat.product_id')
                 ->orderBy('score', 'desc')
                 ->get();
+
+            $related_previous_product_id = null;
+
+            foreach($related_products as $key => $related_product){
+                
+                if($related_product->id == $related_previous_product_id) {
+                    unset($related_products[$key]);
+                }
+
+                $related_previous_product_id = $related_product->id;
+            }
+
+            $related_products = $related_products->values()->all();
             
             if( $number_of_products == 1 ) {
 
                 $product_1 = $products[0];
                 $product_2 = $related_products[0];
                 $product_3 = $related_products[1];
-
+                
             } else if( $number_of_products == 2 ) {
 
                 $product_1 = $products[0];
                 $product_2 = $products[1];
                 $product_3 = $products[0];
 
-            } else if( $number_of_products == 3 ){
+            } else if( $number_of_products >= 3 ){
+                
                 $product_1 = $products[0];
-                $product_1 = $products[1];
-                $product_1 = $products[3];
+                $product_2 = $products[1];
+                $product_3 = $products[2];
+                
             } else {
 
                 if( isset($related_products[0]) ) {

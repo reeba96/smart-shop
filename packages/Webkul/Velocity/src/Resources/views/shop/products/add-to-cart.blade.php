@@ -22,7 +22,7 @@
                 'addClass' => $addWishlistClass ?? ''
             ])
         @endif
-
+{{dd(2)}}
         <div class="add-to-cart-btn pl0">
             @if (isset($form) && !$form)
                 <button
