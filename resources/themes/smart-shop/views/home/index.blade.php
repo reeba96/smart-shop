@@ -61,7 +61,7 @@
             @if(isset($product_1) && isset($product_2) && isset($product_3))
 
                 <div class="container-fluid advertisement-four-container">
-                    <h2>Recommended for you</h2>
+                    <h1><b>Recommended for you</b></h1><br>
                     <div class="row">
                         <div class="col-lg-4 col-12 offers-ct-panel">
                             <a @if (isset($product_1->path)) href="{{ asset($product_1->url_key) }}" @endif>
